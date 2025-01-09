@@ -1,0 +1,54 @@
+#lang racket
+(require 2htdp/image);
+
+
+;; Exercise 2 
+(define cost_per_lecture (exact->inexact (/ 84731 56 4 2)));
+(display cost_per_lecture);
+(display "\n");
+
+
+;; Exercise 9
+;; Define colors
+(define yellow (make-color 255 255 0));
+(define light-blue (make-color 173 216 230));
+(define dark-brown (make-color 139 69 19));
+(define light-brown (make-color 183 111 87));
+(define dark_green (make-color 34 139 34));
+(define bg_width 200);
+
+(define circle_center_x (/ bg_width 6.66666667));
+(define circle_center_y (/ bg_width 6.66666667));
+(define circle_radius (/ bg_width 13.3333333));
+(define ellipse_height (/ bg_width 3.38983051));
+(define ellipse_width (/ bg_width 5.71428571));
+(define ellipse_center_x (/ bg_width 4.04040404));
+(define ellipse_center_y (/ bg_width 1.95121951));
+(define ground_center_x (/ bg_width 2));
+(define ground_center_y (/ bg_width 1.11111111));
+(define ground_hieght (/ bg_width 5));
+(define stump_width (/ bg_width 15.3846154));
+(define stump_hieght (/ bg_width 6.25));
+(define stump_center_y (/ bg_width 1.38888889));
+(define stump_center_x (/ bg_width 4.04040404));
+
+
+;; Define shapes
+(define c (circle circle_radius "solid" yellow));
+(define bg (rectangle bg_width bg_width "solid" light-blue));
+(define leaves (ellipse ellipse_width ellipse_height "solid" dark_green));
+(define ground (rectangle bg_width ground_hieght "solid" dark-brown));
+(define stump (rectangle stump_width stump_hieght "solid" light-brown));
+
+
+;; Display the final scene
+(define scene-with-bg bg);
+(define scene-with-circle 
+  (place-image c circle_center_x circle_center_y scene-with-bg));
+(define final-scene 
+  (place-image stump stump_center_x stump_center_y  scene-with-circle));
+(define final_final_scene
+  (place-image ground ground_center_x ground_center_y final-scene));
+(define final_final_final_scene
+  (place-image leaves ellipse_center_x ellipse_center_y final_final_scene));
+final_final_final_scene
