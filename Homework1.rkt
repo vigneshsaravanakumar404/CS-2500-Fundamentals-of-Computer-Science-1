@@ -4,12 +4,6 @@
 
 
 ;; Exercise 8
-(define (string-insert string position)
-  (string-append (substring string 0 position) "-" (substring string position (string-length string)))
-  )
-
-
-;; Exercise 9
 ;; Define colors
 (define light-blue (make-color 173 216 230))
 (define dark-brown (make-color 139 69 19))
@@ -80,7 +74,5 @@
            (place-image window_2 window_inner_x_2 window_inner_y
             (place-image house_base house_base_x house_base_y
          bg))))))))))))
-
-;; Call Functions
-(string-insert "HelloWorld" 5)
 final-scene
+
