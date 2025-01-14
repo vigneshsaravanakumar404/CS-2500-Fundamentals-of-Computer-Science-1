@@ -1,0 +1,39 @@
+#lang racket
+
+;; ====================================================
+;; Exercise 1
+;; duplicated? : String -> Boolean
+;; Checks if a given string is of the form "XX"
+;; Example: (duplicated? "AA") => true
+(define (duplicated? str)
+  (cond 
+    [(= (modulo (string-length str) 2) 1) false]
+    [(string=? (substring str 0 (/ (string-length str) 2)) 
+               (substring str (/ (string-length str) 2) (string-length str))) true]
+    [else false]))
+
+;; (duplicated? "AA") should be true
+;; (duplicated? "AB") should be false
+;; (duplicated? "A") should be false
+;; ====================================================
+
+
+;; ====================================================
+;; Exercise 2
+;; describe-ordering : Number Number Number -> String
+;; Returns the ordering of the given numbers
+;; Example: (describe-ordering 1 2 3) => "ascending"
+(define (describe-ordering a b c)
+    (cond
+        [(< a b c) "ascending"]
+        [(> a b c) "descending"]
+        [or (= a b) (= b c) (= a c) "repeats"]
+        [else "scrambled"]))
+    
+(describe-ordering 1 2 3) ; should be "ascending"
+(describe-ordering 3 2 1) ; should be "descending"
+(describe-ordering 1 1 2) ; should be "repeats"
+(describe-ordering 1 2 1) ; should be "repeats"
+(describe-ordering 2 1 1) ; should be "repeats"
+(describe-ordering 3 1 2) ; should be "scrambled"
+        

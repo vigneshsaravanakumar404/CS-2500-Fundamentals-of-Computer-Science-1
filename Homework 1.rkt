@@ -5,9 +5,30 @@
 
 ;; ====================================================
 ;; Exercise 1
-;; "Do not use dangling parentheses: the closing
-;;  right-parenthesis should be on the same line
-;;  as the last expression of your code."
+#| Do not use dangling parentheses: the closing right-parenthesis should be
+on the same line as the last expression of your code.
+
+  ;; ------------------------ GOOD
+
+  (define (f l)
+
+    (cond [(empty? l) 0]
+
+          [else (f (rest l))])) ;; HERE
+
+  ;; ------------------------ BAD
+
+  (define (f l)
+
+    (cond [(empty? 1) 0]
+
+          [else (f (rest l))]
+
+     ) ;; NOT HERE
+
+   )
+
+The dangling parentheses in the second code excerpt are considered extremely bad style. |#
 ;; ====================================================
 
 
@@ -23,11 +44,13 @@
 ;; Converts a word to pig latin form
 ;; Example: (pig-latinize "crater") => "ratercay"
 (define (pig-latinize word)
-  (string-append (substring word 1) (substring word 0 1) "ay"))
+  (cond
+    [(> (string-length word) 0) (string-append (substring word 1) (substring word 0 1) "ay")]
+    [else "ay"]))
 
 ;; Tests
-;; (pig-latinize "crater") should return "ratercay"
-;; (pig-latinize "Vignesh") should return "igneshVay"
+;; (pig-latinize "crater") should be "ratercay"
+;; (pig-latinize "Vignesh") should be "igneshVay"
 ;; ====================================================
 
 
@@ -40,8 +63,8 @@
   b)
 
 ;; Tests
-;; (middle "one" "two" "three") should return "two"
-;; (middle 3.14 null #f) should return null
+;; (middle "one" "two" "three") should be "two"
+;; (middle 3.14 null #f) should be null
 ;; ====================================================
 
 
@@ -50,22 +73,23 @@
 ;; cost-to-climb : Number -> Number
 ;; Calculates the cost to climb a given number of meters
 ;; Example: (cost-to-climb 3500) => 645.0
-(define (cost-to-climb meters)
-  (+ 120 (* meters 0.15)))
+(define (cost-to-climb m)
+  (+ (* m 0.15) 120))
 
 ;; Tests
-;; (cost-to-climb 3500) should return 645.0
-;; (cost-to-climb 101) should return 135.15
+;; (cost-to-climb 3500) should be 645.0
+;; (cost-to-climb 101) should be 135.15
 ;; ====================================================
 
 
 ;; ====================================================
 ;; Exercise 6
-;; valid-date : String Number -> Boolean
+;; valid-date? : String Number -> Boolean
 ;; Checks if a given month and day form a valid date
-;; Example: (valid-date "January" 31) => true
-(define (valid-date month day)
+;; Example: (valid-date? "January" 31) => true
+(define (valid-date? month day)
   (cond
+    [(not (integer? day)) false]
     [(and (or (string=? month "January")
               (string=? month "March")
               (string=? month "May")
@@ -84,35 +108,35 @@
     [else false]))
 
 ;; Tests
-;; (valid-date "January" 31)    Expected: true
-;; (valid-date "April" 31)      Expected: false
-;; (valid-date "February" 29)   Expected: true
-;; (valid-date "February" 300)  Expected: false
-;; (valid-date "NotAMonth" 10)  Expected: false
+;; (valid-date? "January" 31)    should be true
+;; (valid-date? "April" 31)      should be false
+;; (valid-date? "February" 29)   should be true
+;; (valid-date? "February" 300)  should be false
+;; (valid-date? "NotAMonth" 10)  should be false
+;; (valid-date? "May" 3.14)  should be false
 ;; ====================================================
-
 
 ;; ====================================================
 ;; Exercise 7
 ;; image-classify : Image -> String
 ;; Classifies an image based on its dimensions
 ;; Example: (image-classify (rectangle 15 15 "solid" "red")) => "square"
-(define (image-classify img)
+(define (image-classify i)
   (cond
-    [(= (image-height img) (image-width img)) "square"]
-    [(> (image-height img) (image-width img)) "tall"]
-    [(< (image-height img) (image-width img)) "wide"]))
+    [(= (image-height i) (image-width i)) "square"]
+    [(> (image-height i) (image-width i)) "tall"]
+    [(< (image-height i) (image-width i)) "wide"]))
 
 ;; Tests
-;; (image-classify (rectangle 15 15 "solid" "red")) Expected: "square"
-;; (image-classify (rectangle 15 10 "solid" "red")) Expected: "wide"
-;; (image-classify (rectangle 10 15 "solid" "red")) Expected: "tall"
+;; (image-classify (rectangle 15 15 "solid" "red")) should be "square"
+;; (image-classify (rectangle 15 10 "solid" "red")) should be "wide"
+;; (image-classify (rectangle 10 15 "solid" "red")) should be "tall"
 ;; ====================================================
 
 
 ;; ====================================================
 ;; Exercise 8
-(define BG-WIDTH 200) ;; RESIZE IMAGE HERE
+(define S 500) ;; RESIZE IMAGE HERE
 
 ;; Constants
 (define LIGHT-BLUE (make-color 173 216 230))
@@ -123,64 +147,49 @@
 (define ORANGE (make-color 255 165 0))
 (define LIGHT-PURPLE (make-color 160 32 240))
 
-(define CIRCLE-CENTER-X (/ BG-WIDTH 6.66666667))
-(define CIRCLE-CENTER-Y (/ BG-WIDTH 6.66666667))
-(define CIRCLE-RADIUS (/ BG-WIDTH 13.3333333))
-(define ELLIPSE-HEIGHT (/ BG-WIDTH 3.38983051))
-(define ELLIPSE-WIDTH (/ BG-WIDTH 5.71428571))
-(define ELLIPSE-CENTER-X (/ BG-WIDTH 4.04040404))
-(define ELLIPSE-CENTER-Y (/ BG-WIDTH 1.95121951))
-(define GROUND-CENTER-X (/ BG-WIDTH 2))
-(define GROUND-CENTER-Y (/ BG-WIDTH 1.11111111))
-(define GROUND-HEIGHT (/ BG-WIDTH 5))
-(define STUMP-WIDTH (/ BG-WIDTH 15.3846154))
-(define STUMP-HEIGHT (/ BG-WIDTH 6.25))
-(define STUMP-CENTER-Y (/ BG-WIDTH 1.38888889))
-(define STUMP-CENTER-X (/ BG-WIDTH 4.04040404))
-(define HOUSE-BASE-WIDTH (/ BG-WIDTH 4.25531915))
-(define HOUSE-BASE-HEIGHT (/ BG-WIDTH 4.16666667))
-(define HOUSE-BASE-X (/ BG-WIDTH 1.33779264))
-(define HOUSE-BASE-Y (/ BG-WIDTH 1.46148148))
-(define ROOF-L1 (/ BG-WIDTH 3.92156863))
-(define ROOF-L2 (/ BG-WIDTH 3.38983051))
-(define ROOF-X (/ BG-WIDTH 1.33779264))
-(define ROOF-Y (/ BG-WIDTH 2.13045685))
-(define OUTER-DOOR-X (/ BG-WIDTH 1.3400335))
-(define OUTER-DOOR-Y (/ BG-WIDTH 1.34680135))
-(define OUTER-DOOR-WIDTH (/ BG-WIDTH 22.2222222))
-(define OUTER-DOOR-HEIGHT (/ BG-WIDTH 8.69565217))
-(define WINDOW-INNER-WIDTH (/ BG-WIDTH 28.5714286))
-(define WINDOW-OUTER-WIDTH (+ WINDOW-INNER-WIDTH (/ BG-WIDTH 200)))
-(define WINDOW-INNER-Y (/ BG-WIDTH 1.58730159))
-(define WINDOW-INNER-X-1 (/ BG-WIDTH 1.42857143))
-(define WINDOW-INNER-X-2 (/ BG-WIDTH 1.2539185))
-
 ;; Shapes
-(define BG (rectangle BG-WIDTH BG-WIDTH "solid" LIGHT-BLUE))
-(define LEAVES (ellipse ELLIPSE-WIDTH ELLIPSE-HEIGHT "solid" DARK-GREEN))
-(define GROUND (rectangle BG-WIDTH GROUND-HEIGHT "solid" DARK-BROWN))
-(define STUMP (rectangle STUMP-WIDTH STUMP-HEIGHT "solid" LIGHT-BROWN))
-(define HOUSE-BASE (rectangle HOUSE-BASE-WIDTH HOUSE-BASE-HEIGHT "solid" GOLD))
-(define ROOF (rotate 180 (triangle/sss ROOF-L1 ROOF-L1 ROOF-L2 "solid" "red")))
-(define OUTER-DOOR (rectangle OUTER-DOOR-WIDTH OUTER-DOOR-HEIGHT "solid" LIGHT-PURPLE))
-(define WINDOW-1 (rectangle WINDOW-INNER-WIDTH WINDOW-INNER-WIDTH "solid" "white"))
-(define WINDOW-2 (rectangle WINDOW-OUTER-WIDTH WINDOW-OUTER-WIDTH "solid" ORANGE))
-(define CIRCLE (circle CIRCLE-RADIUS "solid" "yellow"))
+(define BG 
+  (rectangle S S "solid" "Light Blue"))
+(define CIRCLE 
+  (circle (/ S 10.2564102) "solid" "yellow"))
+(define GROUND 
+  (rectangle S (/ S 5) "solid" "brown"))
+(define STUMP 
+  (rectangle (/ S 15.3846154) (/ S 6.25) "solid" "light brown"))
+(define OUTER-DOOR 
+  (rectangle (/ S 22.2222222) (/ S 8.69565217) "solid" "Purple"))
+(define WINDOW-1 
+  (rectangle (/ S 28.5714286) (/ S 28.5714286) "solid" "white"))
+(define LEAVES 
+  (ellipse (/ S 5.71428571) (/ S 3.38983051) "solid" "Forest Green"))
+(define HOUSE-BASE 
+  (rectangle (/ S 4.25531915) (/ S 4.16666667) "solid" "Gold"))
+(define ROOF 
+  (rotate 180
+          (triangle/sss (/ S 3.92156863) (/ S 3.92156863) (/ S 3.38983051) "solid" "red")))
+(define WINDOW-2 
+  (rectangle (+ (/ S 28.5714286) (/ S 200)) (+ (/ S 28.5714286) (/ S 200)) "solid" "Orange"))
+
+;; Store Objects/Positions
+(define objects
+  (list LEAVES GROUND STUMP CIRCLE ROOF OUTER-DOOR
+        WINDOW-1 WINDOW-1 WINDOW-2 WINDOW-2 HOUSE-BASE))
+(define positions
+  (list (make-posn (/ S 4.04040404) (/ S 1.95121951)) ;; LEAVES
+        (make-posn (/ S 2) (/ S 1.11111111)) ;; GROUND
+        (make-posn (/ S 4.04040404) (/ S 1.38888889)) ;; STUMP
+        (make-posn (/ S 6.66666667) (/ S 6.66666667)) ;; CIRCLE
+        (make-posn (/ S 1.33779264) (/ S 2.13045685)) ;; ROOF
+        (make-posn (/ S 1.3400335) (/ S 1.34680135)) ;; OUTER-DOOR 
+        (make-posn (/ S 1.42857143) (/ S 1.58730159)) ;; WINDOW-1
+        (make-posn (/ S 1.2539185) (/ S 1.58730159)) ;; WINDOW-1
+        (make-posn (/ S 1.42857143) (/ S 1.58730159)) ;; WINDOW-2
+        (make-posn (/ S 1.2539185) (/ S 1.58730159)) ;; WINDOW-2
+        (make-posn (/ S 1.33779264) (/ S 1.46148148)))) ;; HOUSE-BASE
 
 ;; Final Scene
 (define final-scene
-  (place-image LEAVES ELLIPSE-CENTER-X ELLIPSE-CENTER-Y
-    (place-image GROUND GROUND-CENTER-X GROUND-CENTER-Y
-      (place-image STUMP STUMP-CENTER-X STUMP-CENTER-Y
-        (place-image CIRCLE CIRCLE-CENTER-X CIRCLE-CENTER-Y
-          (place-image ROOF ROOF-X ROOF-Y
-            (place-image OUTER-DOOR OUTER-DOOR-X OUTER-DOOR-Y
-              (place-image WINDOW-1 WINDOW-INNER-X-1 WINDOW-INNER-Y
-                (place-image WINDOW-1 WINDOW-INNER-X-2 WINDOW-INNER-Y
-                  (place-image WINDOW-2 WINDOW-INNER-X-1 WINDOW-INNER-Y
-                    (place-image WINDOW-2 WINDOW-INNER-X-2 WINDOW-INNER-Y
-                      (place-image HOUSE-BASE HOUSE-BASE-X HOUSE-BASE-Y
-                        BG))))))))))))
+  (place-images objects positions BG))
 
 final-scene
 ;; ====================================================

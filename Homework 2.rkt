@@ -1,0 +1,96 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname |Homework 2|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require racket/string)
+
+;; ====================================================
+;; Exercise 1
+;; duplicated? : String -> Boolean
+;; Checks if a given string is of the form "XX"
+;; Example: (duplicated? "AA") => true
+;; (duplicated? "AA") should be true
+;; (duplicated? "AB") should be false
+;; (duplicated? "A") should be false
+(define (duplicated? str)
+  (cond 
+    [(= (modulo (string-length str) 2) 1) false]
+    [(string=? (substring str 0 (/ (string-length str) 2)) 
+               (substring str (/ (string-length str) 2) (string-length str))) true]
+    [else false]))
+;; ====================================================
+
+
+;; ====================================================
+;; Exercise 2
+;; describe-ordering : Number Number Number -> String
+;; Returns the ordering of the given numbers
+;; Example: (describe-ordering 1 2 3) => "ascending"
+;; (describe-ordering 1 2 3) ; should be "ascending"
+;; (describe-ordering 3 2 1) ; should be "descending"
+;; (describe-ordering 1 1 2) ; should be "repeats"
+;; (describe-ordering 1 2 1) ; should be "repeats"
+;; (describe-ordering 2 1 1) ; should be "repeats"
+;; (describe-ordering 3 1 2) ; should be "scrambled"
+(define (describe-ordering a b c)
+  (cond
+    [(< a b c) "ascending"]
+    [(> a b c) "descending"]
+    [(or (= a b) (= b c) (= a c))"repeats"]
+    [else "scrambled"]))
+;; ====================================================
+
+
+;; ====================================================
+;; Exercise 3
+;; => : Boolean Boolean -> Boolean
+;; Returns the output of the => function
+;; Example (=> #f #t) => #t
+(define (=> x y)
+  (cond
+    [(= x #f) #t]
+    [(= y #t) #t]
+    [else #f]))
+
+;; (check-expect (=> #f #f) #t)
+;; (check-expect (=> #f #t) #t)
+;; (check-expect (=> #t #f) #f)
+;; (check-expect (=> #t #t) #t)
+;; By the implementation the output is #t
+;; ====================================================
+
+
+;; ====================================================
+;; Exercise 4
+
+;; dayminute->hour : DayMinute => Hour
+;; Returns the hour of day the minute is in
+;; Example (dayminute->hour DayMinute) => Hour
+;; (dayminute->hour 65) should be 5
+;; (dayminute->hour 5) should be 0
+(define (dayminute->hour DayMinute)
+  (floor (/ DayMinute 60)))
+
+;; dayminute->minute : DayMinute  => Minute
+;; Returns the Minute of the hour
+;; Example (dayminute->minute DayMinute) => Minute
+;; (dayminute->minute 65) should be 5
+;; (dayminute->minute 5) should be 5
+(define (dayminute->minute DayMinute)
+  (floor (modulo DayMinute 60)))
+
+(define (pad string)
+  (cond
+    [(< (string-length string) 2) (string-append "0" string)]
+    [else string]))
+(define (dayminute->string DayMinute)
+  (string-append (pad (number->string (dayminute->hour DayMinute)))
+                 ":"
+                 (pad (number->string(dayminute->minute DayMinute)))))
+
+(dayminute->string 65)
+;; ====================================================
+
+
+
+
+
