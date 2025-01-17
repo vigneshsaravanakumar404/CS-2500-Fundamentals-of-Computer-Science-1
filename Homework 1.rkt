@@ -90,20 +90,20 @@ The dangling parentheses in the second code excerpt are considered extremely bad
 (define (valid-date? month day)
   (cond
     [(not (integer? day)) false]
-    [(and (or (string=? month "January")
-              (string=? month "March")
-              (string=? month "May")
-              (string=? month "July")
-              (string=? month "August")
-              (string=? month "October")
-              (string=? month "December"))
+    [(and (or (string=? (string-downcase month) "january")
+              (string=? (string-downcase month) "march")
+              (string=? (string-downcase month) "may")
+              (string=? (string-downcase month) "july")
+              (string=? (string-downcase month) "august")
+              (string=? (string-downcase month) "october")
+              (string=? (string-downcase month) "december"))
           (and (>= day 1) (<= day 31))) true]
-    [(and (or (string=? month "April")
-              (string=? month "June")
-              (string=? month "September")
-              (string=? month "November"))
+    [(and (or (string=? (string-downcase month) "april")
+              (string=? (string-downcase month) "june")
+              (string=? (string-downcase month) "september")
+              (string=? (string-downcase month) "november"))
           (and (>= day 1) (<= day 30))) true]
-    [(and (string=? month "February")
+    [(and (string=? (string-downcase month) "february")
           (and (>= day 1) (<= day 29))) true]
     [else false]))
 

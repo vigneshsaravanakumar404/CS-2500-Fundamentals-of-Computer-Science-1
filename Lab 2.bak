@@ -1,0 +1,21 @@
+#lang racket
+
+;; ====================================================
+;; Exercise 1
+;; string-starts-with? -> String String -> Boolean
+;; Returns true if the first string starts with the second string
+;; Example: (string-starts-with? "Vignesh" "V") => true
+(define (string-starts-with? s p)
+  (string-prefix? s p))
+
+;; Tests
+;; (string-starts-with? "Bob" "B") ; should be true
+;; (string-starts-with? "Bob" "o") ; should be false
+;; (string-starts-with? "Bob" "Bo") ; should be true
+;; (string-starts-with? "Bob" "Bob") ; should be true
+;; (string-starts-with? "Bob" "Bobo") ; should be false
+;; ====================================================
+
+
+;; ====================================================
+;; Exercise 2
