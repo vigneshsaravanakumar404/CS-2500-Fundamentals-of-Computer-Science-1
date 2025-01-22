@@ -63,7 +63,7 @@
     [(string=? state "Chicken Soup with Rice (1962)") (text "Chicken Soup with Rice (1962)" 15 "indigo")]
     [(string=? state "Where the Wild Things Are (1963)") (text "Where the Wild Things Are (1963)" 13 "indigo")]
     [(string=? state "Higglety Pigglety Pop! (1967)") (text "Higglety Pigglety Pop! (1967)" 15 "indigo")]
-    [(string=? state "In the Night Kitchen (1970)") (text "In the Night Kitchen (1970)" 15 "indigo")]
+    [(string=? state "In the Night Kitchen (1970)") (text "In the Night Kitchen (1970)" 15 "indigo")] 
     [(string=? state "Seven Little Monsters (1977)") (text "Seven Little Monsters (1977)" 15 "indigo")]))
 
 (big-bang "Chicken Soup with Rice (1962)"
