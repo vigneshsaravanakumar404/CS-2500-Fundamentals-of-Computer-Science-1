@@ -1,3 +1,5 @@
+#lang htdp/bsl
+
 ;; ====================================================
 ;; Exercise 1
 ;; divides? : Number Number -> Boolean
