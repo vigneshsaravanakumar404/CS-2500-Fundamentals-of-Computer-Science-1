@@ -1,6 +1,5 @@
 #lang htdp/bsl
 
-;; ====================================================
 ;; Exercise 1
 ;; divides? : Number Number -> Boolean
 ;; Determine if the numbers divide each other evenly
@@ -13,4 +12,3 @@
     [(= (remainder a b) 0) #t]
     [(= (remainder b a) 0) #t]
     [else #f]))
-;; ====================================================

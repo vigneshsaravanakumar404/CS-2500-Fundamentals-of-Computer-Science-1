@@ -2,7 +2,6 @@
 (require 2htdp/universe)
 (require 2htdp/image)
 
-;; ====================================================
 ;; Exercise 2
 
 ; A MauriceSendakBook is one of ...
@@ -12,16 +11,16 @@
 ; - "In the Night Kitchen (1970)"
 ; - "Seven Little Monsters (1977)"
 ; Interpretation: the name and year of books authored by Maurice Sendak
-
 (define CHICKEN-SOUP-WITH-RICE "Chicken Soup with Rice (1962)")
 (define WHERE-THE-WILD-THINGS-ARE "Where the Wild Things Are (1963)")
 (define HIGGLETY-PIGGLETY-POP "Higglety Pigglety Pop! (1967)")
 (define IN-THE-NIGHT-KITCHEN "In the Night Kitchen (1970)")
 (define SEVEN-LITTLE-MONSTERS "Seven Little Monsters (1977)")
 
-;;! template for a function
 (define (book-temp MauriceSendakBook)
-  ...)
+  (...
+    (cond 
+      [string=? MauriceSendakBook CHICKEN-SOUP-WITH-RICE] (... MauriceSendakBook))))
 
 ;; next-book : MauriceSendakBook -> MauriceSendakBook
 ;; Given MauriceSendakBook, returns the next book in the series. Newest book returns oldest book.
@@ -59,7 +58,7 @@
 ;; handle-key : MauriceSendakBook String -> MauriceSendakBook
 ;; Given a MauriceSendakBook and String, returns next/previous book based on the key pressed.
 (check-expect (handle-key CHICKEN-SOUP-WITH-RICE "right") WHERE-THE-WILD-THINGS-ARE)
-(check-expect (handle-key WHERE-THE-WILD-THINGS-ARE "right" ) HIGGLETY-PIGGLETY-POP)
+(check-expect (handle-key WHERE-THE-WILD-THINGS-ARE "right") HIGGLETY-PIGGLETY-POP)
 (check-expect (handle-key HIGGLETY-PIGGLETY-POP "right") IN-THE-NIGHT-KITCHEN)
 (check-expect (handle-key IN-THE-NIGHT-KITCHEN "right") SEVEN-LITTLE-MONSTERS)
 (check-expect (handle-key SEVEN-LITTLE-MONSTERS "right") CHICKEN-SOUP-WITH-RICE)
@@ -80,4 +79,3 @@
 (big-bang "Chicken Soup with Rice (1962)"
   (on-key handle-key)
   (to-draw render))
-;; ====================================================
