@@ -55,9 +55,11 @@
 ;; render : MauriceSendakBook -> Image
 ;; Given a MauriceSendakBook, returns an image of the book.
 ;; Example: (render (MauriceSendakBook1 "Chicken Soup with Rice (1962)")) =>
-;;          (text "Chicken Soup with Rice (1962)" 15 "indigo")
+;;          (text "Chicken Soup with Rice (1962)" 15 "black")
 (define (render state)
-  (text state 15 "indigo"))
+  (overlay
+   (rectangle 500 200 "outline" "white")
+   (text state 32 "black")))
 
 (big-bang "Chicken Soup with Rice (1962)"
   (on-key handle-key)
