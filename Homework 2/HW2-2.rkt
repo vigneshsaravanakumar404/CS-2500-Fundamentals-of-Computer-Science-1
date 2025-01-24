@@ -19,8 +19,8 @@
 
 (define (book-temp MauriceSendakBook)
   (...
-    (cond 
-      [string=? MauriceSendakBook CHICKEN-SOUP-WITH-RICE] (... MauriceSendakBook))))
+   (cond
+     [string=? MauriceSendakBook CHICKEN-SOUP-WITH-RICE] (... MauriceSendakBook))))
 
 ;; next-book : MauriceSendakBook -> MauriceSendakBook
 ;; Given MauriceSendakBook, returns the next book in the series. Newest book returns oldest book.
