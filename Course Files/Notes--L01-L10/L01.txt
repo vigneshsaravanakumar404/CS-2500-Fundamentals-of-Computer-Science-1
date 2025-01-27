@@ -1,0 +1,145 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname L01) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+Welcome to Fundies 1!!!
+
+Why does Prof. Park look like a rabbit today?
+
+What is this course (and CS in general) all about?
+
+Lack of experience: why it won't hurt you in Fundies 1
+
+Why are we teaching it in BSL/ISL, instead of Python?
+
+
+Prefix Notation:
+================
+
+In "standard arithmetic notation", how do you express "add three and two"?
+
+
+What about "multiply two and three and add four"?
+
+"Add two and three multiplied by four"?
+
+"Add two and three, multiply by four"?
+
+What is the value of:
+2 + 3 x 4 + 6 [div] 3
+
+Quick digression: '*' and '/' operator symbols
+  so above would be:
+  2 + 3 * 4 + 5 / 6
+
+How do you know what order to do the operations in?
+
+
+PEMDAS
+
+PEMDAS gives rules for order of evaluation; is that sufficient?
+What is 20 / 4 / 2?
+3 - 2 - 1?
+
+Let's play with an alternative algebraic notation system:
+Prefix notation
+
+
+
+1 + 2  ==  + 1 2
+3 * 4  ==  * 3 4
+Can also do:
++ 1 2 3 4 5 6 7 8 9 10
+...but then, we need to add in mandatory parentheses
+
+
+3 - 9
+
+== (- 3 9)
+
+4 * 18 * 2
+
+== (* 4 18 2)
+
+182
+
+== 182
+
+3 - 9 + 2 + 1 + 2 + 3
+
+==  (+ (- 3 9) 2 1 2 3)
+
+vs: 3 - (9 + 2)
+
+== (- 3 (+ 9 2))
+
+3 * 4 - 2
+
+==  (- (* 3 4) 2)
+
+7 x ((2 + 4) / 3)
+
+== (* 7 (/ (+ 2 4) 3))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+What about 3x - 2 = 7 ?
+That's not an expression that evaluates to a value--it is a
+statement of algebraic equivalence.
+
+However, we can ask what is the value of "3x - 2, with x=3"
+(more on this later...)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+We've now seen numbers; what about other types of data?
+0.1, 12.3e-2, 0+1i, pi, e
+Strings:
+"Hello there"
+
+String operations:
+Appending multiple strings:
+Try: (+ "abc" "def")
+Now, try: (string-append "abc" "def")
+
+Also try: substring, string-length
+How can we look this up?
+Go to Help Desk, or right-click
+
+Images:
+(square 10 "solid" "red")
+Need to add:
+(require 2htdp/image)
+
+Try:
+(circle 5 "outline" "blue")
+retangle, triangle, ...
+Creating compound shapes:
+above, beside, overlay, overlay/align
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+General nested form for an expression that has a value:
+  TERM
+or:
+  (OP EXPR EXPR EXPR ...)
+
+(circle (* 2 5) (substring "REALLYsolid" 6) (string-append "r" "e" "d"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Challenge for next class:
+draw a picture of a sun in the sky; if feeling fancy, above a green field
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Administrivia:
+Read the syllabus
+Download DrRacket ASAP!
+Join Piazza
+Get a Khoury account
+Join Handins and Gradescope
+First homework will come out this week
+Understand the late policy
+First lab this week
+Academic integrity! No sharing, no ChatGPT.
+
