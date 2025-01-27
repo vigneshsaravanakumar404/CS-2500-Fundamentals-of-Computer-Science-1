@@ -1,5 +1,8 @@
-(require 2htdp/universe)
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname HW3-3) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (require 2htdp/image)
+(require racket/string)
 
 ; =========================================================================
 ;; a.
@@ -90,13 +93,13 @@
 ;; in-budget? : Hotel Price -> Boolean
 ;; Determines if the price of the hotel is in the budget
 (check-expect (in-budget? HOTEL-1 PRICE-1) #t)
-(check-expect (in-budget? HOTEL-2 PRICE-2) #t)
-(check-expect (in-budget? HOTEL-4 PRICE-4) #f)
-(check-expect (in-budget? HOTEL-1 PRICE-2) #f)
+(check-expect (in-budget? HOTEL-1 PRICE-2) #t)
+(check-expect (in-budget? HOTEL-3 PRICE-2) #f)
+(check-expect (in-budget? HOTEL-3 PRICE-4) #t)
 
 (define (in-budget? h p)
  (cond
-   [(> (string-length (price-price (hotel-price h))) (string-length (price-price p))) #f]
+   [(< (string-length (price-price p)) (string-length (price-price (hotel-price h)))) #f]
    [else #t]))
 ;; =========================================================================
 
@@ -104,12 +107,50 @@
 
 ;; =========================================================================
 ;; c.
+;; make-cheaper : Hotel -> Hotel
+;; Given a hotel makes the price 1 cheaper till "$" and adds cheaper to name
+(check-expect (make-cheaper HOTEL-1) (make-hotel (make-name "Cheaper Marriott") (make-stars 3) (make-price "$")))
+(check-expect (make-cheaper HOTEL-2) (make-hotel (make-name "Cheaper Hilton") (make-stars 4) (make-price "$")))
+(check-expect (make-cheaper HOTEL-3) (make-hotel (make-name "Cheaper Sheraton") (make-stars 5) (make-price "$$")))
+(check-expect (make-cheaper HOTEL-4) (make-hotel (make-name "Cheaper Marriott") (make-stars 4) (make-price "$$$")))
 
+(define (make-cheaper h)
+  (cond
+    [(string=? (price-price (hotel-price h)) "$")
+     (make-hotel (make-name (string-append "Cheaper " (name-name (hotel-name h))))
+                 (hotel-stars h)
+                 (make-price "$"))]
+    [else (make-hotel (make-name (string-append "Cheaper " (name-name (hotel-name h))))
+                      (hotel-stars h)
+                      (make-price (substring (price-price (hotel-price h)) 1)))]))
 ;; =========================================================================
 
 
 
 ;; =========================================================================
 ;; d.
+;; star-count->stars : Number -> String;
+;; Given star count returns string with that many stars
+(define (star-count->stars n)
+  (cond
+    [(= n 5) "★★★★★"]
+    [(= n 4) "★★★★"]
+    [(= n 3) "★★★"]
+    [(= n 2) "★★"]
+    [else "★"]))
+
+
+;; draw-panels : Hotel -> Image
+;; Given a Hotel returns a card with the hotel's information
+(define (draw-panels h)
+  (place-images (list (text (name-name (hotel-name h)) 40 "black")
+                      (text (price-price (hotel-price h)) 20 "forest green")
+                      (text (star-count->stars (stars-stars (hotel-stars h))) 20 "red")
+                      (rectangle 498 98 "solid" "white"))
+                (list (make-posn 250 20)
+                      (make-posn 250 50)
+                      (make-posn 250 75)
+                      (make-posn 250 50))
+                (rectangle 500 100 "solid" "black")))
 
 ;; =========================================================================
