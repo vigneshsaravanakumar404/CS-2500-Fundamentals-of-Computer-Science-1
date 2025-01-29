@@ -110,27 +110,29 @@
 ;; d.
 ;; star-count->stars : Number -> String;
 ;; Given star count returns string with that many stars
+(define STAR (star 21 "solid" "red"))
 (define (star-count->stars n)
   (cond
-    [(= n 5) "★★★★★"]
-    [(= n 4) "★★★★"]
-    [(= n 3) "★★★"]
-    [(= n 2) "★★"]
-    [else "★"]))
+    [(= n 5) (beside STAR STAR STAR STAR STAR)]
+    [(= n 4) (beside STAR STAR STAR STAR)]
+    [(= n 3) (beside STAR STAR STAR)]
+    [(= n 2) (beside STAR STAR)]
+    [else (beside STAR)]))
 
 
 ;; draw-panels : Hotel -> Image
 ;; Given a Hotel returns a card with the hotel's information
 (define (draw-panels h)
-  (place-images (list (text (hotel-name h) 40 "black")
-                      (text (hotel-price h) 20 "forest green")
-                      (text (star-count->stars (hotel-stars h)) 20 "red")
-                      (rectangle 498 98 "solid" "white"))
-                (list (make-posn 250 20)
-                      (make-posn 250 50)
-                      (make-posn 250 75)
-                      (make-posn 250 50))
-                (rectangle 500 100 "solid" "black")))
-
+  (place-images (list (text (hotel-name h) 80 "black")
+                      (star-count->stars (hotel-stars h))
+                      (text (hotel-price h) 20 "black")
+                      (rectangle (- (image-width (text (hotel-name h) 80 "black")) 2)
+                                 126
+                                 "solid"
+                                 "white"))
+                (list (make-posn (/ (image-width (text (hotel-name h) 80 "black")) 2) 35)
+                      (make-posn (/ (image-width (text (hotel-name h) 80 "black")) 2) 78)
+                      (make-posn (/ (image-width (text (hotel-name h) 80 "black")) 2) 110)
+                      (make-posn (/ (image-width (text (hotel-name h) 80 "black")) 2) 64))
+                (rectangle (image-width (text (hotel-name h) 80 "black")) 128 "solid" "black")))
 ;; =========================================================================
-

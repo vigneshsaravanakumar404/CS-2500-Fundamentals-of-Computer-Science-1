@@ -84,13 +84,6 @@
     [(< (string-length s) 2) (string-append "0" s)]
     [else s]))
 
-;; hour-formatting : Number -> Number
-;; given an hour returns the formatted hour
-(define (hour-formatting h)
-  (cond
-    [(= (modulo h 12) 0) 12]
-    [else (modulo h 12)]))
-
 ;; time->text : Time -> String
 ;; Given a Time, returns a string representation of the time in the format "HH:MM AM/PM"
 (check-expect (time->text (make-time 00 28)) "12:28 AM")
@@ -99,7 +92,10 @@
 (check-expect (time->text (make-time 11 59)) "11:59 AM")
 
 (define (time->text t)
-  (string-append (pad-zeros (number->string (hour-formatting (time-hour t))))
+  (string-append (pad-zeros (number->string
+                             (cond
+                               [(= (modulo (time-hour t) 12) 0) 12]
+                               [else (modulo (time-hour t) 12)])))
                  ":"
                  (pad-zeros (number->string (time-minute t)))
                  (cond
