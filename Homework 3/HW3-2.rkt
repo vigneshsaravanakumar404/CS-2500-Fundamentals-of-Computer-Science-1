@@ -1,42 +1,29 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname HW3-2) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (require 2htdp/universe)
 (require 2htdp/image)
 
 ; =========================================================================
 ;; a.
-(define-struct hour [hour])
-
-; An Hour is a (make-hour Number)
+; An Hour is a natural number 0 to 23
 ; Interpretation: An hour of the day
-;  - hour is the hour of the day between 0 and 23
-
-; make-hour : Number -> Hour
-; hour? : Any -> Boolean
-; hour-hour : hour -> Number
-
-(define HOUR-1 (make-hour 12))
-(define HOUR-2 (make-hour 0))
-(define HOUR-3 (make-hour 23))
+(define HOUR-1 12)
+(define HOUR-2 0)
+(define HOUR-3 23)
 
 (define (hour-temp h)
-  (... (hour-hour h) ...))
+  (... h ...))
 
 
-(define-struct minute [minute])
-
-; A Minute is a (make-minute Number)
+; A Minute is a natural number 0 to 59
 ; Interpretation: A minute of the hour
-;  - minute is the minute of the hour between 0 and 59
-
-; make-minute : Number -> Minute
-; minute? : Any -> Boolean
-; minute-minute : Minute -> Number
-
-(define MINUTE-1 (make-minute 30))
-(define MINUTE-2 (make-minute 0))
-(define MINUTE-3 (make-minute 59))
+(define MINUTE-1 30)
+(define MINUTE-2 0)
+(define MINUTE-3 59)
 
 (define (minute-temp m)
-  (... (minute-minute m) ...))
+  (... m ...))
 ;; =========================================================================
 
 
@@ -70,16 +57,21 @@
 ;; tick-tock : Time -> Time
 ;; Given a Time, returns the next minute. 59th minute returns 0th minute and increments hour.
 ;; 23rd hour returns 0th hour.
-(check-expect (tick-tock (make-time (make-hour 12) (make-minute 30))) (make-time (make-hour 12) (make-minute 31)))
-(check-expect (tick-tock (make-time (make-hour 23) (make-minute 59))) (make-time (make-hour 00) (make-minute 00)))
-(check-expect (tick-tock (make-time (make-hour 23) (make-minute 00))) (make-time (make-hour 23) (make-minute 01)))
-(check-expect (tick-tock (make-time (make-hour 00) (make-minute 00))) (make-time (make-hour 00) (make-minute 01)))
-(check-expect (tick-tock (make-time (make-hour 00) (make-minute 59))) (make-time (make-hour 01) (make-minute 00)))
+(check-expect (tick-tock (make-time HOUR-1 MINUTE-1))
+              (make-time 12 31))
+(check-expect (tick-tock (make-time 23 59))
+              (make-time 00 00))
+(check-expect (tick-tock (make-time 23 00))
+              (make-time 23 01))
+(check-expect (tick-tock (make-time 00 00))
+              (make-time 00 01))
+(check-expect (tick-tock (make-time 00 59))
+              (make-time 01 00))
 
 
 (define (tick-tock t)
-  (make-time (make-hour (modulo (+ (quotient (+ 1 (minute-minute (time-minute t))) 60) (hour-hour (time-hour t))) 24))
-             (make-minute (modulo (+ 1 (minute-minute (time-minute t))) 60))))
+  (make-time (modulo (+ (quotient (+ 1 (time-minute t)) 60) (time-hour t)) 24)
+             (modulo (+ 1 (time-minute t)) 60)))
 ;; =========================================================================
 
 
@@ -101,17 +93,17 @@
 
 ;; time->text : Time -> String
 ;; Given a Time, returns a string representation of the time in the format "HH:MM AM/PM"
-(check-expect (time->text (make-time (make-hour 00) (make-minute 28))) "12:28 AM")
-(check-expect (time->text (make-time (make-hour 12) (make-minute 28))) "12:28 PM")
-(check-expect (time->text (make-time (make-hour 23) (make-minute 59))) "11:59 PM")
-(check-expect (time->text (make-time (make-hour 11) (make-minute 59))) "11:59 AM")
+(check-expect (time->text (make-time 00 28)) "12:28 AM")
+(check-expect (time->text (make-time 12 28)) "12:28 PM")
+(check-expect (time->text (make-time 23 59)) "11:59 PM")
+(check-expect (time->text (make-time 11 59)) "11:59 AM")
 
 (define (time->text t)
-  (string-append (pad-zeros (number->string (hour-formatting (hour-hour (time-hour t)))))
+  (string-append (pad-zeros (number->string (hour-formatting (time-hour t))))
                  ":"
-                 (pad-zeros (number->string (minute-minute (time-minute t))))
+                 (pad-zeros (number->string (time-minute t)))
                  (cond
-                   [(< (hour-hour (time-hour t)) 12) " AM"]
+                   [(< (time-hour t) 12) " AM"]
                    [else " PM"])))
 ;; =========================================================================
 
@@ -130,5 +122,5 @@
     (on-tick tick-tock 60)
     (to-draw render)))
 
-(digital-clock (make-time (make-hour 23) (make-minute 59)))
+(digital-clock (make-time 10 51))
 ;; =========================================================================

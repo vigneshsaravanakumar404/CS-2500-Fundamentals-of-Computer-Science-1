@@ -6,61 +6,36 @@
 
 ; =========================================================================
 ;; a.
-(define-struct name [name])
-
-; A Name is a (make-name String)
+; A Name is a String
 ; Interpretation: A name of a hotel
-;  - name is the name of the hotel
-
-; make-name : String -> Name
-; name? : Any -> Boolean
-; name-name : Name -> String
-
-(define NAME-1 (make-name "Marriott"))
-(define NAME-2 (make-name "Hilton"))
-(define NAME-3 (make-name "Sheraton"))
+(define NAME-1 "Marriott")
+(define NAME-2 "Hilton")
+(define NAME-3 "Sheraton")
 
 (define (name-temp n)
-  (... (name-name n) ...))
+  (... n ...))
 
 
-
-(define-struct stars [stars])
-
-; A Stars is a (make-stars Number)
+; A Stars is a natural number 1 to 5
 ; Interpretation: Luxry rating of the hotel in stars from 1 to 5
 
-; make-stars : Number -> Stars
-; stars? : Any -> Boolean
-; stars-stars : Stars -> Number
-
-(define STARS-1 (make-stars 3))
-(define STARS-2 (make-stars 4))
-(define STARS-3 (make-stars 5)) 
+(define STARS-1 3)
+(define STARS-2 4)
+(define STARS-3 5)
 
 (define (stars-temp s)
-  (... (stars-stars s) ...))
+  (... s ...))
 
 
-
-(define-struct price [price])
-
-; A Price is a (make-price String)
-; Interpretation: Price of the hotelin $ signs 1 to 4
-
-; make-price : String -> Price
-; price? : Any -> Boolean
-; price-price : Price -> String
-
-(define PRICE-1 (make-price "$"))
-(define PRICE-2 (make-price "$$"))
-(define PRICE-3 (make-price "$$$"))
-(define PRICE-4 (make-price "$$$$"))
-
+; A Price is a String
+; Interpretation: Price of the hotel in $ signs 1 to 4
+(define PRICE-1 "$")
+(define PRICE-2 "$$")
+(define PRICE-3 "$$$")
+(define PRICE-4 "$$$$")
 
 (define (price-temp p)
-  (... (price-price p) ...))
-
+  (... p ...))
 
 
 (define-struct hotel [name stars price])
@@ -98,9 +73,9 @@
 (check-expect (in-budget? HOTEL-3 PRICE-4) #t)
 
 (define (in-budget? h p)
- (cond
-   [(< (string-length (price-price p)) (string-length (price-price (hotel-price h)))) #f]
-   [else #t]))
+  (cond
+    [(< (string-length p) (string-length (hotel-price h))) #f]
+    [else #t]))
 ;; =========================================================================
 
 
@@ -109,20 +84,24 @@
 ;; c.
 ;; make-cheaper : Hotel -> Hotel
 ;; Given a hotel makes the price 1 cheaper till "$" and adds cheaper to name
-(check-expect (make-cheaper HOTEL-1) (make-hotel (make-name "Cheaper Marriott") (make-stars 3) (make-price "$")))
-(check-expect (make-cheaper HOTEL-2) (make-hotel (make-name "Cheaper Hilton") (make-stars 4) (make-price "$")))
-(check-expect (make-cheaper HOTEL-3) (make-hotel (make-name "Cheaper Sheraton") (make-stars 5) (make-price "$$")))
-(check-expect (make-cheaper HOTEL-4) (make-hotel (make-name "Cheaper Marriott") (make-stars 4) (make-price "$$$")))
+(check-expect (make-cheaper HOTEL-1)
+              (make-hotel "Cheaper Marriott" 3 "$"))
+(check-expect (make-cheaper HOTEL-2)
+              (make-hotel "Cheaper Hilton" 4 "$"))
+(check-expect (make-cheaper HOTEL-3)
+              (make-hotel "Cheaper Sheraton" 5 "$$"))
+(check-expect (make-cheaper HOTEL-4)
+              (make-hotel "Cheaper Marriott" 4 "$$$"))
 
 (define (make-cheaper h)
   (cond
-    [(string=? (price-price (hotel-price h)) "$")
-     (make-hotel (make-name (string-append "Cheaper " (name-name (hotel-name h))))
+    [(string=? (hotel-price h) "$")
+     (make-hotel (string-append "Cheaper " (hotel-name h))
                  (hotel-stars h)
-                 (make-price "$"))]
-    [else (make-hotel (make-name (string-append "Cheaper " (name-name (hotel-name h))))
+                 "$")]
+    [else (make-hotel (string-append "Cheaper " (hotel-name h))
                       (hotel-stars h)
-                      (make-price (substring (price-price (hotel-price h)) 1)))]))
+                      (substring (hotel-price h) 1))]))
 ;; =========================================================================
 
 
@@ -143,9 +122,9 @@
 ;; draw-panels : Hotel -> Image
 ;; Given a Hotel returns a card with the hotel's information
 (define (draw-panels h)
-  (place-images (list (text (name-name (hotel-name h)) 40 "black")
-                      (text (price-price (hotel-price h)) 20 "forest green")
-                      (text (star-count->stars (stars-stars (hotel-stars h))) 20 "red")
+  (place-images (list (text (hotel-name h) 40 "black")
+                      (text (hotel-price h) 20 "forest green")
+                      (text (star-count->stars (hotel-stars h)) 20 "red")
                       (rectangle 498 98 "solid" "white"))
                 (list (make-posn 250 20)
                       (make-posn 250 50)
@@ -154,3 +133,4 @@
                 (rectangle 500 100 "solid" "black")))
 
 ;; =========================================================================
+
