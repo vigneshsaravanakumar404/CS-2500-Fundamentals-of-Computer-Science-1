@@ -110,7 +110,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Exercise:
-; Design the function num-passengers that counts the number of passengers on a flight.
+; Design the function num-passengers tfhat counts the number of passengers on a flight.
 
 ; num-passengers : ??? -> ???
 ; Returns how many passengers are on the flight
