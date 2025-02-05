@@ -1,3 +1,5 @@
+;;                                  EXERCISE 1
+;; =========================================================================
 (define-struct name [first middle last])
 
 ; A Name is a (make-name String String String)
@@ -95,7 +97,7 @@
 ;; =========================================================================
 (define-struct date [month day year])
 
-; A Date is a (make-date Month Number Number)
+; A Date is a (make-date Month PosInt PosInt)
 ; Interpretation: A date in the format month/day/year
 ;  - Month is the month
 ;  - Day is the day
@@ -104,8 +106,8 @@
 ; make-date : Month PosInt PosInt -> Date
 ; date? : Any -> Boolean
 ; date-month : Date -> Month
-; date-day : Date -> Number
-; date-year : Date -> Number
+; date-day : Date -> PosInt
+; date-year : Date -> PosInt
 
 (define DATE-1 (make-date MONTH-1 1 2018))
 (define DATE-2 (make-date MONTH-11 15 2005))

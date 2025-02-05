@@ -142,7 +142,7 @@
 ; Interpretation: A Representation of a NEU Student
 ;  - Name is the student's name
 ;  - Date is the student's date of birth
-;  - Number is the student's tution
+;  - PosInt is the student's tution
 
 ; make-student : Name Date PosInt -> Student
 ; student? : Any -> Boolean
@@ -162,14 +162,14 @@
        (student-date t) ...
        (student-tution t) ...))
 
-;; end-of-enrollment : Student -> PosInt ;; FIX THIS SHIT
-;; Given a Student, returns the year the student will graduate
-(check-expect (end-of-enrollment STUDENT-1) 2022)
-(check-expect (end-of-enrollment STUDENT-2) 2009)
-(check-expect (end-of-enrollment STUDENT-3) 2010)
+;; end-of-enrollment : Student -> Date 
+;; Given a Student, returns the date the student will graduate
+(check-expect (end-of-enrollment STUDENT-1) (make-date (date-month DATE-1) (date-day DATE-1) (+ 4 (date-year DATE-1))))
+(check-expect (end-of-enrollment STUDENT-2) (make-date (date-month DATE-2) (date-day DATE-2) (+ 4 (date-year DATE-2))))
+(check-expect (end-of-enrollment STUDENT-3) (make-date (date-month DATE-3) (date-day DATE-3) (+ 4 (date-year DATE-3))))
 
-(define (end-of-enrollment s) ;; FIX THIS SHIT
-  (+ 4 (date-year (student-date s)))) ;; FIX THIS SHIT
+(define (end-of-enrollment s)
+  (make-date (date-month s) (date-day s) (+ 4 (date-year (student-date s))))
 
 
 ;; annual-tuition : Student -> PosInt
@@ -213,23 +213,22 @@
        (faculty-contract f) ...
        (faculty-salary f) ...))
 
-; end-of-contract : Faculty -> Number ;; FIX THIS 
-; Given a Faculty, returns the year the contract ends
-(check-expect (end-of-contract FACULTY-1) 1994)
-(check-expect (end-of-contract FACULTY-2) 1995)
-(check-expect (end-of-contract FACULTY-3) 1996)
+; end-of-contract : Faculty -> Date
+; Given a Faculty, returns the date the contract ends
+(check-expect (end-of-contract FACULTY-1) (make-date (date-month DATE-1) (date-day DATE-1) (+ 4 (date-year DATE-1))))
+(check-expect (end-of-contract FACULTY-2) (make-date (date-month DATE-2) (date-day DATE-2) (+ 4 (date-year DATE-2))))
+(check-expect (end-of-contract FACULTY-3) (make-date (date-month DATE-3) (date-day DATE-3) (+ 4 (date-year DATE-3))))
 
-(define (end-of-contract f) ;; FIX THIS 
-  (+ (date-year (faculty-date f))
-     (faculty-contract f)))
+(define (end-of-contract f)
+  (make-faculty (faculty-name f) (faculty-date f) (+ (faculty-contract f) (date-year (faculty-date f)))))
 
-; takehome-salary : Faculty -> Number
+; takehome-salary : Faculty -> RealNumber
 ; Given a Faculty, returns the takehome salary
-(check-expect (takehome-salary FACULTY-1) 60000)  ;; FIX THIS 
+(check-expect (takehome-salary FACULTY-1) 60000) 
 (check-expect (takehome-salary FACULTY-2) 67500)
 (check-expect (takehome-salary FACULTY-3) 75000)
 
-(define (takehome-salary f) ;; FIX THIS 
+(define (takehome-salary f)
   (* 0.75 (faculty-salary f)))
 ;; =========================================================================
 
@@ -237,17 +236,17 @@
 ;; =========================================================================
 (define-struct staff [name date salary])
 
-; A Staff is a (make-staff Name Date Number)
+; A Staff is a (make-staff Name Date PosInt)
 ; Interpretation: A Representation of a NEU Staff
 ;  - Name is the staff's name
 ;  - Date is the start of this contract
 ;  - Salary is the staff's hour wage
 
-; make-staff : Name Date Number -> Staff
+; make-staff : Name Date PosInt -> Staff
 ; staff? : Any -> Boolean
 ; staff-name : Staff -> Name
 ; staff-date : Staff -> Date
-; staff-salary : Staff -> Number
+; staff-salary : Staff -> PosInt
 
 (define STAFF-1
   (make-staff NAME-1 DATE-1 25))
@@ -261,7 +260,7 @@
        (staff-date s) ...
        (staff-salary s) ...))
 
-; annual-compensation: Staff -> Number ;; FIX THIS 
+; annual-compensation: Staff -> PosInt
 ; Given a Staff, returns the annual compensation
 (check-expect (annual-compensation STAFF-1) 50000)
 (check-expect (annual-compensation STAFF-2) 60000)
@@ -270,4 +269,3 @@
 (define (annual-compensation s)
   (* 2000 (staff-salary s)))
 ;; =========================================================================
-        
