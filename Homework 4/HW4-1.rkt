@@ -1,6 +1,3 @@
-;; The first three lines of this file were inserted by DrRacket. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname HW4-1) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (define-struct name [first middle last])
 
 ; A Name is a (make-name String String String)
@@ -54,6 +51,36 @@
 ; - "November"
 ; - "December"
 
+(define MONTH-1 "January")
+(define MONTH-2 "February")
+(define MONTH-3 "March")
+(define MONTH-4 "April")
+(define MONTH-5 "May")
+(define MONTH-6 "June")
+(define MONTH-7 "July")
+(define MONTH-8 "August")
+(define MONTH-9 "September")
+(define MONTH-10 "October")
+(define MONTH-11 "November")
+(define MONTH-12 "December")
+
+; mont-temp : Month -> ?
+(define (month-temp m)
+  (...
+    (cond
+      [(string=? m "January") ...]
+      [(string=? m "February") ...]
+      [(string=? m "March") ..]
+      [(string=? m "April") ...]
+      [(string=? m "May") ...]
+      [(string=? m "June") ...]
+      [(string=? m "July") ...]
+      [(string=? m "August") ...]
+      [(string=? m "September") ...]
+      [(string=? m "October") ...]
+      [(string=? m "November") ...]
+      [(string=? m "December") ...])))
+
 ; month-abbrev : Month -> String
 ; Given a Month, returns the first three letters of the month
 (check-expect (month-abbrev "January") "Jan")
@@ -74,20 +101,21 @@
 ;  - Day is the day
 ;  - Year is the year
 
-; make-date : Month Number Number -> Date
+; make-date : Month PosInt PosInt -> Date
 ; date? : Any -> Boolean
 ; date-month : Date -> Month
 ; date-day : Date -> Number
 ; date-year : Date -> Number
 
-(define DATE-1 (make-date "January" 1 2018))
-(define DATE-2 (make-date "November" 15 2005))
-(define DATE-3 (make-date "March" 17 2006))
+(define DATE-1 (make-date MONTH-1 1 2018))
+(define DATE-2 (make-date MONTH-11 15 2005))
+(define DATE-3 (make-date "MONTH-3 17 2006))
 
 (define (date-temp d)
-  (... (month-abbrev (date-month d)) ...
-       (number->string (date-day d)) ...
-       (number->string (date-year d)) ...))
+  (... (date? d) ...
+       (date-month d) ...
+       (date-day d) ...
+       (date-year d) ...))
 
 ; date->string : Date -> String
 ; Given a Date, returns the date as a string

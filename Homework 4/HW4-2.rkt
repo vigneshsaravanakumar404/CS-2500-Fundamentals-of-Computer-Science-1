@@ -1,9 +1,33 @@
-;; The first three lines of this file were inserted by DrRacket. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname HW4-2) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+;;                                  EXERCISE 1
 ;; =========================================================================
 (define-struct name [first middle last])
-(define-struct date [month day year])
+
+; A Name is a (make-name String String String)
+; Interpretation: A person's name
+;  - First is the first name
+;  - Middle is the middle initial
+;  - Last is the last name
+
+; make-name : String String String -> Name
+; name? : Any -> Boolean
+; name-first : Name -> String
+; name-middle : Name -> String
+; name-last : Name -> String
+
+(define NAME-1 (make-name "John" "Q" "Public"))
+(define NAME-2 (make-name "Jane" "R" "Doe"))
+(define NAME-3 (make-name "Jim" "S" "Smith"))
+
+(define (name-temp t)
+  (... (name-first t) ...
+       (name-middle t) ...
+       (name-last t) ...))
+
+;; name->string : Name -> String
+;; Given a Name, returns the full name as a string
+(check-expect (name->string NAME-1) "John Q. Public")
+(check-expect (name->string NAME-2) "Jane R. Doe")
+(check-expect (name->string NAME-3) "Jim S. Smith")
 
 (define (name->string n)
   (string-append (name-first n)
@@ -11,9 +35,95 @@
                  (name-middle n)
                  ". "
                  (name-last n)))
+;; =========================================================================
+
+
+;; =========================================================================
+; A Month is one of:
+; - "January"
+; - "February"
+; - "March"
+; - "April"
+; - "May"
+; - "June"
+; - "July"
+; - "August"
+; - "September"
+; - "October"
+; - "November"
+; - "December"
+
+(define MONTH-1 "January")
+(define MONTH-2 "February")
+(define MONTH-3 "March")
+(define MONTH-4 "April")
+(define MONTH-5 "May")
+(define MONTH-6 "June")
+(define MONTH-7 "July")
+(define MONTH-8 "August")
+(define MONTH-9 "September")
+(define MONTH-10 "October")
+(define MONTH-11 "November")
+(define MONTH-12 "December")
+
+; mont-temp : Month -> ?
+(define (month-temp m)
+  (...
+    (cond
+      [(string=? m "January") ...]
+      [(string=? m "February") ...]
+      [(string=? m "March") ..]
+      [(string=? m "April") ...]
+      [(string=? m "May") ...]
+      [(string=? m "June") ...]
+      [(string=? m "July") ...]
+      [(string=? m "August") ...]
+      [(string=? m "September") ...]
+      [(string=? m "October") ...]
+      [(string=? m "November") ...]
+      [(string=? m "December") ...])))
+
+; month-abbrev : Month -> String
+; Given a Month, returns the first three letters of the month
+(check-expect (month-abbrev "January") "Jan")
+(check-expect (month-abbrev "February") "Feb")
+(check-expect (month-abbrev "March") "Mar")
 
 (define (month-abbrev m)
   (substring m 0 3))
+;; =========================================================================
+
+
+;; =========================================================================
+(define-struct date [month day year])
+
+; A Date is a (make-date Month PosInt PosInt)
+; Interpretation: A date in the format month/day/year
+;  - Month is the month
+;  - Day is the day
+;  - Year is the year
+
+; make-date : Month PosInt PosInt -> Date
+; date? : Any -> Boolean
+; date-month : Date -> Month
+; date-day : Date -> PosInt
+; date-year : Date -> PosInt
+
+(define DATE-1 (make-date MONTH-1 1 2018))
+(define DATE-2 (make-date MONTH-11 15 2005))
+(define DATE-3 (make-date "MONTH-3 17 2006))
+
+(define (date-temp d)
+  (... (date? d) ...
+       (date-month d) ...
+       (date-day d) ...
+       (date-year d) ...))
+
+; date->string : Date -> String
+; Given a Date, returns the date as a string
+(check-expect (date->string DATE-1) "Jan. 1, 2018")
+(check-expect (date->string DATE-2) "Nov. 15, 2005")
+(check-expect (date->string DATE-3) "Mar. 17, 2006")
 
 (define (date->string d)
   (string-append (month-abbrev (date-month d))
@@ -23,49 +133,46 @@
                  (number->string (date-year d))))
 ;; =========================================================================
 
+
+;;                                  EXERCISE 2
+;; =========================================================================
 (define-struct student [name date tution])
 
-; A Student is a (make-student Name Date Number)
+; A Student is a (make-student Name Date PosInt)
 ; Interpretation: A Representation of a NEU Student
 ;  - Name is the student's name
 ;  - Date is the student's date of birth
 ;  - Number is the student's tution
 
-; make-student : Name Date Number -> Student
+; make-student : Name Date PosInt -> Student
 ; student? : Any -> Boolean
 ; student-name : Student -> Name
 ; stident-date : Student -> Date
-; student-tution : Student -> Number
+; student-tution : Student -> PosInt
 
 (define STUDENT-1
-  (make-student (make-name "John" "Doe" "Smith")
-                (make-date "January" 1 1990)
-                40000))
+  (make-student NAME-1 DATE-1 40000))
 (define STUDENT-2
-  (make-student (make-name "Jane" "R" "Doe")
-                (make-date "February" 2 1991)
-                39500))
+  (make-student NAME-2 DATE-2 39500))
 (define STUDENT-3
-  (make-student (make-name "Jim" "S" "Smith")
-                (make-date "March" 3 1992)
-                39000))
+  (make-student NAME-3 DATE-3 39000))
 
 (define (student-temp t)
-  (... (name->string (student-name t)) ...
-       (date->string (student-date t)) ...
-       (number->string (student-tution t)) ...))
+  (... (student-name t) ...
+       (student-date t) ...
+       (student-tution t) ...))
 
-;; end-of-enrollment : Student -> Number
+;; end-of-enrollment : Student -> PosInt ;; FIX THIS SHIT
 ;; Given a Student, returns the year the student will graduate
-(check-expect (end-of-enrollment STUDENT-1) 1994)
-(check-expect (end-of-enrollment STUDENT-2) 1995)
-(check-expect (end-of-enrollment STUDENT-3) 1996)
+(check-expect (end-of-enrollment STUDENT-1) 2022)
+(check-expect (end-of-enrollment STUDENT-2) 2009)
+(check-expect (end-of-enrollment STUDENT-3) 2010)
 
-(define (end-of-enrollment s)
-  (+ 4 (date-year (student-date s))))
+(define (end-of-enrollment s) ;; FIX THIS SHIT
+  (+ 4 (date-year (student-date s)))) ;; FIX THIS SHIT
 
 
-;; annual-tuition : Student -> Number
+;; annual-tuition : Student -> PosInt
 ;; Given a Student, returns the annual tuition
 (check-expect (annual-tuition STUDENT-1) 80000)
 (check-expect (annual-tuition STUDENT-2) 79000)
@@ -79,59 +186,50 @@
 ;; =========================================================================
 (define-struct faculty [name date contract salary])
 
-; A Faculty is a (make-faculty Name Date Number Number)
+; A Faculty is a (make-faculty Name Date PosInt PosInt)
 ; Interpretation: A Representation of a NEU Faculty
 ;  - Name is the faculty's name
 ;  - Date is the start of this contract
 ;  - Contract is the number of years of the contract
 ;  - Salary is the faculty's salary
 
-; make-faculty : Name Date Number Number -> Faculty
+; make-faculty : Name Date PosInt PosInt -> Faculty
 ; faculty? : Any -> Boolean
 ; faculty-name : Faculty -> Name
 ; faculty-date : Faculty -> Date
-; faculty-contract : Faculty -> Number
-; faculty-salary : Faculty -> Number
+; faculty-contract : Faculty -> PosInt
+; faculty-salary : Faculty -> PosInt
 
 (define FACULTY-1
-  (make-faculty (make-name "John" "Doe" "Smith")
-                (make-date "January" 1 1990)
-                4
-                80000))
+  (make-faculty NAME-1 DATE-1 4 80000))
 (define FACULTY-2
-  (make-faculty (make-name "Jane" "R" "Doe")
-                (make-date "February" 2 1991)
-                4
-                90000))
+  (make-faculty NAME-2 DATE-2 4 90000))
 (define FACULTY-3
-  (make-faculty (make-name "Jim" "S" "Smith")
-                (make-date "March" 3 1992)
-                4
-                100000))
+  (make-faculty NAME-3 DATE-3 4 100000))
 
 (define (faculty-temp f)
-  (... (name->string (faculty-name f)) ...
-       (date->string (faculty-date f)) ...
-       (number->string (faculty-contract f)) ...
-       (number->string (faculty-salary f)) ...))
+  (... (faculty-name f) ...
+       (faculty-date f) ...
+       (faculty-contract f) ...
+       (faculty-salary f) ...))
 
-; end-of-contract : Faculty -> Number
+; end-of-contract : Faculty -> Number ;; FIX THIS 
 ; Given a Faculty, returns the year the contract ends
 (check-expect (end-of-contract FACULTY-1) 1994)
 (check-expect (end-of-contract FACULTY-2) 1995)
 (check-expect (end-of-contract FACULTY-3) 1996)
 
-(define (end-of-contract f)
+(define (end-of-contract f) ;; FIX THIS 
   (+ (date-year (faculty-date f))
      (faculty-contract f)))
 
 ; takehome-salary : Faculty -> Number
 ; Given a Faculty, returns the takehome salary
-(check-expect (takehome-salary FACULTY-1) 60000)
+(check-expect (takehome-salary FACULTY-1) 60000)  ;; FIX THIS 
 (check-expect (takehome-salary FACULTY-2) 67500)
 (check-expect (takehome-salary FACULTY-3) 75000)
 
-(define (takehome-salary f)
+(define (takehome-salary f) ;; FIX THIS 
   (* 0.75 (faculty-salary f)))
 ;; =========================================================================
 
@@ -152,24 +250,18 @@
 ; staff-salary : Staff -> Number
 
 (define STAFF-1
-  (make-staff (make-name "John" "Doe" "Smith")
-              (make-date "January" 1 1990)
-              25))
+  (make-staff NAME-1 DATE-1 25))
 (define STAFF-2
-  (make-staff (make-name "Jane" "R" "Doe")
-              (make-date "February" 2 1991)
-              30))
+  (make-staff NAME-2 DATE-2 30))
 (define STAFF-3
-  (make-staff (make-name "Jim" "S" "Smith")
-              (make-date "March" 3 1992)
-              35))
+  (make-staff NAME-3 DATE-3 35))
 
 (define (staff-temp s)
-  (... (name->string (staff-name s)) ...
-       (date->string (staff-date s)) ...
-       (number->string (staff-salary s)) ...))
+  (... (staff-name s) ...
+       (staff-date s) ...
+       (staff-salary s) ...))
 
-; annual-compensation: Staff -> Number
+; annual-compensation: Staff -> Number ;; FIX THIS 
 ; Given a Staff, returns the annual compensation
 (check-expect (annual-compensation STAFF-1) 50000)
 (check-expect (annual-compensation STAFF-2) 60000)
