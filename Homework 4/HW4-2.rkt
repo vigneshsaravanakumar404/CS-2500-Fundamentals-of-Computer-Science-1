@@ -68,7 +68,7 @@
 (define MONTH-11 "November")
 (define MONTH-12 "December")
 
-; mont-temp : Month -> ?
+; month-temp : Month -> ?
 (define (month-temp m)
   (...
    (cond
@@ -90,6 +90,7 @@
 (check-expect (month-abbrev "January") "Jan")
 (check-expect (month-abbrev "February") "Feb")
 (check-expect (month-abbrev "March") "Mar")
+(check-expect (month-abbrev "May") "May")
 
 (define (month-abbrev m)
   (substring m 0 3))
@@ -137,19 +138,19 @@
 
 ;;                                  EXERCISE 2
 ;; =========================================================================
-(define-struct student [name date tution])
+(define-struct student [name date tuition])
 
 ; A Student is a (make-student Name Date PosInt)
 ; Interpretation: A Representation of a NEU Student
 ;  - Name is the student's name
-;  - Date is the student's date of birth
-;  - PosInt is the student's tution
+;  - Date is the student's date of enrollment
+;  - PosInt is the student's tuition
 
 ; make-student : Name Date PosInt -> Student
 ; student? : Any -> Boolean
 ; student-name : Student -> Name
-; stident-date : Student -> Date
-; student-tution : Student -> PosInt
+; student-date : Student -> Date
+; student-tuition : Student -> PosInt
 
 (define STUDENT-1
   (make-student NAME-1 DATE-1 40000))
@@ -161,7 +162,7 @@
 (define (student-temp t)
   (... (student-name t) ...
        (student-date t) ...
-       (student-tution t) ...))
+       (student-tuition t) ...))
 
 ;; end-of-enrollment : Student -> Date 
 ;; Given a Student, returns the date the student will graduate
@@ -185,7 +186,7 @@
 (check-expect (annual-tuition STUDENT-3) 78000)
 
 (define (annual-tuition s)
-  (* 2 (student-tution s)))
+  (* 2 (student-tuition s)))
 ;; =========================================================================
 
 
@@ -209,9 +210,9 @@
 (define FACULTY-1
   (make-faculty NAME-1 DATE-1 4 80000))
 (define FACULTY-2
-  (make-faculty NAME-2 DATE-2 4 90000))
+  (make-faculty NAME-2 DATE-2 3 90000))
 (define FACULTY-3
-  (make-faculty NAME-3 DATE-3 4 100000))
+  (make-faculty NAME-3 DATE-3 5 100000))
 
 (define (faculty-temp f)
   (... (faculty-name f) ...
@@ -224,9 +225,9 @@
 (check-expect (end-of-contract FACULTY-1)
               (make-date (date-month DATE-1) (date-day DATE-1) (+ 4 (date-year DATE-1))))
 (check-expect (end-of-contract FACULTY-2)
-              (make-date (date-month DATE-2) (date-day DATE-2) (+ 4 (date-year DATE-2))))
+              (make-date (date-month DATE-2) (date-day DATE-2) (+ 3 (date-year DATE-2))))
 (check-expect (end-of-contract FACULTY-3)
-              (make-date (date-month DATE-3) (date-day DATE-3) (+ 4 (date-year DATE-3))))
+              (make-date (date-month DATE-3) (date-day DATE-3) (+ 5 (date-year DATE-3))))
 
 (define (end-of-contract f)
   (make-date (date-month (faculty-date f))

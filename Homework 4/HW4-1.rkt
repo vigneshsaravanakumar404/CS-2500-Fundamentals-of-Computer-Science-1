@@ -1,7 +1,4 @@
-;; The first three lines of this file were inserted by DrRacket. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname HW4-1) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
-
+#lang htdp/bsl
 
 ;;                                  EXERCISE 1
 ;; =========================================================================
@@ -71,7 +68,7 @@
 (define MONTH-11 "November")
 (define MONTH-12 "December")
 
-; mont-temp : Month -> ?
+; month-temp : Month -> ?
 (define (month-temp m)
   (...
    (cond
@@ -93,6 +90,7 @@
 (check-expect (month-abbrev "January") "Jan")
 (check-expect (month-abbrev "February") "Feb")
 (check-expect (month-abbrev "March") "Mar")
+(check-expect (month-abbrev "May") "May")
 
 (define (month-abbrev m)
   (substring m 0 3))
