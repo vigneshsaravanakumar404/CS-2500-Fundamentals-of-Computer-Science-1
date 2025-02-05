@@ -1,3 +1,8 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname HW4-1) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+
+
 ;;                                  EXERCISE 1
 ;; =========================================================================
 (define-struct name [first middle last])
@@ -69,19 +74,19 @@
 ; mont-temp : Month -> ?
 (define (month-temp m)
   (...
-    (cond
-      [(string=? m "January") ...]
-      [(string=? m "February") ...]
-      [(string=? m "March") ..]
-      [(string=? m "April") ...]
-      [(string=? m "May") ...]
-      [(string=? m "June") ...]
-      [(string=? m "July") ...]
-      [(string=? m "August") ...]
-      [(string=? m "September") ...]
-      [(string=? m "October") ...]
-      [(string=? m "November") ...]
-      [(string=? m "December") ...])))
+   (cond
+     [(string=? m "January") ...]
+     [(string=? m "February") ...]
+     [(string=? m "March") ..]
+     [(string=? m "April") ...]
+     [(string=? m "May") ...]
+     [(string=? m "June") ...]
+     [(string=? m "July") ...]
+     [(string=? m "August") ...]
+     [(string=? m "September") ...]
+     [(string=? m "October") ...]
+     [(string=? m "November") ...]
+     [(string=? m "December") ...])))
 
 ; month-abbrev : Month -> String
 ; Given a Month, returns the first three letters of the month
@@ -92,7 +97,6 @@
 (define (month-abbrev m)
   (substring m 0 3))
 ;; =========================================================================
-
 
 ;; =========================================================================
 (define-struct date [month day year])
@@ -111,7 +115,7 @@
 
 (define DATE-1 (make-date MONTH-1 1 2018))
 (define DATE-2 (make-date MONTH-11 15 2005))
-(define DATE-3 (make-date "MONTH-3 17 2006))
+(define DATE-3 (make-date MONTH-3 17 2006))
 
 (define (date-temp d)
   (... (date? d) ...

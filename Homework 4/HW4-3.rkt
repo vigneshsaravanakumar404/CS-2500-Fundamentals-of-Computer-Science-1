@@ -1,3 +1,5 @@
+#lang htdp/bsl
+
 ;;                                  EXERCISE 1
 ;; =========================================================================
 (define-struct name [first middle last])
@@ -69,19 +71,19 @@
 ; mont-temp : Month -> ?
 (define (month-temp m)
   (...
-    (cond
-      [(string=? m "January") ...]
-      [(string=? m "February") ...]
-      [(string=? m "March") ..]
-      [(string=? m "April") ...]
-      [(string=? m "May") ...]
-      [(string=? m "June") ...]
-      [(string=? m "July") ...]
-      [(string=? m "August") ...]
-      [(string=? m "September") ...]
-      [(string=? m "October") ...]
-      [(string=? m "November") ...]
-      [(string=? m "December") ...])))
+   (cond
+     [(string=? m "January") ...]
+     [(string=? m "February") ...]
+     [(string=? m "March") ..]
+     [(string=? m "April") ...]
+     [(string=? m "May") ...]
+     [(string=? m "June") ...]
+     [(string=? m "July") ...]
+     [(string=? m "August") ...]
+     [(string=? m "September") ...]
+     [(string=? m "October") ...]
+     [(string=? m "November") ...]
+     [(string=? m "December") ...])))
 
 ; month-abbrev : Month -> String
 ; Given a Month, returns the first three letters of the month
@@ -92,7 +94,6 @@
 (define (month-abbrev m)
   (substring m 0 3))
 ;; =========================================================================
-
 
 ;; =========================================================================
 (define-struct date [month day year])
@@ -111,7 +112,7 @@
 
 (define DATE-1 (make-date MONTH-1 1 2018))
 (define DATE-2 (make-date MONTH-11 15 2005))
-(define DATE-3 (make-date "MONTH-3 17 2006))
+(define DATE-3 (make-date MONTH-3 17 2006))
 
 (define (date-temp d)
   (... (date? d) ...
@@ -164,12 +165,17 @@
 
 ;; end-of-enrollment : Student -> Date 
 ;; Given a Student, returns the date the student will graduate
-(check-expect (end-of-enrollment STUDENT-1) (make-date (date-month DATE-1) (date-day DATE-1) (+ 4 (date-year DATE-1))))
-(check-expect (end-of-enrollment STUDENT-2) (make-date (date-month DATE-2) (date-day DATE-2) (+ 4 (date-year DATE-2))))
-(check-expect (end-of-enrollment STUDENT-3) (make-date (date-month DATE-3) (date-day DATE-3) (+ 4 (date-year DATE-3))))
+(check-expect (end-of-enrollment STUDENT-1)
+              (make-date (date-month DATE-1) (date-day DATE-1) (+ 4 (date-year DATE-1))))
+(check-expect (end-of-enrollment STUDENT-2)
+              (make-date (date-month DATE-2) (date-day DATE-2) (+ 4 (date-year DATE-2))))
+(check-expect (end-of-enrollment STUDENT-3)
+              (make-date (date-month DATE-3) (date-day DATE-3) (+ 4 (date-year DATE-3))))
 
 (define (end-of-enrollment s)
-  (make-date (date-month s) (date-day s) (+ 4 (date-year (student-date s))))
+  (make-date (date-month (student-date s))
+             (date-day (student-date s))
+             (+ 4 (date-year (student-date s)))))
 
 
 ;; annual-tuition : Student -> PosInt
@@ -215,12 +221,17 @@
 
 ; end-of-contract : Faculty -> Date
 ; Given a Faculty, returns the date the contract ends
-(check-expect (end-of-contract FACULTY-1) (make-date (date-month DATE-1) (date-day DATE-1) (+ 4 (date-year DATE-1))))
-(check-expect (end-of-contract FACULTY-2) (make-date (date-month DATE-2) (date-day DATE-2) (+ 4 (date-year DATE-2))))
-(check-expect (end-of-contract FACULTY-3) (make-date (date-month DATE-3) (date-day DATE-3) (+ 4 (date-year DATE-3))))
+(check-expect (end-of-contract FACULTY-1)
+              (make-date (date-month DATE-1) (date-day DATE-1) (+ 4 (date-year DATE-1))))
+(check-expect (end-of-contract FACULTY-2)
+              (make-date (date-month DATE-2) (date-day DATE-2) (+ 4 (date-year DATE-2))))
+(check-expect (end-of-contract FACULTY-3)
+              (make-date (date-month DATE-3) (date-day DATE-3) (+ 4 (date-year DATE-3))))
 
 (define (end-of-contract f)
-  (make-faculty (faculty-name f) (faculty-date f) (+ (faculty-contract f) (date-year (faculty-date f)))))
+  (make-date (date-month (faculty-date f))
+             (date-day (faculty-date f))
+             (+ (faculty-contract f) (date-year (faculty-date f)))))
 
 ; takehome-salary : Faculty -> RealNumber
 ; Given a Faculty, returns the takehome salary
@@ -300,9 +311,16 @@
 ;; =========================================================================
 ; end-date : NEUPeep -> String
 ; Given a NEUPeep, returns the end date of their time at Northeastern
-(check-expect (end-date NEUPEEP-1) (date->string (make-date (date-month DATE-1) (date-day DATE-1) (+ 4 (date-year DATE-1)))))
-(check-expect (end-date NEUPEEP-2) (date->string (make-date (date-month DATE-2) (date-day DATE-2) (+ 4 (date-year DATE-2)))))
-(check-expect (end-date NEUPEEP-3) "<UNKNOWN>")
+(check-expect (end-date NEUPEEP-1)
+              (date->string (make-date (date-month DATE-1)
+                                       (date-day DATE-1)
+                                       (+ 4 (date-year DATE-1)))))
+(check-expect (end-date NEUPEEP-2)
+              (date->string (make-date (date-month DATE-2)
+                                       (date-day DATE-2)
+                                       (+ 4 (date-year DATE-2)))))
+(check-expect (end-date NEUPEEP-3)
+              "<UNKNOWN>")
 
 (define (end-date neupeep)
   (cond
