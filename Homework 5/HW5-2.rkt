@@ -108,19 +108,20 @@
 (define BEAD-2 (make-bead "blue" 3))
 (define BEAD-3 (make-bead "green" 7))
 
-
-; A FancyBracelet is one of
-; - Charm 
+; An Item is one of:
+; - Charm
 ; - Bead
+
+; A FancyBracelet is a (make-fancyBracelet Item FancyBracelet)
 ; Interpretation: A fancy bracelet with a charm or a bead
-; - Charm is the charm on the bracelet
-; - Bead is the bead on the bracelet
+; - Item is an item attached to the fancyBracelet
+; - FancyBracelet is fancy bracelet with an item
 
 (define-struct fancyBracelet [item fancyBracelet])
 
-; make-fancyBracelet : Charm/Bead FancyBracelet -> FancyBracelet
+; make-fancyBracelet : Item FancyBracelet -> FancyBracelet
 ; fancyBracelet? : Any -> Boolean
-; fancyBracelet-item : FancyBracelet -> Charm/Bead
+; fancyBracelet-item : FancyBracelet -> Item
 ; fancyBracelet-fancyBracelet : FancyBracelet -> FancyBracelet
 
 (define FANCY-BRACELET-0 #false)
@@ -157,28 +158,38 @@
     [else (+ 1 (count-charms (fancyBracelet-fancyBracelet f)))]))
 
 
-; swap-bead: Bead String -> Bead/Charm
+; swap-bead: Bead String -> Item
 ; given a Bead returns a charm if the bead matches
 ; color. Otherwise returns the Bead
-(check-expect (swap-bead BEAD-1 "red" "moon") (make-charm "silver" "moon"))
+(check-expect (swap-bead BEAD-1 "red" "moon") (make-charm "moon" "silver"))
 (check-expect (swap-bead BEAD-1 "blue" "jeff") BEAD-1)
-(check-expect (swap-bead BEAD-2 "blue" "heart") (make-charm "silver" "heart"))
+(check-expect (swap-bead BEAD-2 "blue" "heart") (make-charm "heart" "silver"))
 (check-expect (swap-bead BEAD-2 "red" "bob") BEAD-2)
 
 (define (swap-bead b c cf)
   (cond
-    [(string=? (bead-color b) c) (make-charm "silver" cf)]
+    [(string=? (bead-color b) c) (make-charm cf "silver")]
     [else b]))
 
 
 ;; ======================================================================
 ;; Fix!
-; upgrade-bracelet: FancyBracelet Color -> FancyBracelet
+; upgrade-bracelet: FancyBracelet Color String -> FancyBracelet
 ; returns an upgraded exchanges all of the beads of the
-; given color in the bracelet for silver charms
+; given color in the bracelet for silver charms of given figure
 (check-expect (upgrade-bracelet FANCY-BRACELET-0 "red" "moon") FANCY-BRACELET-0)
 (check-expect (upgrade-bracelet FANCY-BRACELET-1 "red" "star") FANCY-BRACELET-1)
-
+(check-expect (upgrade-bracelet (make-fancyBracelet (make-bead "red" 5) #false) "red" "hello")
+              (make-fancyBracelet (make-charm "hello" "silver") #false))
+(check-expect (upgrade-bracelet FANCY-BRACELET-6 "green" "diamond") 
+              (make-fancyBracelet (make-charm "diamond" "silver") FANCY-BRACELET-5))
+(check-expect (upgrade-bracelet FANCY-BRACELET-6 "blue" "sun") 
+              (make-fancyBracelet BEAD-3 
+                (make-fancyBracelet CHARM-3 
+                  (make-fancyBracelet (make-charm "sun" "silver") 
+                    (make-fancyBracelet CHARM-2 
+                      (make-fancyBracelet BEAD-1 
+                        (make-fancyBracelet CHARM-1 #false)))))))
 
 
 (define (upgrade-bracelet f c cf)

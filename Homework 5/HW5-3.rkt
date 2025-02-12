@@ -1,3 +1,5 @@
+#lang htdp/bsl
+
 (define-struct student [firstname lastname gpa on-coop])
 
 ; A Student is a (make-student String String Number Boolean)
@@ -48,21 +50,32 @@
   (cond
     [(empty? los) 0]
     [(cons? los) (if (student-on-coop (first los))
-                    (+ 1 (count-coop-students (rest los)))
-                    (count-coop-students (rest los)))]))
+                     (+ 1 (count-coop-students (rest los)))
+                     (count-coop-students (rest los)))]))
 
 ; exchange-coop-students : Los -> Los
 ; Flips the coop status of all students
 (check-expect (exchange-coop-students LOS-0) LOS-0)
-(check-expect (exchange-coop-students LOS-1) (cons (make-student "Jane" "Smith" 4.0 #false) LOS-0))
-(check-expect (exchange-coop-students LOS-2) (cons (make-student "Ashok" "Singhal" 0.0 #true) (cons (make-student "Jane" "Smith" 4.0 #false) LOS-0)))
-(check-expect (exchange-coop-students LOS-3) (cons (make-student "Alice" "Wonderland" 3.5 #false) (cons (make-student "Ashok" "Singhal" 0.0 #true) (cons (make-student "Jane" "Smith" 4.0 #false) LOS-0))))
-(check-expect (exchange-coop-students LOS-4) (cons (make-student "Bob" "Builder" 2.0 #true) (cons (make-student "Alice" "Wonderland" 3.5 #false) (cons (make-student "Ashok" "Singhal" 0.0 #true) (cons (make-student "Jane" "Smith" 4.0 #false) LOS-0)))))
+(check-expect (exchange-coop-students LOS-1)
+              (cons (make-student "Jane" "Smith" 4.0 #false) LOS-0))
+(check-expect (exchange-coop-students LOS-2)
+              (cons (make-student "Ashok" "Singhal" 0.0 #true)
+                    (cons (make-student "Jane" "Smith" 4.0 #false) LOS-0)))
+(check-expect (exchange-coop-students LOS-3)
+              (cons (make-student "Alice" "Wonderland" 3.5 #false)
+                    (cons (make-student "Ashok" "Singhal" 0.0 #true)
+                          (cons (make-student "Jane" "Smith" 4.0 #false) LOS-0))))
+(check-expect (exchange-coop-students LOS-4)
+              (cons (make-student "Bob" "Builder" 2.0 #true)
+                    (cons (make-student "Alice" "Wonderland" 3.5 #false)
+                          (cons (make-student "Ashok" "Singhal" 0.0 #true)
+                                (cons (make-student "Jane" "Smith" 4.0 #false) LOS-0)))))
 
 (define (exchange-coop-students los)
   (cond
     [(empty? los) '()]
-    [(cons? los) (cons (make-student (student-firstname (first los))(student-lastname (first los))
+    [(cons? los) (cons (make-student (student-firstname (first los))
+                                     (student-lastname (first los))
                                      (student-gpa (first los))
                                      (not (student-on-coop (first los))))
                        (exchange-coop-students (rest los)))]))
