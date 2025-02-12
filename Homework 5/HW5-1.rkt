@@ -5,12 +5,19 @@
 ; - "gold"
 ; - "silver"
 ; - "pewter"
+; Interpretation: A meterial represents what the Charm is made of
 
 (define MATERIAL-1 "gold")
 (define MATERIAL-2 "silver")
 (define MATERIAL-3 "pewter")
 
 (define-struct charm [description material])
+
+(define (material-temp m)
+  (... (cond
+         [(string=? m "gold") ...]
+         [(string=? m "silver") ...]
+         [(string=? m "pewter") ...]) ...))
 
 ; A Charm is a (make-charm String Material)
 ; Interpretation: A charm with a description and material
@@ -40,6 +47,7 @@
 ; Interpretation: A charm bracelet with a charm and a charm bracelet
 ;  - Charm is the charm on the bracelet
 ;  - CharmBracelet is the rest of the bracelet
+;  - #flase represents the clasp of the bracelet
 
 ; make-charmBracelet : Charm CharmBracelet -> CharmBracelet
 ; charmBracelet? : Any -> Boolean
@@ -51,14 +59,14 @@
 (define CHARM-BRACELET-2 (make-charmBracelet CHARM-2 CHARM-BRACELET-1))
 (define CHARM-BRACELET-3 (make-charmBracelet CHARM-3 CHARM-BRACELET-2))
 
-(define (charmBracelet-temp t)
-  (cond
-    [(charmBracelet? t)
-     (... (charm-temp (charmBracelet-charm t)) ...
-          (charmBracelet-temp (charmBracelet-charmBracelet t)) ...)]
-    [else
-     (...)]))
 
+;! Format
+(define (charmBracelet-temp t)
+  (... 
+    (cond
+     [(boolean? cf)]
+     [(charmBracelet? c) (... (charm-temp (charmBracelet-charm c)) ... (charmBracelet-temp (charmBracelet-charmBracelet c)) ...)])))
+      
 
 ; material-cost: Charm -> Number
 ; returns the cost of material
@@ -84,5 +92,5 @@
 (define (bracelet-cost c)
   (cond
     [(boolean? c) 0]
-    [else (+ (material-cost (charmBracelet-charm c))
+    [(charmBracelet? c) (+ (material-cost (charmBracelet-charm c))
              (bracelet-cost (charmBracelet-charmBracelet c)))]))

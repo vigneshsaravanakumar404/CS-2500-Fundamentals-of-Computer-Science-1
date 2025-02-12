@@ -34,7 +34,7 @@
 
 (define (los-temp los)
   (cond [(empty? los) ...]
-        [(cons? los) (... (first los) ...
+        [(cons? los) (... (student-templ (first los)) ...
                           (los-temp (rest los)) ...)]))
 
 
