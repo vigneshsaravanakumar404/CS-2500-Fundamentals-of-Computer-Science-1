@@ -1,9 +1,9 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname HW5-2) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
-
 ;;                              Exercise 1
 ;; ======================================================================
+
 ;; A Material is one of:
 ; - "gold"
 ; - "silver"
@@ -63,12 +63,13 @@
 (define CHARM-BRACELET-3 (make-charmBracelet CHARM-3 CHARM-BRACELET-2))
 
 
-;! Format
 (define (charmBracelet-temp t)
-  (... 
-    (cond
+  (...
+   (cond
      [(boolean? cf)]
-     [(charmBracelet? c) (... (charm-temp (charmBracelet-charm c)) ... (charmBracelet-temp (charmBracelet-charmBracelet c)) ...)])))
+     [(charmBracelet? c)
+      (... (charm-temp (charmBracelet-charm c)) ...
+           (charmBracelet-temp (charmBracelet-charmBracelet c)) ...)])))
       
 
 ; material-cost: Charm -> Number
@@ -96,107 +97,10 @@
   (cond
     [(boolean? c) 0]
     [(charmBracelet? c) (+ (material-cost (charmBracelet-charm c))
-             (bracelet-cost (charmBracelet-charmBracelet c)))]))
+                           (bracelet-cost (charmBracelet-charmBracelet c)))]))
 
 
-
-;;                               Exercise 2
-;; ======================================================================
-(define-struct bead [color size])
-; A Bead is a (make-bead String Number)
-; Interpretation: A bead with a color and size
-;  - Color is the color of the bead
-;  - Size is the size of the bead
-
-; make-bead : String Number -> Bead
-; bead? : Any -> Boolean
-; bead-color : Bead -> String
-; bead-size : Bead -> Number
-
-(define BEAD-1 (make-bead "red" 5))
-(define BEAD-2 (make-bead "blue" 3))
-(define BEAD-3 (make-bead "green" 7))
-
-; An Item is one of:
-; - Charm
-; - Bead
-; Interpretation: An item is either a charm or a bead
-
-(define ITEM-1 CHARM-1)
-(define ITEM-2 BEAD-1)
-(define ITEM-3 CHARM-2)
-
-(define (item-temp i)
-  (... (cond
-         [(charm? i) (... (charm-temp i) ...)]
-         [(bead? i) (... (bead-color i) ...)]) ...))
-
-
-; A FancyBracelet is a (make-fancyBracelet Item FancyBracelet)
-; - (make-fancyBracelet ITEM-1 FANCY-BRACELET-0)
-; - #false
-; Interpretation: A fancy bracelet with a charm or a bead
-; - Item is an item attached to the fancyBracelet
-; - FancyBracelet is fancy bracelet with an item
-
-(define-struct fancyBracelet [item fancyBracelet])
-
-; make-fancyBracelet : Item FancyBracelet -> FancyBracelet
-; fancyBracelet? : Any -> Boolean
-; fancyBracelet-item : FancyBracelet -> Item
-; fancyBracelet-fancyBracelet : FancyBracelet -> FancyBracelet
-
-(define FANCY-BRACELET-0 #false)
-(define FANCY-BRACELET-1 (make-fancyBracelet CHARM-1 FANCY-BRACELET-0))
-(define FANCY-BRACELET-2 (make-fancyBracelet BEAD-1 FANCY-BRACELET-1))
-(define FANCY-BRACELET-3 (make-fancyBracelet CHARM-2 FANCY-BRACELET-2))
-(define FANCY-BRACELET-4 (make-fancyBracelet BEAD-2 FANCY-BRACELET-3))
-(define FANCY-BRACELET-5 (make-fancyBracelet CHARM-3 FANCY-BRACELET-4))
-(define FANCY-BRACELET-6 (make-fancyBracelet BEAD-3 FANCY-BRACELET-5))
-
-(define (fancyBracelet-temp t)
-  (...
-    (cond 
-      [(boolean? f) ...]
-      [(fancyBracelet? f) 
-       (... 
-        (cond
-         [(charm? (fancyBracelet-item f)) (... (bead-temp (fancyBracelet-item f)) ...)]
-         [(bead? (fancyBracelet-item f)) (... (charm-temp (fancyBracelet-item f)) ...)] )
-         (fancyBracelet-temp (fancyBracelet-fancyBracelet f)) ...)])))
-
-; count-charms: FancyBracelet -> PosInt
-; returns the number of charms on the bracelet
-(check-expect (count-charms FANCY-BRACELET-0) 0)
-(check-expect (count-charms FANCY-BRACELET-1) 1)
-(check-expect (count-charms FANCY-BRACELET-2) 1)
-(check-expect (count-charms FANCY-BRACELET-3) 2)
-(check-expect (count-charms FANCY-BRACELET-4) 2)
-(check-expect (count-charms FANCY-BRACELET-5) 3)
-(check-expect (count-charms FANCY-BRACELET-6) 3)
-
-
-(define (count-charms f)
-  (cond
-    [(boolean? f) 0]
-    [(bead? (fancyBracelet-item f)) (count-charms (fancyBracelet-fancyBracelet f))]
-    [(charm? (fancyBracelet-item f)) (+ 1 (count-charms (fancyBracelet-fancyBracelet f)))]))
-
-
-; swap-bead: Bead String -> Item
-; given a Bead returns a charm if the bead matches
-; color. Otherwise returns the Bead
-(check-expect (swap-bead BEAD-1 "red" "moon") (make-charm "moon" "silver"))
-(check-expect (swap-bead BEAD-1 "blue" "jeff") BEAD-1)
-(check-expect (swap-bead BEAD-2 "blue" "heart") (make-charm "heart" "silver"))
-(check-expect (swap-bead BEAD-2 "red" "bob") BEAD-2)
-
-(define (swap-bead b c cf)
-  (cond
-    [(string=? (bead-color b) c) (make-charm cf "silver")]
-    [else b]))
-
-
+;; Exercise 2
 ;; ======================================================================
 ;; Fix!
 ; upgrade-bracelet: FancyBracelet Color String -> FancyBracelet
@@ -208,19 +112,23 @@
               (make-fancyBracelet (make-charm "hello" "silver") #false))
 (check-expect (upgrade-bracelet FANCY-BRACELET-6 "green" "diamond") 
               (make-fancyBracelet (make-charm "diamond" "silver") FANCY-BRACELET-5))
-(check-expect (upgrade-bracelet FANCY-BRACELET-6 "blue" "sun") 
-              (make-fancyBracelet BEAD-3 
-                (make-fancyBracelet CHARM-3 
-                  (make-fancyBracelet (make-charm "sun" "silver") 
-                    (make-fancyBracelet CHARM-2 
-                      (make-fancyBracelet BEAD-1 
-                        (make-fancyBracelet CHARM-1 #false)))))))
+(check-expect (upgrade-bracelet FANCY-BRACELET-6 "blue" "sun")
+              (make-fancyBracelet
+               BEAD-3
+               (make-fancyBraceletCHARM-3
+                (make-fancyBracelet
+                 (make-charm "sun" "silver")
+                 (make-fancyBracelet
+                  CHARM-2
+                  (make-fancyBracelet
+                   BEAD-1
+                   (make-fancyBracelet CHARM-1 #false)))))))
 
 
 (define (upgrade-bracelet f c cf)
   (cond
     [(boolean? f) f]
-    [(fancyBracelet? f) (make-fancyBracelet
+    [else (make-fancyBracelet
            (cond
              [(bead? (fancyBracelet-item f)) (swap-bead (fancyBracelet-item f) c cf)]
              [else (fancyBracelet-item f)])

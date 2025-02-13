@@ -60,12 +60,13 @@
 (define CHARM-BRACELET-3 (make-charmBracelet CHARM-3 CHARM-BRACELET-2))
 
 
-;! Format
 (define (charmBracelet-temp t)
-  (... 
-    (cond
+  (...
+   (cond
      [(boolean? cf)]
-     [(charmBracelet? c) (... (charm-temp (charmBracelet-charm c)) ... (charmBracelet-temp (charmBracelet-charmBracelet c)) ...)])))
+     [(charmBracelet? c)
+      (... (charm-temp (charmBracelet-charm c)) ...
+           (charmBracelet-temp (charmBracelet-charmBracelet c)) ...)])))
       
 
 ; material-cost: Charm -> Number
@@ -93,4 +94,4 @@
   (cond
     [(boolean? c) 0]
     [(charmBracelet? c) (+ (material-cost (charmBracelet-charm c))
-             (bracelet-cost (charmBracelet-charmBracelet c)))]))
+                           (bracelet-cost (charmBracelet-charmBracelet c)))]))
