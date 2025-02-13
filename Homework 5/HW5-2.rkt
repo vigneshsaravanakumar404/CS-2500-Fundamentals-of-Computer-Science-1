@@ -100,7 +100,6 @@
 
 
 
-
 ;;                               Exercise 2
 ;; ======================================================================
 (define-struct bead [color size])
@@ -118,9 +117,22 @@
 (define BEAD-2 (make-bead "blue" 3))
 (define BEAD-3 (make-bead "green" 7))
 
+(define (bead-temp t)
+  (... (bead-color t) ...
+       (bead-size t) ...))
+
 ; An Item is one of:
 ; - Charm
 ; - Bead
+
+(define ITEM-1 CHARM-1)
+(define ITEM-2 BEAD-1)
+(define ITEM-3 CHARM-2)
+
+(define (item-temp i)
+  (... (cond
+         [(charm? i) (... (charm-temp i) ...)]
+         [(bead? i) (... (bead-color i) ...)]) ...))
 
 ; A FancyBracelet is a (make-fancyBracelet Item FancyBracelet)
 ; Interpretation: A fancy bracelet with a charm or a bead
