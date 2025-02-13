@@ -3,17 +3,23 @@
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname HW5-2) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 ;;                              Exercise 1
 ;; ======================================================================
-
-;; A Material is one of:
+; A Material is one of:
 ; - "gold"
 ; - "silver"
 ; - "pewter"
+; Interpretation: A meterial represents what the Charm is made of
 
 (define MATERIAL-1 "gold")
 (define MATERIAL-2 "silver")
 (define MATERIAL-3 "pewter")
 
 (define-struct charm [description material])
+
+(define (material-temp m)
+  (... (cond
+         [(string=? m "gold") ...]
+         [(string=? m "silver") ...]
+         [(string=? m "pewter") ...]) ...))
 
 ; A Charm is a (make-charm String Material)
 ; Interpretation: A charm with a description and material
@@ -43,6 +49,7 @@
 ; Interpretation: A charm bracelet with a charm and a charm bracelet
 ;  - Charm is the charm on the bracelet
 ;  - CharmBracelet is the rest of the bracelet
+;  - #flase represents the clasp of the bracelet
 
 ; make-charmBracelet : Charm CharmBracelet -> CharmBracelet
 ; charmBracelet? : Any -> Boolean
@@ -54,14 +61,15 @@
 (define CHARM-BRACELET-2 (make-charmBracelet CHARM-2 CHARM-BRACELET-1))
 (define CHARM-BRACELET-3 (make-charmBracelet CHARM-3 CHARM-BRACELET-2))
 
-(define (charmBracelet-temp t)
-  (cond
-    [(charmBracelet? t)
-     (... (charm-temp (charmBracelet-charm t)) ...
-          (charmBracelet-temp (charmBracelet-charmBracelet t)) ...)]
-    [else
-     (...)]))
 
+(define (charmBracelet-temp t)
+  (...
+   (cond
+     [(boolean? cf) ...]
+     [(charmBracelet? c)
+      (... (charm-temp (charmBracelet-charm c)) ...
+           (charmBracelet-temp (charmBracelet-charmBracelet c)) ...)])))
+      
 
 ; material-cost: Charm -> Number
 ; returns the cost of material
@@ -87,8 +95,10 @@
 (define (bracelet-cost c)
   (cond
     [(boolean? c) 0]
-    [else (+ (material-cost (charmBracelet-charm c))
-             (bracelet-cost (charmBracelet-charmBracelet c)))]))
+    [(charmBracelet? c) (+ (material-cost (charmBracelet-charm c))
+                           (bracelet-cost (charmBracelet-charmBracelet c)))]))
+
+
 
 
 ;;                               Exercise 2
@@ -135,10 +145,11 @@
 (define (fancyBracelet-temp t)
   (cond
     [(fancyBracelet? t)
-     (... (charm-temp (fancyBracelet-item t)) ...
+     (... (cond
+            [(charm? (fancyBracelet-item t)) (charm-temp (fancyBracelet-item t))] 
+            [(bead? (fancyBracelet-item t)) (bead-temp (fancyBracelet-item t))] ...)
           (fancyBracelet-temp (fancyBracelet-fancyBracelet t)) ...)]
-    [else
-     (...)]))
+    [(boolean? t) 0]))
 
 ; count-charms: FancyBracelet -> Number
 ; returns the number of charms on the bracelet
@@ -155,7 +166,7 @@
   (cond
     [(boolean? f) 0]
     [(bead? (fancyBracelet-item f)) (count-charms (fancyBracelet-fancyBracelet f))]
-    [else (+ 1 (count-charms (fancyBracelet-fancyBracelet f)))]))
+    [(charm? (fancyBracelet-item f)) (+ 1 (count-charms (fancyBracelet-fancyBracelet f)))]))
 
 
 ; swap-bead: Bead String -> Item
@@ -200,8 +211,8 @@
 (define (upgrade-bracelet f c cf)
   (cond
     [(boolean? f) f]
-    [else (make-fancyBracelet
-           (cond
-             [(bead? (fancyBracelet-item f)) (swap-bead (fancyBracelet-item f) c cf)]
-             [else (fancyBracelet-item f)])
-           (upgrade-bracelet (fancyBracelet-fancyBracelet f) c cf))]))
+    [(fancyBracelet? f) (make-fancyBracelet
+                         (cond
+                           [(bead? (fancyBracelet-item f)) (swap-bead (fancyBracelet-item f) c cf)]
+                           [(charm? (fancyBracelet-item f)) (fancyBracelet-item f)])
+                         (upgrade-bracelet (fancyBracelet-fancyBracelet f) c cf))]))

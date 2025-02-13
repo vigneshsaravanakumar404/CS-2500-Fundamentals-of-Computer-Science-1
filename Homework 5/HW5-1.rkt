@@ -63,7 +63,7 @@
 (define (charmBracelet-temp t)
   (...
    (cond
-     [(boolean? cf)]
+     [(boolean? cf) ...]
      [(charmBracelet? c)
       (... (charm-temp (charmBracelet-charm c)) ...
            (charmBracelet-temp (charmBracelet-charmBracelet c)) ...)])))
