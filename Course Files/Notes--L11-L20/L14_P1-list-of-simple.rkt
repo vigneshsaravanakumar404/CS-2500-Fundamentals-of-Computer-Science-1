@@ -21,7 +21,7 @@
 ; A ListOfNumbers (LoN) is one of
 ; - #false
 ; - (make-numlist Number LoN)
-; Interpretation: ... 
+; Interpretation: ...
 
 (define LON-0 #false)
 (define LON-1 (make-numlist 3 LON-0))
@@ -96,16 +96,15 @@
 
 
 
+
 ; A ListofStrings (LoS) is one of
 ; - '()
 ; - (cons String LoS)
 ; Interpretation: ...
-
  
 (define LOS-0 '())
 (define LOS-1 (cons "bob" LOS-0))
 (define LOS-2 (cons "alice" LOS-1))
-
  
 (define (los-temp los)
   (...
