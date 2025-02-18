@@ -37,20 +37,22 @@
     [else (keep-less-than (rest lon) num)]))
 
 
-; keep-select: [List-of Number] Number Number -> [List-of Number]
-; Produces a list of numbers that satisfy the given predicate
-(check-expect (keep-select LIST-1 2 -1) (cons 2 (cons 3 '())))
-(check-expect (keep-select LIST-2 2 -1) (cons 2 (cons 3 (cons 4 '()))))
-(check-expect (keep-select LIST-3 50 -1) (cons 70 '()))
-(check-expect (keep-select LIST-1 2 1) (cons 1 (cons 2 '())))
-(check-expect (keep-select LIST-2 2 1) (cons 1 (cons 2 '())))
-(check-expect (keep-select LIST-3 50 1) (cons 43 (cons 12 '())))
+; keep-select: [List-of Number] Number Number Nuber -> [List-of Number]
+; Produces a list of numbers that satisfy the given modifiers
+(check-expect (keep-select (cons 1 (cons 2 (cons 3 (cons 4 (cons 5 '()))))) 3 1 -1) (cons 3 (cons 4 (cons 5 '()))))  ;; num >= x  (3 >= x)
+(check-expect (keep-select (cons 1 (cons 2 (cons 3 (cons 4 (cons 5 '()))))) 3 1 0) (cons 4 (cons 5 '())))   ;; num > x   (3 > x)
+(check-expect (keep-select (cons 1 (cons 2 (cons 3 (cons 4 (cons 5 '()))))) 3 -1 -1) (cons 1 (cons 2 (cons 3 '())))) ;; num <= x  (3 <= x)
+(check-expect (keep-select (cons 1 (cons 2 (cons 3 (cons 4 (cons 5 '()))))) 3 -1 0) (cons 1 (cons 2 '())))  ;; num < x   (3 < x)
+;;; (check-expect (keep-select (cons 1 (cons 2 (cons 3 (cons 4 (cons 5 '()))))) 3 0 0) (cons 3 '())) ;; num = x (3 = x)
 
-(define (keep-select lon num pred)
+; /fix/ make 0 work
+(define (keep-select lon num flip comp-type)
   (cond
     [(empty? lon) '()]
-    [(>= (* pred num) (* pred (first lon))) (cons (first lon) (keep-select (rest lon) num pred))]
-    [else (keep-select (rest lon) num pred)]))
+    [(> (+ (* -1 flip num) (* flip (first lon))) comp-type)
+     (cons (first lon) (keep-select (rest lon) num flip comp-type))]
+    [else (keep-select (rest lon) num flip comp-type)]))
+
 
 
 
@@ -60,14 +62,14 @@
 (check-expect (keep-greater-than/v2 LIST-3 50) (cons 70 '()))
 
 (define (keep-greater-than/v2 lon num)
-  (keep-select lon num -1))
+  (keep-select lon num 1 -1))
 
 (check-expect (keep-less-than/v2 LIST-1 2) (cons 1 (cons 2 '())))
 (check-expect (keep-less-than/v2 LIST-2 2) (cons 1 (cons 2 '())))
 (check-expect (keep-less-than/v2 LIST-3 50) (cons 43 (cons 12 '())))
 
 (define (keep-less-than/v2 lon num)
-  (keep-select lon num 1))
+  (keep-select lon num -1 -1))
 
 
 ;;                           Exercise 2
