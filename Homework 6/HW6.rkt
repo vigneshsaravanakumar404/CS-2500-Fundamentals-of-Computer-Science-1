@@ -37,6 +37,16 @@
     [else (keep-less-than (rest lon) num)]))
 
 
+; should-keep? : [List-of Number] Number Number Number -> Boolean
+; Produces true if the number should be kept based on the given modifiers
+(check-expect (should-keep? LIST-1 3 1 -1) #false)  ;; num >= x  (3 >= x)
+(check-expect (should-keep? LIST-1 3 1 0) #false)   ;; num > x   (3 > x)
+(check-expect (should-keep? LIST-1 3 -1 -1) #true) ;; num <= x  (3 <= x)
+(check-expect (should-keep? LIST-1 3 -1 0) #true)  ;; num < x   (3 < x)
+
+(define (should-keep? lon num flip comp-type)
+  (> (+ (* -1 flip num) (* flip (first lon))) comp-type))
+
 ; keep-select: [List-of Number] Number Number Nuber -> [List-of Number]
 ; Produces a list of numbers that satisfy the given modifiers
 (check-expect (keep-select (cons 1 (cons 2 (cons 3 (cons 4 (cons 5 '()))))) 3 1 -1) (cons 3 (cons 4 (cons 5 '()))))  ;; num >= x  (3 >= x)
@@ -49,10 +59,9 @@
 (define (keep-select lon num flip comp-type)
   (cond
     [(empty? lon) '()]
-    [(> (+ (* -1 flip num) (* flip (first lon))) comp-type)
+    [(should-keep? lon num flip comp-type)
      (cons (first lon) (keep-select (rest lon) num flip comp-type))]
     [else (keep-select (rest lon) num flip comp-type)]))
-
 
 
 
@@ -102,19 +111,6 @@
     [else (nth-is-true? (rest lob) (- n 1))]))
 
 
-; first-true-helper : [List-of Boolean] Number -> Number
-; Produces the index of the first true element in the list and -1 if there is no true element
-(check-expect (first-true-helper BOOL-LIST-1 0) 0)
-(check-expect (first-true-helper BOOL-LIST-2 0) 2)
-(check-expect (first-true-helper BOOL-LIST-3 0) 0)
-(check-expect (first-true-helper (cons #false '()) 0) -1)
-
-(define (first-true-helper lob n)
-  (cond
-    [(empty? lob) -1]
-    [(first lob) n]
-    [else (first-true-helper (rest lob) (+ n 1))]))
-
 ; first-true : [List-of Boolean] -> Number
 ; Produces the index of the first true element in the list and -1 if there is no true element
 (check-expect (first-true BOOL-LIST-1) 0)
@@ -131,21 +127,35 @@
 
 
 (define (first-true lob)
-  (first-true-helper lob 0))
-
-#| Doing it without a Helper function
-(define (first-true lob)
   (cond 
     [(empty? lob) -1]
     [(first lob) 0]
     [(= -1 (first-true (rest lob))) -1]
-    [else (+ 1 (first-true (rest lob)))])) |#
+    [else (+ 1 (first-true (rest lob)))]))
 
 
-;; /FIX/ What does limit unnecessary recursion mean?
+
+; should-error? : [List-of Boolean] Boolean -> Boolean
+; Produces true if the function should return an error
+(check-expect (should-error? BOOL-LIST-1 #true) #true)
+(check-expect (should-error? BOOL-LIST-1 #false) #false)
+(check-expect (should-error? BOOL-LIST-2 #true) #false)
+
+(define (should-error? lob pred)
+  (or (and (first lob) pred) (and (not (first lob)) (not pred))))
+
+; render-error : Boolean -> String
+; Produces the error message
+(check-expect (render-error #true) "The old value was not #false")
+(check-expect (render-error #false) "The old value was not #true")
+(check-expect (render-error #true) "The old value was not #false")
+
+(define (render-error pred)
+  (string-append "The old value was not " (boolean->string (not pred))))
+
+
 ; set-predicate : [List-of Boolean] Number Boolean -> [List-of Boolean]
-; n-th item in the list (counting from 0) set to the given boolean or
-; error if the old value was the same
+; n-th item in the list (counting from 0) set to the given boolean or error if it was the same
 (check-expect (set-predicate BOOL-LIST-1 1 #true)
               (cons #true  (cons #true (cons #true '()))))
 (check-expect (set-predicate BOOL-LIST-2 1 #true)
@@ -163,8 +173,7 @@
   (cond
     [(empty? lob) '()]
     [(= n 0) (cond
-               [(or (and (first lob) pred) (and (not (first lob)) (not pred)))
-                (error (string-append "The old value was not " (boolean->string (not pred))))]
+               [(should-error? lob pred) (error (render-error pred))]
                [else (cons pred (rest lob))])]
     [else (cons (first lob) (set-predicate (rest lob) (- n 1) pred))]))
 
@@ -174,6 +183,7 @@
 ; to #true, error if the old value was not #false)
 (check-expect (set-true BOOL-LIST-1 1) (cons #true (cons #true (cons #true '()))))
 (check-expect (set-true BOOL-LIST-2 1) (cons #false (cons #true (cons #true (cons #true '())))))
+(check-expect (set-true '() 1) '())
 (check-error (set-true BOOL-LIST-1 2) "The old value was not #false")
 (check-error (set-true BOOL-LIST-2 2) "The old value was not #false")
 
@@ -186,6 +196,7 @@
 ; the old value was not #true)
 (check-expect (set-false BOOL-LIST-1 0) (cons #false (cons #false (cons #true '()))))
 (check-expect (set-false BOOL-LIST-2 2) (cons #false (cons #false (cons #false (cons #true '())))))
+(check-expect (set-true '() 1) '())
 (check-error (set-false BOOL-LIST-1 1) "The old value was not #true")
 (check-error (set-false BOOL-LIST-2 0) "The old value was not #true")
 
@@ -193,7 +204,7 @@
   (set-predicate lob n #false))
 
 
-
+;; /FIX/ Extract to helper function
 ; draw-map : [List-of Boolean] Number -> Image
 ; Produces an image of a map with the given list of booleans and proportion n:1
 (check-expect (draw-map BOOL-LIST-1 1)
