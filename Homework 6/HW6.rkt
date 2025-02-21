@@ -72,6 +72,7 @@
 
 ;;                           Exercise 2
 ;; ========================================================================
+(define BOOL-LIST-0 '())
 (define BOOL-LIST-1 (cons #true (cons #false (cons #true '()))))
 (define BOOL-LIST-2 (cons #false (cons #false (cons #true (cons #true '())))))
 (define BOOL-LIST-3 (cons #true (cons #true (cons #false '()))))
@@ -82,6 +83,7 @@
                                             (cons #true
                                                   (cons #false
                                                         (cons #true '()))))))))
+(define BOOL-LIST-5 (cons #false '()))
 
 ; count-trues : [List-of Boolean] -> Number
 ; Produces the number of true values in the list
@@ -211,41 +213,36 @@
 ; create-rectangle : Boolean Number -> Image
 ; Interpretation : Produces an image of a rectangle with the given list of booleans and proportion n:1
 (check-expect (create-rectangle #true 1) (rectangle 20 20 "solid" "black"))
-(check-expect (create-rectangle #false 1) (rectangle 19 19 "outline" "black"))
+(check-expect (create-rectangle #false 1) (rectangle 20 20 "outline" "black"))
 (check-expect (create-rectangle #true 4) (rectangle 80 20 "solid" "black"))
 
 (define (create-rectangle b n)
-  (rectangle (cond
-               [b (* n 20)]
-               [else (+ -1 (* n 20))])
-             (cond
-               [b 20]
-               [else 19])
-             (cond
-               [b "solid"]
-               [else "outline"]) "black"))
+  (rectangle (* n 20) 20 (cond
+                            [b "solid"]
+                            [else "outline"]) "black"))
+             
 
 
 ; draw-map : [List-of Boolean] Number -> Image
 ; Produces an image of a map with the given list of booleans and proportion n:1
 (check-expect (draw-map BOOL-LIST-1 1)
               (beside (rectangle 20 20 "solid" "black")
-                      (beside (rectangle 19 19 "outline" "black")
+                      (beside (rectangle 20 20 "outline" "black")
                               (rectangle 20 20 "solid" "black"))))
 (check-expect (draw-map BOOL-LIST-2 1)
-              (beside (rectangle 19 19 "outline" "black")
-                      (beside (rectangle 19 19 "outline" "black")
+              (beside (rectangle 20 20 "outline" "black")
+                      (beside (rectangle 20 20 "outline" "black")
                               (beside (rectangle 20 20 "solid" "black")
                                       (rectangle 20 20 "solid" "black")))))
 (check-expect (draw-map BOOL-LIST-2 4)
-              (beside (rectangle 79 19 "outline" "black")
-                      (beside (rectangle 79 19 "outline" "black")
+              (beside (rectangle 80 20 "outline" "black")
+                      (beside (rectangle 80 20 "outline" "black")
                               (beside (rectangle 80 20 "solid" "black")
                                       (rectangle 80 20 "solid" "black")))))
 (check-expect (draw-map BOOL-LIST-3 1)
               (beside (rectangle 20 20 "solid" "black")
                       (beside (rectangle 20 20 "solid" "black")
-                              (rectangle 19 19 "outline" "black"))))
+                              (rectangle 20 20 "outline" "black"))))
 
 (define (draw-map lob n)
   (cond
@@ -267,8 +264,8 @@
     [else (+ 1 (count-total (rest lob)))]))
 
 
-; render : WorldState -> Image
-; Produces an image of the WorldState with the following properties:
+; render : [List-of Boolean] -> Image
+; Produces an image of the [List-of Boolean] with the following properties:
 ; - number of true values
 ; - visualized as a rectangle
 ; - the message "[THIS SPACE FOR RENT]"
@@ -305,7 +302,7 @@
          (text "[THIS SPACE FOR RENT]" 20 "black")))
 
 
-; key-expr : WorldState KeyEvent -> WorldState
+; key-expr : [List-of Boolean] KeyEvent -> [List-of Boolean]
 ; Checks if the "q" key is pressed and if so, exits the program
 (check-expect (key-expr BOOL-LIST-1 "q") (stop-with BOOL-LIST-1))
 (check-expect (key-expr BOOL-LIST-2 "q") (stop-with BOOL-LIST-2))
@@ -317,26 +314,36 @@
     [(key=? ke "q") (stop-with ws)]
     [else ws]))
 
-; mouse-expr : WorldState Integer Integer MouseEvent -> WorldState
+
+; compute-shift : [List-of Boolean] -> Number
+; Produces the shift value for the mouse fliping of rectangles
+(define (compute-shift ws)
+  (quotient (max (- (image-width (render ws)) (image-width (draw-map ws 4))) 0) 2))
+
+
+; mouse-expr : [List-of Boolean] Integer Integer MouseEvent -> [List-of Boolean]
 ; Flips the value of the clicked rectangle
 (check-expect (mouse-expr BOOL-LIST-1 50 50 "button-down") BOOL-LIST-1)  
 (check-expect (mouse-expr BOOL-LIST-1 50 20 "button-down") BOOL-LIST-1)  
 (check-expect (mouse-expr BOOL-LIST-1 160 30 "move") BOOL-LIST-1)        
 (check-expect (mouse-expr BOOL-LIST-2 160 30 "button-down") 
-              (set-predicate BOOL-LIST-2 (quotient 160 80) #false)) 
-(check-expect (mouse-expr BOOL-LIST-3 80 30 "button-down") 
-              (set-predicate BOOL-LIST-3 (quotient 80 80) #false))
+              (set-predicate BOOL-LIST-2 (quotient 160 80) #false))
+
 
 (define (mouse-expr ws x y me)
   (cond
     [(> y 41) ws]
     [(< y 22) ws]
-    [(mouse=? me "button-down") (set-predicate ws (quotient x 80) (not (nth-is-true? ws (quotient x 80))))]
+    [(< x (compute-shift ws)) ws]
+    [(> x (+ (compute-shift ws) (image-width (draw-map ws 4)))) ws]
+    [(empty? ws) ws]
+    [(mouse=? me "button-down")
+     (set-predicate ws (quotient (- x (compute-shift ws)) 80)
+                    (not (nth-is-true? ws (quotient (- x (compute-shift ws)) 80))))]
     [else ws]))
 
-
-; bit-bucket : [List-of Number] -> WorldState
-; Interpretation: Produces a WorldState with the given list of booleans
+; bit-bucket : [List-of Boolean] -> [List-of Boolean]
+; Interpretation: Produces a visual representation of the list
 (define (bit-bucket lob)
   (big-bang lob
     (to-draw render)
@@ -344,4 +351,5 @@
     (on-mouse mouse-expr)
     (close-on-stop #true)))
 
-(bit-bucket BOOL-LIST-4)
+;;; (bit-bucket BOOL-LIST-4)
+(bit-bucket BOOL-LIST-5)
