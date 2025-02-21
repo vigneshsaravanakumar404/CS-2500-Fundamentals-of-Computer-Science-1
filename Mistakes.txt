@@ -1,5 +1,5 @@
 - Not using helper functions
+- Specificity of data types in signature
 - Missing interpretation
 - Missing Tests
 - Template Error
-- Be more specific with what type a struct accepts (PosInt)

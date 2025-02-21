@@ -1,17 +1,22 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname HW6) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+
 (require 2htdp/image)
 (require 2htdp/universe)
 
 ;;                             Exercise 1
 ;; ========================================================================
+
+; SmallNatural is assumed to be defined as per https://piazza.com/class/m5h7r615vbn18k/post/131
+
+
 (define LIST-1 (cons 1 (cons 2 (cons 3 '()))))
 (define LIST-2 (cons 1 (cons 2 (cons 3 (cons 4 '())))))
 (define LIST-3 (cons 43 (cons 70 (cons 12 '()))))
 
 
-; keep-greater-than : [List-of Number] Number -> [List-of Number]
+; keep-greater-than : [List-of SmallNatural] SmallNatural -> [List-of Number]
 ; Produces a list of numbers greater or equal to the given number
 (check-expect (keep-greater-than LIST-1 2) (cons 2 (cons 3 '())))
 (check-expect (keep-greater-than LIST-2 2) (cons 2 (cons 3 (cons 4 '()))))
@@ -24,7 +29,7 @@
     [else (keep-greater-than (rest lon) num)]))
 
 
-; keep-less-than : [List-of Number] Number -> [List-of Number]
+; keep-less-than : [List-of SmallNatural] SmallNatural -> [List-of SmallNatural]
 ; Produces a list of numbers less than the given number
 (check-expect (keep-less-than LIST-1 2) (cons 1 (cons 2 '())))
 (check-expect (keep-less-than LIST-2 2) (cons 1 (cons 2 '())))
@@ -37,7 +42,7 @@
     [else (keep-less-than (rest lon) num)]))
 
 
-; keep-select: [List-of Number] Number Number -> [List-of Number]
+; keep-select: [List-of SmallNatural] SmallNatural SmallNatural -> [List-of SmallNatural]
 ; Produces a list of numbers that satisfy the given modifier
 (check-expect (keep-select LIST-1 2 1000) (cons 2 (cons 3 '())))
 (check-expect (keep-select LIST-2 0 2) (cons 1 (cons 2 '())))
@@ -51,7 +56,7 @@
     [else (keep-select (rest lon) low high)]))
 
 
-; keep-greater-than/v2 : [List-of Number] Number -> [List-of Number]
+; keep-greater-than/v2 : [List-of SmallNatural] SmallNatural -> [List-of SmallNatural]
 ; Produces a list of numbers greater or equal to the given number
 (check-expect (keep-greater-than/v2 LIST-1 2) (cons 2 (cons 3 '())))
 (check-expect (keep-greater-than/v2 LIST-2 2) (cons 2 (cons 3 (cons 4 '()))))
@@ -60,7 +65,7 @@
 (define (keep-greater-than/v2 lon num)
   (keep-select lon num 1000))
 
-; keep-less-than/v2 : [List-of Number] Number -> [List-of Number]
+; keep-less-than/v2 : [List-of SmallNatural] SmallNatural -> [List-of SmallNatural]
 ; Produces a list of numbers less than the given number
 (check-expect (keep-less-than/v2 LIST-1 2) (cons 1 (cons 2 '())))
 (check-expect (keep-less-than/v2 LIST-2 2) (cons 1 (cons 2 '())))
@@ -85,7 +90,7 @@
                                                         (cons #true '()))))))))
 (define BOOL-LIST-5 (cons #false '()))
 
-; count-trues : [List-of Boolean] -> Number
+; count-trues : [List-of Boolean] -> NonNegInteger
 ; Produces the number of true values in the list
 (check-expect (count-trues BOOL-LIST-1) 2)
 (check-expect (count-trues BOOL-LIST-2) 2)
@@ -98,7 +103,7 @@
     [else (count-trues (rest lob))]))
 
 
-; nth-is-true? : [List-of Boolean] Number -> Boolean
+; nth-is-true? : [List-of Boolean] NonNegInteger -> Boolean
 ; Produces true if the nth element of the list is true counting from 0
 (check-expect (nth-is-true? BOOL-LIST-1 0) #true)
 (check-expect (nth-is-true? BOOL-LIST-1 1) #false)
@@ -114,7 +119,7 @@
     [else (nth-is-true? (rest lob) (- n 1))]))
 
 
-; first-true : [List-of Boolean] -> Number
+; first-true : [List-of Boolean] -> Integer
 ; Produces the index of the first true element in the list and -1 if there is no true element
 (check-expect (first-true BOOL-LIST-1) 0)
 (check-expect (first-true BOOL-LIST-2) 2)
@@ -156,8 +161,9 @@
   (string-append "The old value was not " (boolean->string (not pred))))
 
 
-; set-predicate : [List-of Boolean] Number Boolean -> [List-of Boolean]
-; n-th item in the list (counting from 0) set to the given boolean or error if it was the same
+; set-predicate : [List-of Boolean] NonNegInteger Boolean -> [List-of Boolean]
+; n-th item in the list (counting from 0) set to the given boolean or error if it was the same or out 
+; of bounds
 (check-expect (set-predicate BOOL-LIST-1 1 #true)
               (cons #true  (cons #true (cons #true '()))))
 (check-expect (set-predicate BOOL-LIST-2 1 #true)
@@ -183,7 +189,7 @@
     [else (cons (first lob) (set-predicate (rest lob) (- n 1) pred))]))
 
 
-; set-true : [List-of Boolean] Number -> [List-of Boolean]
+; set-true : [List-of Boolean] NonNegInteger -> [List-of Boolean]
 ; n-th item in the list (counting from 0) converted from #false
 ; to #true, error if the old value was not #false)
 (check-expect (set-true BOOL-LIST-1 1) (cons #true (cons #true (cons #true '()))))
@@ -197,7 +203,7 @@
   (set-predicate lob n #true))
 
 
-; set-false : [List-of Boolean] Number -> [List-of Boolean]
+; set-false : [List-of Boolean] NonNegInteger -> [List-of Boolean]
 ; n-th item in the list (counting from 0) converted from #true to #false, error if
 ; the old value was not #true)
 (check-expect (set-false BOOL-LIST-1 0) (cons #false (cons #false (cons #true '()))))
@@ -210,7 +216,7 @@
   (set-predicate lob n #false))
 
 
-; create-rectangle : Boolean Number -> Image
+; create-rectangle : Boolean PosInteger -> Image
 ; Interpretation : Produces an image of a rectangle with the given list of booleans and proportion n:1
 (check-expect (create-rectangle #true 1) (rectangle 20 20 "solid" "black"))
 (check-expect (create-rectangle #false 1) (rectangle 20 20 "outline" "black"))
@@ -218,12 +224,12 @@
 
 (define (create-rectangle b n)
   (rectangle (* n 20) 20 (cond
-                            [b "solid"]
-                            [else "outline"]) "black"))
+                           [b "solid"]
+                           [else "outline"]) "black"))
              
 
 
-; draw-map : [List-of Boolean] Number -> Image
+; draw-map : [List-of Boolean] PosInteger -> Image
 ; Produces an image of a map with the given list of booleans and proportion n:1
 (check-expect (draw-map BOOL-LIST-1 1)
               (beside (rectangle 20 20 "solid" "black")
@@ -252,7 +258,7 @@
 
 ;;                           Exercise 3
 ;; ========================================================================
-; count-total : [List-of Boolean] -> Number
+; count-total : [List-of Boolean] -> NonNegInteger
 ; Produces the total number of values in the list
 (check-expect (count-total BOOL-LIST-1) 3)
 (check-expect (count-total BOOL-LIST-2) 4)
@@ -303,19 +309,19 @@
 
 
 ; key-expr : [List-of Boolean] KeyEvent -> [List-of Boolean]
-; Checks if the "q" key is pressed and if so, exits the program
-(check-expect (key-expr BOOL-LIST-1 "q") (stop-with BOOL-LIST-1))
-(check-expect (key-expr BOOL-LIST-2 "q") (stop-with BOOL-LIST-2))
-(check-expect (key-expr BOOL-LIST-3 "q") (stop-with BOOL-LIST-3))
+; Checks if the "Q" key is pressed and if so, exits the program
+(check-expect (key-expr BOOL-LIST-1 "Q") (stop-with BOOL-LIST-1))
+(check-expect (key-expr BOOL-LIST-2 "Q") (stop-with BOOL-LIST-2))
+(check-expect (key-expr BOOL-LIST-3 "Q") (stop-with BOOL-LIST-3))
 (check-expect (key-expr BOOL-LIST-3 "w") BOOL-LIST-3)
 
 (define (key-expr ws ke)
   (cond
-    [(key=? ke "q") (stop-with ws)]
+    [(key=? ke "Q") (stop-with ws)]
     [else ws]))
 
 
-; compute-shift : [List-of Boolean] -> Number
+; compute-shift : [List-of Boolean] -> NonNegInteger
 ; Produces the shift value for the mouse fliping of rectangles
 (define (compute-shift ws)
   (quotient (max (- (image-width (render ws)) (image-width (draw-map ws 4))) 0) 2))
@@ -346,10 +352,10 @@
 ; Interpretation: Produces a visual representation of the list
 (define (bit-bucket lob)
   (big-bang lob
-    (to-draw render)
-    (on-key key-expr)
-    (on-mouse mouse-expr)
-    (close-on-stop #true)))
+    [to-draw render]
+    [on-key key-expr]
+    [on-mouse mouse-expr]
+    [close-on-stop #true]))
 
-;;; (bit-bucket BOOL-LIST-4)
+(bit-bucket BOOL-LIST-4)
 (bit-bucket BOOL-LIST-5)
