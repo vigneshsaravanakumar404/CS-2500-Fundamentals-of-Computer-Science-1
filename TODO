@@ -1,6 +1,6 @@
-Cheat Sheet TODOs:
-  - Animations
-  - Homework Functions
-
-Learn:
-  - Nested Tempalte
+Check Before Each Submission:
+  - Not using helper functions
+  - Specificity of data types in signature
+  - Missing interpretation
+  - Missing Tests
+  - Template Error

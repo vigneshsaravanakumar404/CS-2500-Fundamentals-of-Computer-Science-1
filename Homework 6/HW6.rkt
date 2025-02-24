@@ -180,9 +180,7 @@
 
 (define (set-predicate lob n pred)
   (cond
-    [(empty? lob) (cond
-                    [(>= n 0) (error "IndexOutOfBoundsException")]
-                    [else '()])]
+    [(empty? lob) (error "IndexOutOfBoundsException")]
     [(= n 0) (cond
                [(should-error? lob pred) (error (render-error pred))]
                [else (cons pred (rest lob))])]
@@ -334,6 +332,10 @@
 (check-expect (mouse-expr BOOL-LIST-1 160 30 "move") BOOL-LIST-1)        
 (check-expect (mouse-expr BOOL-LIST-2 160 30 "button-down") 
               (set-predicate BOOL-LIST-2 (quotient 160 80) #false))
+(check-expect (mouse-expr BOOL-LIST-1 160 100 "button-down") BOOL-LIST-1)
+(check-expect (mouse-expr BOOL-LIST-5 0 30 "button-down") BOOL-LIST-5)
+(check-expect (mouse-expr '() 5 30 "button-down") '()) 
+
 
 
 (define (mouse-expr ws x y me)
@@ -342,7 +344,6 @@
     [(< y 22) ws]
     [(< x (compute-shift ws)) ws]
     [(> x (+ (compute-shift ws) (image-width (draw-map ws 4)))) ws]
-    [(empty? ws) ws]
     [(mouse=? me "button-down")
      (set-predicate ws (quotient (- x (compute-shift ws)) 80)
                     (not (nth-is-true? ws (quotient (- x (compute-shift ws)) 80))))]
@@ -357,5 +358,6 @@
     [on-mouse mouse-expr]
     [close-on-stop #true]))
 
+(bit-bucket '())
 (bit-bucket BOOL-LIST-4)
 (bit-bucket BOOL-LIST-5)
