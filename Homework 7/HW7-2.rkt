@@ -1,6 +1,4 @@
-;; The first three lines of this file were inserted by DrRacket. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-reader.ss" "lang")((modname HW7-2) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+#lang htdp/isl
 
 (define-struct user [username friends rating])
 (define-struct proctor [username friends community rank])
@@ -47,10 +45,10 @@
 
 ; ============================================================================================
 (define SM-PROCTOR-3
-    (make-proctor "Benjamin Koopferstock"
-                  (list "agent86" "fundies1" "fundies1" "fundies1" "fundies1")
-                  "CHIPs"
-                  12))
+  (make-proctor "Benjamin Koopferstock"
+                (list "agent86" "fundies1" "fundies1" "fundies1" "fundies1")
+                "CHIPs"
+                12))
 
 
 ; a.
@@ -65,7 +63,7 @@
 (check-expect (only-proctors empty) empty)
 
 (define (only-proctors sml)
-    (filter proctor? sml))
+  (filter proctor? sml))
 
 
 ; b.
@@ -80,14 +78,15 @@
 (check-expect (all-friends empty) empty)
 
 (define (all-friends sml)
-    (foldr append empty (map choose-friends sml)))
+  (foldr append empty (map choose-friends sml)))
 
 ; choose-friends : SiteMember -> [List-of String]
 ; Interpretation: Return a predicate that is true for the given site member.
 (check-expect (choose-friends SM-USER-1) (list "jo6n"))
 (check-expect (choose-friends SM-PROCTOR-1) (list "adam12" "agent99"))
 (check-expect (choose-friends SM-PROCTOR-2) (list "agent86" "fundies1"))
-(check-expect (choose-friends SM-PROCTOR-3) (list "agent86" "fundies1" "fundies1" "fundies1" "fundies1"))
+(check-expect (choose-friends SM-PROCTOR-3)
+              (list "agent86" "fundies1" "fundies1" "fundies1" "fundies1"))
 (check-expect (choose-friends SM-USER-2) (list "fundies1" "adam12"))
 
 (define (choose-friends sm)
@@ -103,7 +102,7 @@
 (check-expect (num-users empty) 0)
 
 (define (num-users sml)
-    (length (filter user? sml)))
+  (length (filter user? sml)))
 
 
 ; d. 
@@ -111,23 +110,24 @@
 ; Interpretation: If at least one sitemember has more than 1 friend
 (check-expect (popular? (list SM-USER-1 SM-USER-2 SM-PROCTOR-1 SM-PROCTOR-2)) #true)
 (check-expect (popular? (list SM-USER-1 SM-USER-2 SM-PROCTOR-1)) #true)
-(check-expect (popular? (list SM-USER-1 SM-USER-2 )) #true)
+(check-expect (popular? (list SM-USER-1 SM-USER-2)) #true)
 (check-expect (popular? (list SM-USER-1)) #false)
 
 (define (popular? sml)
-    (> (most-popular sml) 1))
+  (> (most-popular sml) 1))
 
 
 ; e.
 ; most-popular : [List-of SiteMember] -> NonNegInteger
 ; Interpretation: To return the most popular site member from the given list.
-(check-expect (most-popular (list SM-USER-1 SM-USER-2 SM-PROCTOR-1 SM-PROCTOR-2 SM-PROCTOR-3)) 5)
+(check-expect (most-popular
+               (list SM-USER-1 SM-USER-2 SM-PROCTOR-1 SM-PROCTOR-2 SM-PROCTOR-3)) 5)
 (check-expect (most-popular (list SM-USER-1 SM-USER-2 SM-PROCTOR-1 SM-PROCTOR-2)) 2)
 (check-expect (most-popular (list SM-USER-1 SM-USER-2 SM-PROCTOR-1)) 2)
 (check-expect (most-popular empty) 0)
 
 (define (most-popular sml)
-    (foldr max 0 (map length (map choose-friends sml))))
+  (foldr max 0 (map length (map choose-friends sml))))
 
 ; f.
 ; highest-rating : [List-of SiteMember] -> NonNegInteger
@@ -138,4 +138,4 @@
 (check-expect (highest-rating empty) 0)
 
 (define (highest-rating l)
-    (foldr max 0 (map user-rating (filter user? l))))
+  (foldr max 0 (map user-rating (filter user? l))))
