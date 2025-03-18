@@ -227,20 +227,37 @@
 ; consumes a HBS and a size s, and produces a new HBS with the first free chunk of size s allocated
 ;;; (check-expect (alloc-chunk (list (list #f #t) (list #f #t #f #f) (list #f #t #f #f #f #f #f #f)) 2)
 ;;;               (list (list #f #t) (list #f #f #f #f) (list #f #t #f #f #f #f #f #f)))
+(define (alloc-chunk HBS s)
+  (cond
+    [(= (find-chunk HBS s) -1) HBS]
+    [else (represental-all-in-last-row HBS (set-false-range (last HBS) (find-chunk HBS s) s))]))
+    
+(define (represental-all-in-last-row HBS Lob)
+  (cond
+    [(empty? (rest HBS)) Lob]
+    [else (represental-all-in-last-row (rest HBS) (execute 0 (/ (length Lob) (length (first HBS))) (first HBS) Lob))]))
 
+(define (execute i n lob1 lob2)
+  (cond
+    [(empty? lob1) '()]
+    [(first lob1) (execute (add1 i) n (rest lob1) (set-true-range (rest lob2) i n))]
+    [else (execute (add1 i) n (rest lob1) (set-false-range (rest lob2) i n))]))
 
-;;; (define (alloc-chunk HBS s)
-;;;   (cond
-;;;     [(empty? (rest HBS)) (initialize-hbs (set-false-range (last HBS) (find-chunk HBS s) s))]
-;;;     []))
+(define (set-false-range lst start count)
+  (cond
+    [(empty? lst) '()]  ; Base case: empty list
+    [(zero? count) lst]  ; Stop modifying once count reaches zero
+    [(= start 0) (cons #f (set-false-range (rest lst) 0 (- count 1)))]  ; Start setting #t
+    [else (cons (first lst) (set-false-range (rest lst) (- start 1) count))]))  ; Decrement start
 
-;;; ; 
+(define (set-true-range lst start count)
+  (cond
+    [(empty? lst) '()]  ; Base case: empty list
+    [(zero? count) lst]  ; Stop modifying once count reaches zero
+    [(= start 0) (cons #t (set-true-range (rest lst) 0 (- count 1)))]  ; Start setting #t
+    [else (cons (first lst) (set-true-range (rest lst) (- start 1) count))]))  ; Decrement start
 
-;;; (define (set-false-range lst start count)
-;;;   (cond
-;;;     [(empty? lst) '()]  ; Base case: empty list
-;;;     [(zero? count) lst]  ; Stop modifying once count reaches zero
-;;;     [(= start 0) (cons #f (set-false-range (rest lst) 0 (- count 1)))]  ; Start setting #t
-;;;     [else (cons (first lst) (set-false-range (rest lst) (- start 1) count))]))  ; Decrement start
-
-;;; (alloc-chunk (list (list #f #t) (list #f #t #f #f) (list #f #t #f #f #f #f #f #f)) 2)
+(alloc-chunk (list (list #f #t) (list #f #t #f #f) (list #f #t #f #f #f #f #f #f)) 2)
+(find-chunk (list (list #f #t) (list #f #t #f #f) (list #f #t #f #f #f #f #f #f)) 2)
+(alloc-chunk HBS-9 2)
+(find-chunk HBS-9 2)
