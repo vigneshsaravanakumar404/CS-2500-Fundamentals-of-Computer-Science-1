@@ -1,158 +1,55 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname HW8) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
-
-; ====================================================================================
-; Import Functions
-; ====================================================================================
-
 (require racket/list)
-(require 2htdp/image)
-(require 2htdp/universe)
 
-
-(define BOOL-LIST-0 '())
-(define BOOL-LIST-1 (cons #true (cons #false (cons #true '()))))
-(define BOOL-LIST-2 (cons #false (cons #false (cons #true (cons #true '())))))
-(define BOOL-LIST-3 (cons #true (cons #true (cons #false '()))))
-(define BOOL-LIST-4 (cons #false
-                          (cons #false
-                                (cons #true
-                                      (cons #true
-                                            (cons #true
-                                                  (cons #false
-                                                        (cons #true '()))))))))
-(define BOOL-LIST-5 (cons #false '()))
-
-; count-trues : [List-of Boolean] -> NonNegInteger
-; Produces the number of true values in the list
-(check-expect (count-trues BOOL-LIST-1) 2)
-(check-expect (count-trues BOOL-LIST-2) 2)
-(check-expect (count-trues BOOL-LIST-3) 2)
-
+; ====================================================================================
+; Import Functions: COPIED DIRECTLY FROM HW6-DISTRIB.RKT
+; Design recipes are not included for this section because it is copied 
+; ====================================================================================
 (define (count-trues lob)
-  (cond
-    [(empty? lob) 0]
-    [(first lob) (+ 1 (count-trues (rest lob)))]
-    [else (count-trues (rest lob))]))
-
-
-; nth-is-true? : [List-of Boolean] NonNegInteger -> Boolean
-; Produces true if the nth element of the list is true counting from 0
-(check-expect (nth-is-true? BOOL-LIST-1 0) #true)
-(check-expect (nth-is-true? BOOL-LIST-1 1) #false)
-(check-expect (nth-is-true? BOOL-LIST-1 2) #true)
-(check-expect (nth-is-true? BOOL-LIST-2 0) #false)
-(check-expect (nth-is-true? BOOL-LIST-2 1) #false)
-(check-expect (nth-is-true? '() 0) #false)
-
-(define (nth-is-true? lob n)
-  (cond
-    [(empty? lob) #false]
-    [(= n 0) (first lob)]
-    [else (nth-is-true? (rest lob) (- n 1))]))
-
-
-; first-true : [List-of Boolean] -> Integer
-; Produces the index of the first true element in the list and -1 if there is no true element
-(check-expect (first-true BOOL-LIST-1) 0)
-(check-expect (first-true BOOL-LIST-2) 2)
-(check-expect (first-true BOOL-LIST-3) 0)
-(check-expect (first-true (cons #false '())) -1)
-(check-expect (first-true (cons #false (cons #false '()))) -1)
-(check-expect (first-true (cons #false (cons #false (cons #true '())))) 2)
-(check-expect (first-true (cons #false (cons #true (cons #false (cons #true '()))))) 1)
-(check-expect (first-true (cons #false (cons #false (cons #false '())))) -1)
-(check-expect (first-true (cons #false
-                                (cons #false
-                                      (cons #false (cons #false (cons #true '())))))) 4)
+  (cond [(empty? lob) 0]
+        [(cons? lob) (if (first lob)
+                           (add1 (count-trues (rest lob)))
+                           (count-trues (rest lob)))]))
 
 
 (define (first-true lob)
-  (cond 
-    [(empty? lob) -1]
-    [(first lob) 0]
-    [(= -1 (first-true (rest lob))) -1]
-    [else (+ 1 (first-true (rest lob)))]))
+  (cond [(empty? lob) -1]
+        [(cons? lob) (if (first lob)
+                          0
+                          (if (= -1 (first-true (rest lob)))
+                              -1
+                              (add1 (first-true (rest lob)))))]))
 
-
-; should-error? : [List-of Boolean] Boolean -> Boolean
-; Produces true if the function should return an error
-(check-expect (should-error? BOOL-LIST-1 #true) #true)
-(check-expect (should-error? BOOL-LIST-1 #false) #false)
-(check-expect (should-error? BOOL-LIST-2 #true) #false)
-
-(define (should-error? lob pred)
-  (or (and (first lob) pred) (and (not (first lob)) (not pred))))
-
-; render-error : Boolean -> String
-; Produces the error message
-(check-expect (render-error #true) "The old value was not #false")
-(check-expect (render-error #false) "The old value was not #true")
-(check-expect (render-error #true) "The old value was not #false")
-
-(define (render-error pred)
-  (string-append "The old value was not " (boolean->string (not pred))))
-
-
-; set-predicate : [List-of Boolean] NonNegInteger Boolean -> [List-of Boolean]
-; n-th item in the list (counting from 0) set to the given boolean or error if it was the same or out 
-; of bounds
-(check-expect (set-predicate BOOL-LIST-1 1 #true)
-              (cons #true  (cons #true (cons #true '()))))
-(check-expect (set-predicate BOOL-LIST-2 1 #true)
-              (cons #false (cons #true (cons #true (cons #true '())))))
-(check-expect (set-predicate BOOL-LIST-1 0 #false)
-              (cons #false (cons #false (cons #true '()))))
-(check-expect (set-predicate BOOL-LIST-2 2 #false)
-              (cons #false (cons #false (cons #false (cons #true '())))))
-(check-error (set-predicate '() 10 #true) "IndexOutOfBoundsException")
-(check-error (set-predicate '() 0 #true) "IndexOutOfBoundsException")
-(check-error (set-predicate BOOL-LIST-1 1 #false) "The old value was not #true")
-(check-error (set-predicate BOOL-LIST-1 2 #true) "The old value was not #false")
-(check-error (set-predicate BOOL-LIST-2 0 #false) "The old value was not #true")
-
-(define (set-predicate lob n pred)
-  (cond
-    [(empty? lob) (error "IndexOutOfBoundsException")]
-    [(= n 0) (cond
-               [(should-error? lob pred) (error (render-error pred))]
-               [else (cons pred (rest lob))])]
-    [else (cons (first lob) (set-predicate (rest lob) (- n 1) pred))]))
-
-
-; set-true : [List-of Boolean] NonNegInteger -> [List-of Boolean]
-; n-th item in the list (counting from 0) converted from #false
-; to #true, error if the old value was not #false)
-(check-expect (set-true BOOL-LIST-1 1) (cons #true (cons #true (cons #true '()))))
-(check-expect (set-true BOOL-LIST-2 1) (cons #false (cons #true (cons #true (cons #true '())))))
-(check-error (set-true '() 1) "IndexOutOfBoundsException")
-(check-error (set-true '() 0) "IndexOutOfBoundsException")
-(check-error (set-true BOOL-LIST-1 2) "The old value was not #false")
-(check-error (set-true BOOL-LIST-2 2) "The old value was not #false")
 
 (define (set-true lob n)
-  (set-predicate lob n #true))
+  (cond [(empty? lob) '()]
+        [(cons? lob) (if (zero? n)
+                          (cons #true (rest lob))
+                          (cons (first lob) (set-true (rest lob) (sub1 n))))]))
 
-
-; set-false : [List-of Boolean] NonNegInteger -> [List-of Boolean]
-; n-th item in the list (counting from 0) converted from #true to #false, error if
-; the old value was not #true)
-(check-expect (set-false BOOL-LIST-1 0) (cons #false (cons #false (cons #true '()))))
-(check-expect (set-false BOOL-LIST-2 2) (cons #false (cons #false (cons #false (cons #true '())))))
-(check-error (set-true '() 1) "IndexOutOfBoundsException")
-(check-error (set-false BOOL-LIST-1 1) "The old value was not #true")
-(check-error (set-false BOOL-LIST-2 0) "The old value was not #true")
 
 (define (set-false lob n)
-  (set-predicate lob n #false))
+  (cond [(empty? lob) '()]
+        [(cons? lob) (if (zero? n)
+                          (cons #false (rest lob))
+                          (cons (first lob) (set-false (rest lob) (sub1 n))))]))
 
+; ====================================================================================
+; End of Import Functions
+; ====================================================================================
+
+
+; ====================================================================================
+; Import Functions: COPIED DIRECTLY MY SUBMISSION FOR HW6
+; ====================================================================================
 
 ; count-total : [List-of Boolean] -> NonNegInteger
 ; Produces the total number of values in the list
-(check-expect (count-total BOOL-LIST-1) 3)
-(check-expect (count-total BOOL-LIST-2) 4)
-(check-expect (count-total BOOL-LIST-3) 3)
+(check-expect (count-total (cons #true (cons #false (cons #true '())))) 3)
+(check-expect (count-total (cons #false (cons #false (cons #true (cons #true '()))))) 4)
+(check-expect (count-total (cons #true (cons #true (cons #false '())))) 3)
 
 (define (count-total lob)
   (cond
@@ -162,6 +59,8 @@
 ; ====================================================================================
 ; End of Import Functions
 ; ====================================================================================
+
+
 
 (define HBS-1
   (list (list #t #t)
@@ -179,20 +78,50 @@
         (list #f #f #f #f #f #f #f #t)))
 
 (define HBS-4
-  (list (list #t #f)
-        (list #f #f #t #f)
-        (list #f #f #f #f #f #f #f #t)
-        (list #f #f #f #f #f #f #f #t)))
+  (list (list #f #t)
+        (list #f #t #f #f)
+        (list #f #t #f #f #f #f #f #f)))
+    
+(define HBS-5
+  (list (list #f #f)
+        (list #f #f #f #f)
+        (list #f #f #f #f #f #f #f #f)))
+
+(define HBS-6
+  (list
+   (list #t #f)
+   (list #f #f #t #f)
+   (list #f #f #f #f #f #f #t #f)))
+
+(define HBS-7
+  (list
+   (list #f #f)
+   (list #f #f #f #f) 
+   (list #f #f #f #f #f #f #f #f)))
+
+(define HBS-8
+  (list
+   (list #t #t)
+   (list #f #f #f #f)
+   (list #f #f #f #f #f #f #f #f)))
+
+(define HBS-9
+  (list (list #false #false) 
+         (list #false #true #true #false) 
+         (list #false #false #false #false #false #false #false #true) 
+         (list #false #true #true #false #false #false #false #false #false #false #false #false #false #false #false #false)))
 
 
 ; Exercise 1a
 
-; blocks-remaining : [List-of [List-of Boolean]] -> NonNegInteger
+; A HierarchicalBitmapSet (HBS) is a [List-of [List-of Boolean]]
+
+; blocks-remaining : HBS -> NonNegInteger
 ; Produces the number of blocks remaining in the list of blocks
 (check-expect (blocks-remaining HBS-1) 8)
 (check-expect (blocks-remaining HBS-3) 7)
 (check-expect (blocks-remaining HBS-2) 6)
-(check-expect (blocks-remaining HBS-4) 15)
+(check-expect (blocks-remaining HBS-4) 7)
 
 (define (blocks-remaining HBS)
   (cond
@@ -201,4 +130,100 @@
              (blocks-remaining (rest HBS)))]))
 
 
-; find-chunk : 
+; Exercise 1b
+; find-chunk : HBS NonNegInteger -> NonNegInteger
+; produce the index of the first block of a free chunk of the requested size
+(check-expect (find-chunk HBS-4 1) 1)
+(check-expect (find-chunk HBS-4 2) 2)
+(check-expect (find-chunk HBS-4 4) 4)
+(check-expect (find-chunk HBS-4 8) -1)
+(check-expect (find-chunk HBS-5 1) -1)
+(check-expect (find-chunk HBS-5 2) -1)
+(check-expect (find-chunk HBS-5 4) -1)
+(check-expect (find-chunk HBS-6 1) 6)
+(check-expect (find-chunk HBS-7 4) -1)
+(check-expect (find-chunk HBS-8 4) 0)
+
+
+(define (find-chunk HBS s)
+  (local [(define expected (expt 2 (- (length HBS) 1)))]
+    (cond
+      [(empty? HBS) -1]
+      [(and (= s expected) (> (count-trues (first HBS)) 0)) 
+       (* (first-true (first HBS)) expected)]
+      [else (find-chunk (rest HBS) s)])))
+    
+
+;! FINISH DESIGN RECIPES FOR EXERCISE 1c
+; Exercise 1c
+; initialize-hbs : [List-of Boolean] -> HBS
+; consumes a single bitmap of the free blocks on a drive, and produces the corresponding HBS 
+(check-expect (initialize-hbs (last HBS-7)) HBS-7)
+
+(define (initialize-hbs lob)
+  (initialize-hbs-helper lob '()))
+
+(define (initialize-hbs-helper lob o)
+  (cond
+    [(= (length lob) 2) (cons lob o)]
+    [else (initialize-hbs-helper (pairwise-and lob) (cons (coalesce lob) o))]))
+
+(define (pairwise-and lst)
+  (cond
+    [(empty? lst) '()]
+    [(empty? (rest lst)) '()]
+    [else (cons (and (first lst) (second lst)) (pairwise-and (rest (rest lst))))]))
+
+; coalesce : [List-of Boolean] -> [List-of Boolean]
+; consumes a list of booleans and produces a list of booleans with every pair of booleans coalesced
+(define (coalesce  lst)
+    (cond
+      [(empty? lst) '()]
+      [(and (first lst) (second lst)) (cons #false (cons #false (coalesce (rest (rest lst)))))]
+      [else (cons (first lst) (cons (second lst) (coalesce  (rest (rest lst)))))]))
+
+
+; Exercise 2
+(define-struct hbs-alloc [block hbs])
+; A HBSAllocResult is a (make-hbs-alloc Integer HBS)
+; Represents the result of an allocation call, where:
+; - block is the starting block number for the chunk that was allocated;
+;   or -1 if no space available
+; - hbs is the updated HBS after the allocation
+
+(define HBSAR-1 (make-hbs-alloc 2
+                                (list (list #f #t)
+                                      (list #t #f #f #f))))
+(define HBSAR-2 (make-hbs-alloc 0
+                                (list (list #t #t)
+                                      (list #f #f #f #f))))
+(define HBSAR-3 (make-hbs-alloc -1
+                                (list (list #t #t)
+                                      (list #f #f #f #f))))
+
+(define (hbsar-temp hbsar)
+  (... (hbs-alloc-block hbsar) ...
+       (hbs-temp (hbs-alloc-hbs hbsar) ...)))
+
+
+; alloc-chunk : HBS NonNegInteger -> HBS
+; consumes a HBS and a size s, and produces a new HBS with the first free chunk of size s allocated
+;;; (check-expect (alloc-chunk (list (list #f #t) (list #f #t #f #f) (list #f #t #f #f #f #f #f #f)) 2)
+;;;               (list (list #f #t) (list #f #f #f #f) (list #f #t #f #f #f #f #f #f)))
+
+
+;;; (define (alloc-chunk HBS s)
+;;;   (cond
+;;;     [(empty? (rest HBS)) (initialize-hbs (set-false-range (last HBS) (find-chunk HBS s) s))]
+;;;     []))
+
+;;; ; 
+
+;;; (define (set-false-range lst start count)
+;;;   (cond
+;;;     [(empty? lst) '()]  ; Base case: empty list
+;;;     [(zero? count) lst]  ; Stop modifying once count reaches zero
+;;;     [(= start 0) (cons #f (set-false-range (rest lst) 0 (- count 1)))]  ; Start setting #t
+;;;     [else (cons (first lst) (set-false-range (rest lst) (- start 1) count))]))  ; Decrement start
+
+;;; (alloc-chunk (list (list #f #t) (list #f #t #f #f) (list #f #t #f #f #f #f #f #f)) 2)
