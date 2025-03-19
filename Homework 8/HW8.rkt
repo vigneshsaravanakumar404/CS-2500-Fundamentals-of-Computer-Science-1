@@ -232,7 +232,23 @@
   (local [(define i (find-chunk HBS s))]
     (cond
       [(= i -1) HBS]
-      [else (make-hbs-alloc i (initialize-hbs (set-range #f (propagate HBS (last HBS)) i (+ -1 i s) 0)))])))
+      [else (make-hbs-alloc i (abstraction HBS s i #f))])))
+
+; Exercise 3
+; free-chunk : HBS NonNegInteger NonNegInteger -> HBS
+; consumes a HBS, a chunk size and starting block number, and produces a new HBS with the chunk freed
+(check-expect (free-chunk (list (list #f #t) (list #f #t #f #f) (list #f #f #f #f #f #f #f #f)) 2 0)
+              (list (list #t #t) (list #f #f #f #f) (list #f #f #f #f #f #f #f #f)))
+
+(define (free-chunk HBS s i)
+    (abstraction HBS s i #t))
+
+
+; abstraction : HBS NonNegInteger NonNegInteger Boolean -> HBS
+; consumes a HBS, a chunk size, a starting block number, and a boolean value, and produces a new HBS
+(define (abstraction HBS s i b)
+  (initialize-hbs (set-range b (propagate HBS (last HBS)) i (+ -1 i s) 0)))
+
 
 ; propagate : HBS [List-of Boolean] -> [List-of [List-of Boolean]]
 ; Propagates the change in the HBS down the tree so all information for the HBS is encoded at the 
@@ -267,12 +283,3 @@
     [(empty? lob) '()]
     [(and (>= i start) (<= i end)) (cons b (set-range b (rest lob) start end (+ 1 i)))]
     [else (cons (first lob) (set-range b (rest lob) start end (+ 1 i)))]))
-
-
-; free-chunk : HBS NonNegInteger NonNegInteger -> HBS
-; consumes a HBS, a chunk size and starting block number, and produces a new HBS with the chunk freed
-(check-expect (free-chunk (list (list #f #t) (list #f #t #f #f) (list #f #f #f #f #f #f #f #f)) 2 0)
-              (list (list #t #t) (list #f #f #f #f) (list #f #f #f #f #f #f #f #f)))
-
-(define (free-chunk HBS s i)
-    (initialize-hbs (set-range #t (propagate HBS (last HBS)) i (+ -1 i s) 0)))
