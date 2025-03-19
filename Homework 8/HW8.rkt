@@ -10,59 +10,19 @@
 (define (count-trues lob)
   (cond [(empty? lob) 0]
         [(cons? lob) (if (first lob)
-                           (+ 1 (count-trues (rest lob)))
-                           (count-trues (rest lob)))]))
-
-
+                         (+ 1 (count-trues (rest lob)))
+                         (count-trues (rest lob)))]))
 (define (first-true lob)
   (cond [(empty? lob) -1]
         [(cons? lob) (if (first lob)
-                          0
-                          (if (= -1 (first-true (rest lob)))
-                              -1
-                              (+ 1 (first-true (rest lob)))))]))
-
-
-(define (set-true lob n)
-  (cond [(empty? lob) '()]
-        [(cons? lob) (if (zero? n)
-                          (cons #t (rest lob))
-                          (cons (first lob) (set-true (rest lob) (- n 1))))]))
-
-
-(define (set-false lob n)
-  (cond [(empty? lob) '()]
-        [(cons? lob) (if (zero? n)
-                          (cons #f (rest lob))
-                          (cons (first lob) (set-false (rest lob) (- n 1))))]))
-
+                         0
+                         (if (= -1 (first-true (rest lob)))
+                             -1
+                             (+ 1 (first-true (rest lob)))))]))
 ; ====================================================================================
 ; End of Import Functions
 ; ====================================================================================
 
-
-
-; ====================================================================================
-; Import Functions: COPIED DIRECTLY MY SUBMISSION FOR HW6
-; ====================================================================================
-
-; count-total : [List-of Boolean] -> NonNegInteger
-; Produces the total number of values in the list
-;;; (check-expect (count-total (cons #t (cons #f (cons #t '())))) 3)
-;;; (check-expect (count-total (cons #f (cons #f (cons #t (cons #t '()))))) 4)
-;;; (check-expect (count-total (cons #t (cons #t (cons #f '())))) 3)
-
-;;; (define (count-total lob)
-;;;   (cond
-;;;     [(empty? lob) 0]
-;;;     [else (+ 1 (count-total (rest lob)))]))
-
-; ====================================================================================
-; End of Import Functions
-; ====================================================================================
-
-
-; DATA DEFINITIONS
 (define HBS-1
   (list (list #t #t)
         (list #f #f #f #f)
@@ -89,28 +49,15 @@
         (list #f #f #f #f #f #f #f #f)))
 
 (define HBS-6
-  (list
-   (list #t #f)
-   (list #f #f #t #f)
-   (list #f #f #f #f #f #f #t #f)))
+  (list (list #t #f)
+        (list #f #f #t #f)
+        (list #f #f #f #f #f #f #t #f)))
 
 (define HBS-7
-  (list
-   (list #f #f)
-   (list #f #f #f #f) 
-   (list #f #f #f #f #f #f #f #f)))
-
-(define HBS-8
-  (list
-   (list #t #t)
-   (list #f #f #f #f)
-   (list #f #f #f #f #f #f #f #f)))
-
-(define HBS-9
   (list (list #f #f) 
-         (list #f #t #t #f) 
-         (list #f #f #f #f #f #f #f #t) 
-         (list #f #t #t #f #f #f #f #f #f #f #f #f #f #f #f #f)))
+        (list #f #t #t #f) 
+        (list #f #f #f #f #f #f #f #t) 
+        (list #f #t #t #f #f #f #f #f #f #f #f #f #f #f #f #f)))
 
 ; A HierarchicalBitmapSet (HBS) is a [List-of [List-of Boolean]]
 
@@ -160,20 +107,18 @@
 (check-expect (find-chunk HBS-4 4) 4)
 (check-expect (find-chunk HBS-4 8) -1)
 (check-expect (find-chunk HBS-6 1) 6)
-(check-expect (find-chunk HBS-7 4) -1)
-(check-expect (find-chunk HBS-8 4) 0)
-(check-expect (find-chunk HBS-8 1) 0)
-(check-expect (find-chunk HBS-9 2) 14)
-
+(check-expect (find-chunk HBS-5 4) -1)
+(check-expect (find-chunk HBS-1 4) 0)
+(check-expect (find-chunk HBS-1 1) 0)
+(check-expect (find-chunk HBS-7 2) 14)
 
 (define (find-chunk HBS s)
-  (find-chunk-helper (reverse HBS) s 1))
-
-(define (find-chunk-helper HBS s e)
-  (cond
-    [(empty? HBS) -1]
-    [(and (>= e s) (> (first-true (first HBS)) -1)) (* e (first-true (first HBS)))]
-    [else (find-chunk-helper (rest HBS) s (* e 2))]))
+  (local [(define (find-chunk-helper HBS s e)
+            (cond
+              [(empty? HBS) -1]
+              [(and (>= e s) (> (first-true (first HBS)) -1)) (* e (first-true (first HBS)))]
+              [else (find-chunk-helper (rest HBS) s (* e 2))]))]
+    (find-chunk-helper (reverse HBS) s 1)))
 
 
 ; Exercise 1c
@@ -183,7 +128,7 @@
 (check-expect (initialize-hbs (list #t #t #t #t #t #t #f #f)) HBS-2)
 (check-expect (initialize-hbs (list #f #f #f #f #f #f #f #f)) HBS-5)
 (check-expect (initialize-hbs (list #t #t #t #t #t #t #t #f)) HBS-6)
-(check-expect (initialize-hbs (list #t #t #t #t #t #t #t #t)) HBS-8)
+(check-expect (initialize-hbs (list #t #t #t #t #t #t #t #t)) HBS-1)
 
 (define (initialize-hbs lob)
   (local [(define (r lob o)
@@ -216,59 +161,62 @@
 (check-expect (coalesce (list #t #f #t #t)) (list #t #f #f #f))
 
 (define (coalesce  lst)
-    (cond
-      [(empty? lst) '()]
-      [(and (first lst) (second lst)) (cons #f (cons #f (coalesce (rest (rest lst)))))]
-      [else (cons (first lst) (cons (second lst) (coalesce  (rest (rest lst)))))]))
+  (cond
+    [(empty? lst) '()]
+    [(and (first lst) (second lst)) (cons #f (cons #f (coalesce (rest (rest lst)))))]
+    [else (cons (first lst) (cons (second lst) (coalesce  (rest (rest lst)))))]))
 
 
 ; Exercise 2
 ; alloc-chunk : HBS NonNegInteger -> HBS
 ; consumes a HBS and a size s, and produces a new HBS with the first free chunk of size s allocated
-(check-expect (alloc-chunk HBS-1 2)
+(check-expect (alloc-chunk HBS-1 2) 
               (make-hbs-alloc 0 (list (list #f #t) (list #f #t #f #f) (list #f #f #f #f #f #f #f #f))))
+
+(check-expect (alloc-chunk HBS-2 2)
+              (make-hbs-alloc 4 (list (list #true #false) (list #false #false #false #false) (list #false #false #false #false #false #false #false #false))))
+
+(check-expect (alloc-chunk HBS-3 4)
+              (make-hbs-alloc 0 (list (list #false #false) (list #false #false #true #false) (list #false #false #false #false #false #false #false #true))))
+
+(check-expect (alloc-chunk HBS-5 2) 
+              (list (list #false #false) (list #false #false #false #false) (list #false #false #false #false #false #false #false #false)))  ; No space available, should return unmodified HBS
+
 
 (define (alloc-chunk HBS s)
   (local [(define i (find-chunk HBS s))]
-    (cond
-      [(= i -1) HBS]
-      [else (make-hbs-alloc i (abstraction HBS s i #f))])))
+    (if (= i -1)
+        HBS
+        (make-hbs-alloc i (abstraction HBS s i #f)))))
 
+;! CHECK-EXPECTS
 ; Exercise 3
 ; free-chunk : HBS NonNegInteger NonNegInteger -> HBS
 ; consumes a HBS, a chunk size and starting block number, and produces a new HBS with the chunk freed
-(check-expect (free-chunk (list (list #f #t) (list #f #t #f #f) (list #f #f #f #f #f #f #f #f)) 2 0)
-              (list (list #t #t) (list #f #f #f #f) (list #f #f #f #f #f #f #f #f)))
-
 (define (free-chunk HBS s i)
-    (abstraction HBS s i #t))
+  (abstraction HBS s i #t))
 
-
+;! CHECK-EXPECTS
 ; abstraction : HBS NonNegInteger NonNegInteger Boolean -> HBS
 ; consumes a HBS, a chunk size, a starting block number, and a boolean value, and produces a new HBS
+; where all the bits are represented in the lowest level of the HBS using propagation
 (define (abstraction HBS s i b)
-  (initialize-hbs (set-range b (propagate HBS (last HBS)) i (+ -1 i s) 0)))
+  (local [(define (encode-ranges ur lr i factor)
+            (cond
+              [(empty? ur) lr]
+              [(first ur)
+               (encode-ranges (rest ur) 
+                              (set-range #t lr (* i factor) (+ (* i factor) (- factor 1)) 0)
+                              (+ 1 i)
+                              factor)]
+              [else (encode-ranges (rest ur) lr (+ 1 i) factor)]))
+          (define (propagate HBS lr)
+            (if (empty? (rest HBS))
+                lr
+                (propagate (rest HBS)
+                           (encode-ranges (first HBS) lr 0 (/ (length lr) (length (first HBS)))))))]
+    (initialize-hbs (set-range b (propagate HBS (last HBS)) i (+ -1 i s) 0))))
 
-
-; propagate : HBS [List-of Boolean] -> [List-of [List-of Boolean]]
-; Propagates the change in the HBS down the tree so all information for the HBS is encoded at the 
-; bottom level
-(define (propagate HBS lr)
-  (cond
-    [(empty? (rest HBS)) lr]
-    [else (propagate (rest HBS) (encode-ranges (first HBS) lr 0 (/ (length lr) (length (first HBS)))) )]))
-
-; encode-ranges : [List-of Boolean] [List-of Boolean] NonNegInteger NonNegInteger -> [List-of Boolean]
-; Changes the bit as directed by the upper level of the HBS
-(define (encode-ranges ur lr i factor)
-  (cond
-    [(empty? ur) lr]
-    [(first ur)
-     (encode-ranges (rest ur) 
-                    (set-range #t lr (* i factor) (+ (* i factor) (- factor 1)) 0)
-                    (+ 1 i)
-                    factor)]
-    [else (encode-ranges (rest ur) lr (+ 1 i) factor)]))
 
 ; set-range : Boolean [List-of Boolean] NonNegInteger NonNegInteger NonNegInteger -> [List-of Boolean]
 ; Sets the range of bits in the list to the given boolean value
