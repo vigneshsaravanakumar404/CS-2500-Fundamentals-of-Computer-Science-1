@@ -154,7 +154,7 @@
 
 ; Exercise 1b
 ; find-chunk : HBS NonNegInteger -> NonNegInteger
-; produce the index of the first block of a free chunk of the requested size
+; produce the i of the first block of a free chunk of the requested size
 (check-expect (find-chunk HBS-4 1) 1)
 (check-expect (find-chunk HBS-4 2) 2)
 (check-expect (find-chunk HBS-4 4) 4)
@@ -226,32 +226,53 @@
 ; alloc-chunk : HBS NonNegInteger -> HBS
 ; consumes a HBS and a size s, and produces a new HBS with the first free chunk of size s allocated
 (check-expect (alloc-chunk HBS-1 2)
-              (list (list #f #t) (list #f #t #f #f) (list #f #f #f #f #f #f #f #f)))
-              
+              (make-hbs-alloc 0 (list (list #f #t) (list #f #t #f #f) (list #f #f #f #f #f #f #f #f))))
+
 (define (alloc-chunk HBS s)
   (local [(define i (find-chunk HBS s))]
     (cond
       [(= i -1) HBS]
-      [else (initialize-hbs (set-range #f (move-down HBS (last HBS)) i (+ -1 i s) 0))])))
+      [else (make-hbs-alloc i (initialize-hbs (set-range #f (propagate HBS (last HBS)) i (+ -1 i s) 0)))])))
 
-(define (move-down HBS last-row)
+; propagate : HBS [List-of Boolean] -> [List-of [List-of Boolean]]
+; Propagates the change in the HBS down the tree so all information for the HBS is encoded at the 
+; bottom level
+(define (propagate HBS lr)
   (cond
-    [(empty? (rest HBS)) last-row]
-    [else (move-down (rest HBS) (encode-ranges (first HBS) last-row 0 (/ (length last-row) (length (first HBS)))) )]))
+    [(empty? (rest HBS)) lr]
+    [else (propagate (rest HBS) (encode-ranges (first HBS) lr 0 (/ (length lr) (length (first HBS)))) )]))
 
-
-(define (encode-ranges upper-row last-row index factor)
+; encode-ranges : [List-of Boolean] [List-of Boolean] NonNegInteger NonNegInteger -> [List-of Boolean]
+; Changes the bit as directed by the upper level of the HBS
+(define (encode-ranges ur lr i factor)
   (cond
-    [(empty? upper-row) last-row]
-    [(first upper-row)
-     (encode-ranges (rest upper-row) 
-                    (set-range #t last-row (* index factor) (+ (* index factor) (- factor 1)) 0)
-                    (+ 1 index)
+    [(empty? ur) lr]
+    [(first ur)
+     (encode-ranges (rest ur) 
+                    (set-range #t lr (* i factor) (+ (* i factor) (- factor 1)) 0)
+                    (+ 1 i)
                     factor)]
-    [else (encode-ranges (rest upper-row) last-row (+ 1 index) factor)]))
+    [else (encode-ranges (rest ur) lr (+ 1 i) factor)]))
 
-(define (set-range b lob start end index)
+; set-range : Boolean [List-of Boolean] NonNegInteger NonNegInteger NonNegInteger -> [List-of Boolean]
+; Sets the range of bits in the list to the given boolean value
+(check-expect (set-range #t (list #f #f #f #f #f #f #f #f) 2 4 0) (list #f #f #t #t #t #f #f #f))
+(check-expect (set-range #t (list #f #f #f #f #f #f #f #f) 0 7 0) (list #t #t #t #t #t #t #t #t))
+(check-expect (set-range #f (list #t #t #t #t #t #t #t #t) 0 0 0) (list #f #t #t #t #t #t #t #t))
+(check-expect (set-range #f (list #t #t #t #t #t #t #t #t) 7 7 0) (list #t #t #t #t #t #t #t #f))
+
+
+(define (set-range b lob start end i)
   (cond
     [(empty? lob) '()]
-    [(and (>= index start) (<= index end)) (cons b (set-range b (rest lob) start end (+ 1 index)))]
-    [else (cons (first lob) (set-range b (rest lob) start end (+ 1 index)))]))
+    [(and (>= i start) (<= i end)) (cons b (set-range b (rest lob) start end (+ 1 i)))]
+    [else (cons (first lob) (set-range b (rest lob) start end (+ 1 i)))]))
+
+
+; free-chunk : HBS NonNegInteger NonNegInteger -> HBS
+; consumes a HBS, a chunk size and starting block number, and produces a new HBS with the chunk freed
+(check-expect (free-chunk (list (list #f #t) (list #f #t #f #f) (list #f #f #f #f #f #f #f #f)) 2 0)
+              (list (list #t #t) (list #f #f #f #f) (list #f #f #f #f #f #f #f #f)))
+
+(define (free-chunk HBS s i)
+    (initialize-hbs (set-range #t (propagate HBS (last HBS)) i (+ -1 i s) 0)))
