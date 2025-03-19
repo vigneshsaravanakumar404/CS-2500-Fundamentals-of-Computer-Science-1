@@ -10,7 +10,7 @@
 (define (count-trues lob)
   (cond [(empty? lob) 0]
         [(cons? lob) (if (first lob)
-                           (add1 (count-trues (rest lob)))
+                           (+ 1 (count-trues (rest lob)))
                            (count-trues (rest lob)))]))
 
 
@@ -20,21 +20,21 @@
                           0
                           (if (= -1 (first-true (rest lob)))
                               -1
-                              (add1 (first-true (rest lob)))))]))
+                              (+ 1 (first-true (rest lob)))))]))
 
 
 (define (set-true lob n)
   (cond [(empty? lob) '()]
         [(cons? lob) (if (zero? n)
                           (cons #t (rest lob))
-                          (cons (first lob) (set-true (rest lob) (sub1 n))))]))
+                          (cons (first lob) (set-true (rest lob) (- n 1))))]))
 
 
 (define (set-false lob n)
   (cond [(empty? lob) '()]
         [(cons? lob) (if (zero? n)
                           (cons #f (rest lob))
-                          (cons (first lob) (set-false (rest lob) (sub1 n))))]))
+                          (cons (first lob) (set-false (rest lob) (- n 1))))]))
 
 ; ====================================================================================
 ; End of Import Functions
@@ -232,34 +232,26 @@
   (local [(define i (find-chunk HBS s))]
     (cond
       [(= i -1) HBS]
-      [else (initialize-hbs (set-range-false (encode-all-in-last-row HBS (last HBS)) i (+ -1 i s) 0))])))
+      [else (initialize-hbs (set-range #f (move-down HBS (last HBS)) i (+ -1 i s) 0))])))
 
-(define (encode-all-in-last-row HBS last-row)
+(define (move-down HBS last-row)
   (cond
     [(empty? (rest HBS)) last-row]
-    [else (encode-all-in-last-row (rest HBS) (encode-all-in-last-row-helper (first HBS) last-row))]))
+    [else (move-down (rest HBS) (encode-ranges (first HBS) last-row 0 (/ (length last-row) (length (first HBS)))) )]))
 
-(define (encode-all-in-last-row-helper upper-row last-row)
-  (encode-ranges upper-row last-row 0 (/ (length last-row) (length upper-row))))
 
 (define (encode-ranges upper-row last-row index factor)
   (cond
     [(empty? upper-row) last-row]
     [(first upper-row)
      (encode-ranges (rest upper-row) 
-                    (set-range-true last-row (* index factor) (+ (* index factor) (sub1 factor)) 0)
-                    (add1 index)
+                    (set-range #t last-row (* index factor) (+ (* index factor) (- factor 1)) 0)
+                    (+ 1 index)
                     factor)]
-    [else (encode-ranges (rest upper-row) last-row (add1 index) factor)]))
+    [else (encode-ranges (rest upper-row) last-row (+ 1 index) factor)]))
 
-(define (set-range-true lob start end index)
+(define (set-range b lob start end index)
   (cond
     [(empty? lob) '()]
-    [(and (>= index start) (<= index end)) (cons #t (set-range-true (rest lob) start end (add1 index)))]
-    [else (cons (first lob) (set-range-true (rest lob) start end (add1 index)))]))
-  
-(define (set-range-false lob start end index)
-  (cond
-    [(empty? lob) '()]
-    [(and (>= index start) (<= index end)) (cons #f (set-range-false (rest lob) start end (add1 index)))]
-    [else (cons (first lob) (set-range-false (rest lob) start end (add1 index)))]))
+    [(and (>= index start) (<= index end)) (cons b (set-range b (rest lob) start end (+ 1 index)))]
+    [else (cons (first lob) (set-range b (rest lob) start end (+ 1 index)))]))
