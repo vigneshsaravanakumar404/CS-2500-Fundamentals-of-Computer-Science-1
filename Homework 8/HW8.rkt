@@ -26,7 +26,7 @@
 (define (set-true lob n)
   (cond [(empty? lob) '()]
         [(cons? lob) (if (zero? n)
-                          (cons #true (rest lob))
+                          (cons #t (rest lob))
                           (cons (first lob) (set-true (rest lob) (sub1 n))))]))
 
 
@@ -48,9 +48,9 @@
 
 ; count-total : [List-of Boolean] -> NonNegInteger
 ; Produces the total number of values in the list
-;;; (check-expect (count-total (cons #true (cons #f (cons #true '())))) 3)
-;;; (check-expect (count-total (cons #f (cons #f (cons #true (cons #true '()))))) 4)
-;;; (check-expect (count-total (cons #true (cons #true (cons #f '())))) 3)
+;;; (check-expect (count-total (cons #t (cons #f (cons #t '())))) 3)
+;;; (check-expect (count-total (cons #f (cons #f (cons #t (cons #t '()))))) 4)
+;;; (check-expect (count-total (cons #t (cons #t (cons #f '())))) 3)
 
 ;;; (define (count-total lob)
 ;;;   (cond
@@ -108,9 +108,9 @@
 
 (define HBS-9
   (list (list #f #f) 
-         (list #f #true #true #f) 
-         (list #f #f #f #f #f #f #f #true) 
-         (list #f #true #true #f #f #f #f #f #f #f #f #f #f #f #f #f)))
+         (list #f #t #t #f) 
+         (list #f #f #f #f #f #f #f #t) 
+         (list #f #t #t #f #f #f #f #f #f #f #f #f #f #f #f #f)))
 
 ; A HierarchicalBitmapSet (HBS) is a [List-of [List-of Boolean]]
 
@@ -159,22 +159,22 @@
 (check-expect (find-chunk HBS-4 2) 2)
 (check-expect (find-chunk HBS-4 4) 4)
 (check-expect (find-chunk HBS-4 8) -1)
-(check-expect (find-chunk HBS-5 1) -1)
-(check-expect (find-chunk HBS-5 2) -1)
-(check-expect (find-chunk HBS-5 4) -1)
 (check-expect (find-chunk HBS-6 1) 6)
 (check-expect (find-chunk HBS-7 4) -1)
 (check-expect (find-chunk HBS-8 4) 0)
+(check-expect (find-chunk HBS-8 1) 0)
+(check-expect (find-chunk HBS-9 2) 14)
 
 
 (define (find-chunk HBS s)
-  (local [(define expected (expt 2 (- (length HBS) 1)))]
-    (cond
-      [(empty? HBS) -1]
-      [(and (= s expected) (> (count-trues (first HBS)) 0)) 
-       (* (first-true (first HBS)) expected)]
-      [else (find-chunk (rest HBS) s)])))
-    
+  (find-chunk-helper (reverse HBS) s 1))
+
+(define (find-chunk-helper HBS s e)
+  (cond
+    [(empty? HBS) -1]
+    [(and (>= e s) (> (first-true (first HBS)) -1)) (* e (first-true (first HBS)))]
+    [else (find-chunk-helper (rest HBS) s (* e 2))]))
+
 
 ; Exercise 1c
 ; initialize-hbs : [List-of Boolean] -> HBS
@@ -225,39 +225,41 @@
 ; Exercise 2
 ; alloc-chunk : HBS NonNegInteger -> HBS
 ; consumes a HBS and a size s, and produces a new HBS with the first free chunk of size s allocated
-;;; (check-expect (alloc-chunk (list (list #f #t) (list #f #t #f #f) (list #f #t #f #f #f #f #f #f)) 2)
-;;;               (list (list #f #t) (list #f #f #f #f) (list #f #t #f #f #f #f #f #f)))
+(check-expect (alloc-chunk HBS-1 2)
+              (list (list #f #t) (list #f #t #f #f) (list #f #f #f #f #f #f #f #f)))
+              
 (define (alloc-chunk HBS s)
-  (cond
-    [(= (find-chunk HBS s) -1) HBS]
-    [else (represental-all-in-last-row HBS (set-false-range (last HBS) (find-chunk HBS s) s))]))
-    
-(define (represental-all-in-last-row HBS Lob)
-  (cond
-    [(empty? (rest HBS)) Lob]
-    [else (represental-all-in-last-row (rest HBS) (execute 0 (/ (length Lob) (length (first HBS))) (first HBS) Lob))]))
+  (local [(define i (find-chunk HBS s))]
+    (cond
+      [(= i -1) HBS]
+      [else (initialize-hbs (set-range-false (encode-all-in-last-row HBS (last HBS)) i (+ -1 i s) 0))])))
 
-(define (execute i n lob1 lob2)
+(define (encode-all-in-last-row HBS last-row)
   (cond
-    [(empty? lob1) '()]
-    [(first lob1) (execute (add1 i) n (rest lob1) (set-true-range (rest lob2) i n))]
-    [else (execute (add1 i) n (rest lob1) (set-false-range (rest lob2) i n))]))
+    [(empty? (rest HBS)) last-row]
+    [else (encode-all-in-last-row (rest HBS) (encode-all-in-last-row-helper (first HBS) last-row))]))
 
-(define (set-false-range lst start count)
+(define (encode-all-in-last-row-helper upper-row last-row)
+  (encode-ranges upper-row last-row 0 (/ (length last-row) (length upper-row))))
+
+(define (encode-ranges upper-row last-row index factor)
   (cond
-    [(empty? lst) '()]  ; Base case: empty list
-    [(zero? count) lst]  ; Stop modifying once count reaches zero
-    [(= start 0) (cons #f (set-false-range (rest lst) 0 (- count 1)))]  ; Start setting #t
-    [else (cons (first lst) (set-false-range (rest lst) (- start 1) count))]))  ; Decrement start
+    [(empty? upper-row) last-row]
+    [(first upper-row)
+     (encode-ranges (rest upper-row) 
+                    (set-range-true last-row (* index factor) (+ (* index factor) (sub1 factor)) 0)
+                    (add1 index)
+                    factor)]
+    [else (encode-ranges (rest upper-row) last-row (add1 index) factor)]))
 
-(define (set-true-range lst start count)
+(define (set-range-true lob start end index)
   (cond
-    [(empty? lst) '()]  ; Base case: empty list
-    [(zero? count) lst]  ; Stop modifying once count reaches zero
-    [(= start 0) (cons #t (set-true-range (rest lst) 0 (- count 1)))]  ; Start setting #t
-    [else (cons (first lst) (set-true-range (rest lst) (- start 1) count))]))  ; Decrement start
-
-(alloc-chunk (list (list #f #t) (list #f #t #f #f) (list #f #t #f #f #f #f #f #f)) 2)
-(find-chunk (list (list #f #t) (list #f #t #f #f) (list #f #t #f #f #f #f #f #f)) 2)
-(alloc-chunk HBS-9 2)
-(find-chunk HBS-9 2)
+    [(empty? lob) '()]
+    [(and (>= index start) (<= index end)) (cons #t (set-range-true (rest lob) start end (add1 index)))]
+    [else (cons (first lob) (set-range-true (rest lob) start end (add1 index)))]))
+  
+(define (set-range-false lob start end index)
+  (cond
+    [(empty? lob) '()]
+    [(and (>= index start) (<= index end)) (cons #f (set-range-false (rest lob) start end (add1 index)))]
+    [else (cons (first lob) (set-range-false (rest lob) start end (add1 index)))]))
