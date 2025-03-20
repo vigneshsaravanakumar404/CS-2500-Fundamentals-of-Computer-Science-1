@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname HW8) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+#reader(lib "htdp-advanced-reader.ss" "lang")((modname HW8) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f () #f)))
 (require racket/list)
 
 ; ====================================================================================
@@ -91,6 +91,8 @@
 (check-expect (blocks-remaining HBS-3) 7)
 (check-expect (blocks-remaining HBS-2) 6)
 (check-expect (blocks-remaining HBS-4) 7)
+(check-expect (blocks-remaining (list (list #t))) 1)
+(check-expect (blocks-remaining (list (list #f))) 0)
 
 (define (blocks-remaining HBS)
   (cond
@@ -111,6 +113,8 @@
 (check-expect (find-chunk HBS-1 4) 0)
 (check-expect (find-chunk HBS-1 1) 0)
 (check-expect (find-chunk HBS-7 2) 14)
+(check-expect (find-chunk (list (list #f)) 2) -1)
+
 
 (define (find-chunk HBS s)
   (local [(define (find-chunk-helper HBS s e)
@@ -121,6 +125,7 @@
     (find-chunk-helper (reverse HBS) s 1)))
 
 
+
 ; Exercise 1c
 ; initialize-hbs : [List-of Boolean] -> HBS
 ; consumes a single bitmap of the free blocks on a drive, and produces the corresponding HBS 
@@ -129,13 +134,33 @@
 (check-expect (initialize-hbs (list #f #f #f #f #f #f #f #f)) HBS-5)
 (check-expect (initialize-hbs (list #t #t #t #t #t #t #t #f)) HBS-6)
 (check-expect (initialize-hbs (list #t #t #t #t #t #t #t #t)) HBS-1)
+(check-expect (initialize-hbs (list #f #f)) (list (list #f #f)))
+(check-expect (initialize-hbs (list #f)) (list #f))
+(check-expect (initialize-hbs
+               (list #t #t #t #t #t #t #t #t)) (list
+                                                (list #t #t)
+                                                (list #f #f #f #f)
+                                                (list #f #f #f #f #f #f #f #f)))
+(check-expect (initialize-hbs
+               (list #f #f #f #f #f #f #f #f))  (list
+                                                 (list #f #f)
+                                                 (list #f #f #f #f) 
+                                                 (list #f #f #f #f #f #f #f #f)))
+(check-expect (initialize-hbs
+               (list #t #t #t #t #t #t #t #f)) (list
+                                                (list #t #f)
+                                                (list #f #f #t #f)
+                                                (list #f #f #f #f #f #f #t #f)))
+
 
 (define (initialize-hbs lob)
   (local [(define (r lob o)
             (cond
               [(= (length lob) 2) (cons lob o)]
               [else (r (pairwise-and lob) (cons (coalesce lob) o))]))]
-    (r lob '())))
+    (cond
+      [(< (length lob) 2) lob]
+      [else (r lob '())])))
 
 ; pairwise-and : [List-of Boolean] -> [List-of Boolean]
 ; consumes a list of booleans and produces a list of booleans 1/2 the size of the input list 
@@ -171,16 +196,26 @@
 ; alloc-chunk : HBS NonNegInteger -> HBS
 ; consumes a HBS and a size s, and produces a new HBS with the first free chunk of size s allocated
 (check-expect (alloc-chunk HBS-1 2) 
-              (make-hbs-alloc 0 (list (list #f #t) (list #f #t #f #f) (list #f #f #f #f #f #f #f #f))))
+              (make-hbs-alloc 0 (list (list #f #t)
+                                      (list #f #t #f #f)
+                                      (list #f #f #f #f #f #f #f #f))))
 
 (check-expect (alloc-chunk HBS-2 2)
-              (make-hbs-alloc 4 (list (list #true #false) (list #false #false #false #false) (list #false #false #false #false #false #false #false #false))))
+              (make-hbs-alloc 4
+                              (list (list #true #false)
+                                    (list #false #false #false #false)
+                                    (list #false #false #false #false #false #false #false #false))))
 
 (check-expect (alloc-chunk HBS-3 4)
-              (make-hbs-alloc 0 (list (list #false #false) (list #false #false #true #false) (list #false #false #false #false #false #false #false #true))))
+              (make-hbs-alloc 0
+                              (list (list #false #false)
+                                    (list #false #false #true #false)
+                                    (list #false #false #false #false #false #false #false #true))))
 
 (check-expect (alloc-chunk HBS-5 2) 
-              (list (list #false #false) (list #false #false #false #false) (list #false #false #false #false #false #false #false #false)))  ; No space available, should return unmodified HBS
+              (list (list #false #false)
+                    (list #false #false #false #false)
+                    (list #false #false #false #false #false #false #false #false)))
 
 
 (define (alloc-chunk HBS s)
@@ -189,19 +224,35 @@
         HBS
         (make-hbs-alloc i (abstraction HBS s i #f)))))
 
-;! CHECK-EXPECTS
+;! 4 MORE CHECK-EXPECTS
 ; Exercise 3
 ; free-chunk : HBS NonNegInteger NonNegInteger -> HBS
 ; consumes a HBS, a chunk size and starting block number, and produces a new HBS with the chunk freed
 (define (free-chunk HBS s i)
   (abstraction HBS s i #t))
 
-;! CHECK-EXPECTS
+;! 2 MORE CHECK-EXPECTS
 ; abstraction : HBS NonNegInteger NonNegInteger Boolean -> HBS
 ; consumes a HBS, a chunk size, a starting block number, and a boolean value, and produces a new HBS
-; where all the bits are represented in the lowest level of the HBS using propagation
+; where all the bits are represented in the lowest level of the HBS using propagation then the 
+; HBS is reconstructed from the bottom up
+(check-expect (abstraction HBS-1 2 (find-chunk HBS-1 2) #f) 
+              (list (list #false #true)
+                    (list #false #true #false #false)
+                    (list #false #false #false #false #false #false #false #false)))
+
+(check-expect (abstraction HBS-2 2 (find-chunk HBS-2 2) #f)
+              (list (list #true #false)
+                    (list #false #false #false #false)
+                    (list #false #false #false #false #false #false #false #false)))
+
 (define (abstraction HBS s i b)
-  (local [(define (encode-ranges ur lr i factor)
+  (local [
+          ; encode-ranges : [List-of [List-of Boolean]] [List-of Boolean] NonNegInteger 
+          ; NonNegInteger -> [List-of Boolean]
+          ; Given a list that needs to be represented in the bottom level of the HBS and the bottom
+          ; row, this function will convert those ranges to the bottom level of the HBS
+          (define (encode-ranges ur lr i factor)
             (cond
               [(empty? ur) lr]
               [(first ur)
@@ -210,6 +261,8 @@
                               (+ 1 i)
                               factor)]
               [else (encode-ranges (rest ur) lr (+ 1 i) factor)]))
+          ; propagate : [List-of [List-of Boolean]] [List-of Boolean] -> [List-of Boolean]
+          ; Places all taken blocks in the lowest level of the HBS
           (define (propagate HBS lr)
             (if (empty? (rest HBS))
                 lr
