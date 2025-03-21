@@ -1,8 +1,6 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-advanced-reader.ss" "lang")((modname HW8) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f () #f)))
-(require racket/list)
-
+#reader(lib "htdp-intermediate-reader.ss" "lang")((modname HW8) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 ; ====================================================================================
 ; Import Functions: COPIED DIRECTLY FROM HW6-DISTRIB.RKT
 ; Design recipes are not included for this section because it is copied 
@@ -10,7 +8,7 @@
 (define (count-trues lob)
   (cond [(empty? lob) 0]
         [(cons? lob) (if (first lob)
-                         (+ 1 (count-trues (rest lob)))
+                         (add1 (count-trues (rest lob)))
                          (count-trues (rest lob)))]))
 (define (first-true lob)
   (cond [(empty? lob) -1]
@@ -18,7 +16,7 @@
                          0
                          (if (= -1 (first-true (rest lob)))
                              -1
-                             (+ 1 (first-true (rest lob)))))]))
+                             (add1 (first-true (rest lob)))))]))
 ; ====================================================================================
 ; End of Import Functions
 ; ====================================================================================
@@ -201,77 +199,131 @@
 
 (check-expect (alloc-chunk HBS-2 2)
               (make-hbs-alloc 4
-                              (list (list #true #false)
-                                    (list #false #false #false #false)
-                                    (list #false #false #false #false #false #false #false #false))))
+                              (list (list #t #f)
+                                    (list #f #f #f #f)
+                                    (list #f #f #f #f #f #f #f #f))))
 
 (check-expect (alloc-chunk HBS-3 4)
               (make-hbs-alloc 0
-                              (list (list #false #false)
-                                    (list #false #false #true #false)
-                                    (list #false #false #false #false #false #false #false #true))))
+                              (list (list #f #f)
+                                    (list #f #f #t #f)
+                                    (list #f #f #f #f #f #f #f #t))))
 
-(check-expect (alloc-chunk HBS-5 2) 
-              (list (list #false #false)
-                    (list #false #false #false #false)
-                    (list #false #false #false #false #false #false #false #false)))
 
+(check-expect (alloc-chunk (list (list #f #f)
+                                 (list #f #f #f #f)
+                                 (list #f #f #f #f #f #f #f #f)) 2) 
+              (make-hbs-alloc -1
+                              (list (list #f #f)
+                                    (list #f #f #f #f)
+                                    (list #f #f #f #f #f #f #f #f))))
 
 (define (alloc-chunk HBS s)
   (local [(define i (find-chunk HBS s))]
     (if (= i -1)
-        HBS
+        (make-hbs-alloc -1 HBS)
         (make-hbs-alloc i (abstraction HBS s i #f)))))
 
-;! 4 MORE CHECK-EXPECTS
 ; Exercise 3
 ; free-chunk : HBS NonNegInteger NonNegInteger -> HBS
 ; consumes a HBS, a chunk size and starting block number, and produces a new HBS with the chunk freed
+(check-expect (free-chunk (list (list #f #t) 
+                                (list #f #f #t #t) 
+                                (list #f #f #f #f #t #t #f #f)) 
+                          2 4)
+              (list (list #false #t)
+                    (list #false #false #false #false)
+                    (list #false #false #false #false #false #false #false #false)))
+
+(check-expect (free-chunk (list (list #t #f) 
+                                (list #t #t #f #f) 
+                                (list #t #t #t #t #f #f #t #t)) 
+                          2 4)
+              (list (list #t #t)
+                    (list #false #false #false #false)
+                    (list #false #false #false #false #false #false #false #false))) 
+(check-expect (free-chunk (list (list #t #f) 
+                                (list #f #f #f #f) 
+                                (list #f #f #f #f #t #f #f #f)) 
+                          2 6)
+              (list (list #t #false)
+                    (list #false #false #false #t)
+                    (list #false #false #false #false #t #false #false #false)))
+
+(check-expect (free-chunk (list (list #f #f) 
+                                (list #f #f #f #f) 
+                                (list #f #f #f #f #f #f #f #f)) 
+                          4 0)
+              (list (list #t #false)
+                    (list #false #false #false #false)
+                    (list #false #false #false #false #false #false #false #false))) 
+
+
 (define (free-chunk HBS s i)
   (abstraction HBS s i #t))
 
-;! 2 MORE CHECK-EXPECTS
 ; abstraction : HBS NonNegInteger NonNegInteger Boolean -> HBS
 ; consumes a HBS, a chunk size, a starting block number, and a boolean value, and produces a new HBS
 ; where all the bits are represented in the lowest level of the HBS using propagation then the 
 ; HBS is reconstructed from the bottom up
 (check-expect (abstraction HBS-1 2 (find-chunk HBS-1 2) #f) 
-              (list (list #false #true)
-                    (list #false #true #false #false)
-                    (list #false #false #false #false #false #false #false #false)))
+              (list (list #f #t)
+                    (list #f #t #f #f)
+                    (list #f #f #f #f #f #f #f #f)))
 
 (check-expect (abstraction HBS-2 2 (find-chunk HBS-2 2) #f)
-              (list (list #true #false)
+              (list (list #t #f)
+                    (list #f #f #f #f)
+                    (list #f #f #f #f #f #f #f #f)))
+
+(check-expect (abstraction HBS-5
+                           4
+                           0
+                           #t)
+              (list (list #t #false)
                     (list #false #false #false #false)
                     (list #false #false #false #false #false #false #false #false)))
 
-(define (abstraction HBS s i b)
+(check-expect (abstraction (list (list #t #false)
+                                 (list #false #false #false #t)
+                                 (list #false #false #false #false #t #false #false #false))
+                           2
+                           6
+                           #t)
+              (list (list #t #false)
+                    (list #false #false #false #t)
+                    (list #false #false #false #false #t #false #false #false)))
+
+(define (abstraction HBS start i b)
   (local [
           ; encode-ranges : [List-of [List-of Boolean]] [List-of Boolean] NonNegInteger 
           ; NonNegInteger -> [List-of Boolean]
-          ; Given a list that needs to be represented in the bottom level of the HBS and the bottom
-          ; row, this function will convert those ranges to the bottom level of the HBS
-          (define (encode-ranges ur lr i factor)
+          ; Given a lob and the bottom row of the HBS, the function encodes that row into the bottom 
+          ; row
+          (define (encode-ranges row lower-row i ratio)
             (cond
-              [(empty? ur) lr]
-              [(first ur)
-               (encode-ranges (rest ur) 
-                              (set-range #t lr (* i factor) (+ (* i factor) (- factor 1)) 0)
+              [(empty? row) lower-row]
+              [(first row)
+               (encode-ranges (rest row) 
+                              (set-range #t lower-row (* i ratio) (+ (* i ratio) (- ratio 1)) 0)
                               (+ 1 i)
-                              factor)]
-              [else (encode-ranges (rest ur) lr (+ 1 i) factor)]))
+                              ratio)]
+              [else (encode-ranges (rest row) lower-row (+ 1 i) ratio)]))
+              
           ; propagate : [List-of [List-of Boolean]] [List-of Boolean] -> [List-of Boolean]
-          ; Places all taken blocks in the lowest level of the HBS
-          (define (propagate HBS lr)
+          ; Iterates through the HBS and calls each row to encode-ranges so that that row can be 
+          ; represented in the bottom row. Also passes in the ratio of the current row to the bottom 
+          ; row
+          (define (propagate HBS lower-row)
             (if (empty? (rest HBS))
-                lr
+                lower-row
                 (propagate (rest HBS)
-                           (encode-ranges (first HBS) lr 0 (/ (length lr) (length (first HBS)))))))]
-    (initialize-hbs (set-range b (propagate HBS (last HBS)) i (+ -1 i s) 0))))
+                           (encode-ranges (first HBS) lower-row 0 (/ (length lower-row) (length (first HBS)))))))]
+    (initialize-hbs (set-range b (propagate HBS (last HBS)) i (+ -1 i start) 0))))
 
 
 ; set-range : Boolean [List-of Boolean] NonNegInteger NonNegInteger NonNegInteger -> [List-of Boolean]
-; Sets the range of bits in the list to the given boolean value
+; Sets a range of values in a list to a given value specified by the boolean
 (check-expect (set-range #t (list #f #f #f #f #f #f #f #f) 2 4 0) (list #f #f #t #t #t #f #f #f))
 (check-expect (set-range #t (list #f #f #f #f #f #f #f #f) 0 7 0) (list #t #t #t #t #t #t #t #t))
 (check-expect (set-range #f (list #t #t #t #t #t #t #t #t) 0 0 0) (list #f #t #t #t #t #t #t #t))
@@ -281,5 +333,19 @@
 (define (set-range b lob start end i)
   (cond
     [(empty? lob) '()]
-    [(and (>= i start) (<= i end)) (cons b (set-range b (rest lob) start end (+ 1 i)))]
+    [(and (>= i start) (<= i end)) (cons b (set-range b (rest lob) start end (+ 1 i)))] 
     [else (cons (first lob) (set-range b (rest lob) start end (+ 1 i)))]))
+
+
+
+; last : [List-of X] -> X
+; Produces the last element of a list
+(check-expect (last (list 1 2 3 4 5)) 5)
+(check-expect (last (list 1 2 3 4)) 4)
+(check-expect (last (list 1 2 3)) 3)
+
+(define (last list)
+  (first (reverse list)))
+
+
+(alloc-chunk (list (list #t #f) (list #f #f #f #t)) 1)
