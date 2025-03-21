@@ -51,12 +51,6 @@
 ; Exercise 3
 #|
 
-
-;; The first three lines of this file were inserted by DrRacket. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-reader.ss" "lang")((modname L22_P2-hw8-hints) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
-
-
 Starting with the following layout for the allocation of disk space:
 
 +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
