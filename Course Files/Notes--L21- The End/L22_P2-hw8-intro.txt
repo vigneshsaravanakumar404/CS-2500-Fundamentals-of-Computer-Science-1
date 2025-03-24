@@ -1,0 +1,86 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-intermediate-reader.ss" "lang")((modname hw8-intro) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+
+[This lecture (part 2) was given March 12 (Wed.), *before* the main lecture--lambda--
+which was covered March 13 (Thu.).
+A recording is available at:
+https://northeastern.zoom.us/rec/share/KpA-1OzChK5Ye-mgAEHiTsv_g3E3a644-WHzDK-tA7Eyng67iSBYAQjXjqprSis.eC0cecFkGP66RN_s
+Passcode: Uy$1dS.7
+]
+
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|               0               |               1               |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|       1       |       0       |       0       |       0       |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|   0   |   0   |   1   |   0   |   0   |   0   |   0   |   0   |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+
+
+Simplifying assumptions:
+1. Always a power-of-2 number of blocks being managed
+   (therefore, every level will have even number of chunks
+    (actually, exactly power-of-2))
+2. Top level will have at least 2 chunks
+
+===============================================================================
+
+; A ListOfBoolPairs (LoBP) is one of:
+; - '()
+; - (cons Boolean (cons Boolean ListOfBoolPairs))
+; Represents an empty list, or the first pair of Booleans in an
+; even-length list of Bools,
+(define LOBP-0 '())
+(define LOBP-1 (list #false #false))
+(define LOBP-2 (append (list #true #true) LOBP-1))
+(define LOBP-3 (append (list #true #false) LOBP-2))
+(define LOBP-4 (append (list #false #false) LOBP-3))
+; LOBP-4 = (list #false #false #true #true #true #false #false #false)
+
+(define (lobp-temp lobp)
+  (...
+   (cond [(empty? lobp) ...]
+         [(cons? lobp) (... (first lobp) ...
+                           (first (rest lobp)) ...
+                           (lobp-temp (rest (rest lobp))) ...)])))
+
+(define BB-1 (list (list #f #t)
+                   (list #t #f #f #f)
+                   (list #f #f #t #f #f #f #f #f)
+                   (list #f #f #f #f #f #f #f #t #f #f #f #f #f #f #f #f)))
+
+===============================================================================
+
+Some simplifying brainstorming:
+Representation:
+The "unique bit" approach above is much better than the alternative of
+every level having a bit for each free chunk: only have to propagate upwards,
+never downwards (except for splitting)
+
+Allocation:
+Most direct approach:
+1. Recurse down to desired level, then allocate, or fail
+2. At levels above desired, need to then detect errors, and do split...
+   which requires recursing downwards again
+Better approach: phased
+Phase 1:
+1. Just SEARCH for available chunk, by recursing down to desired level
+2. At levels above desired, if recursion failed, just search this level
+
+Phase 2:
+If phase 1 failed, return failure; else
+Recurse down to desired level, splitting chunks along the way
+At desired level, turn off allocated chunk
+
+Freeing:
+Have to coalesce: but passing information about what was freed up at lower
+level, and therefore what upper levels might then have to coalesce, is difficult.
+Easier to just post-normalize each level--how to do this easily?
+Be careful of edge cases
+
+Other Hints:
+Consider the various functions we are having you define. We are not assigning
+anything superfluous, so consider reusing the various functions as helpers
