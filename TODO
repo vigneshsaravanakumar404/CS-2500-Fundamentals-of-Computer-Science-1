@@ -4,3 +4,8 @@ Check Before Each Submission:
   - Missing interpretation
   - Missing Tests
   - Template Error
+
+HOMEWORK 8:
+  - Check frequent mistakes
+  - Check for data definitions
+  - Check if there is enough check-expects

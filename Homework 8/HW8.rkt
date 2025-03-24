@@ -114,9 +114,7 @@
 
 
 (define (find-chunk HBS s)
-  (local [; find-chunk-helper : HBS NonNegInteger NonNegInteger -> NonNegInteger
-          ; recursive method to find the first block of a free chunk of the requested size
-          (define (find-chunk-helper HBS s e)
+  (local [(define (find-chunk-helper HBS s e)
             (cond
               [(empty? HBS) -1]
               [(and (>= e s) (> (first-true (first HBS)) -1)) (* e (first-true (first HBS)))]
@@ -153,16 +151,13 @@
 
 
 (define (initialize-hbs lob)
-  (local [; recursion-helper : [List-of Boolean] [List-of [List-of Boolean]] -> 
-          ; [List-of [List-of Boolean]]
-          ; recursively builds the HBS from the bottom up
-          (define (recursion-helper lob o)
+  (local [(define (r lob o)
             (cond
               [(= (length lob) 2) (cons lob o)]
-              [else (recursion-helper (pairwise-and lob) (cons (coalesce lob) o))]))]
+              [else (r (pairwise-and lob) (cons (coalesce lob) o))]))]
     (cond
       [(< (length lob) 2) lob]
-      [else (recursion-helper lob '())])))
+      [else (r lob '())])))
 
 ; pairwise-and : [List-of Boolean] -> [List-of Boolean]
 ; consumes a list of booleans and produces a list of booleans 1/2 the size of the input list 
@@ -187,7 +182,7 @@
 (check-expect (coalesce (list #t #f #t #f)) (list #t #f #t #f))
 (check-expect (coalesce (list #t #f #t #t)) (list #t #f #f #f))
 
-(define (coalesce lst)
+(define (coalesce  lst)
   (cond
     [(empty? lst) '()]
     [(and (first lst) (second lst)) (cons #f (cons #f (coalesce (rest (rest lst)))))]
@@ -195,7 +190,7 @@
 
 
 ; Exercise 2
-; alloc-chunk : HBS NonNegInteger -> HBSAllocResult
+; alloc-chunk : HBS NonNegInteger -> HBS
 ; consumes a HBS and a size s, and produces a new HBS with the first free chunk of size s allocated
 (check-expect (alloc-chunk HBS-1 2) 
               (make-hbs-alloc 0 (list (list #f #t)
@@ -225,9 +220,9 @@
 
 (define (alloc-chunk HBS s)
   (local [(define i (find-chunk HBS s))]
-    (cond
-      [(= i -1) (make-hbs-alloc -1 HBS)]
-      [else (make-hbs-alloc i (abstraction HBS s i #f))])))
+    (if (= i -1)
+        (make-hbs-alloc -1 HBS)
+        (make-hbs-alloc i (abstraction HBS s i #f)))))
 
 ; Exercise 3
 ; free-chunk : HBS NonNegInteger NonNegInteger -> HBS
@@ -300,29 +295,30 @@
 
 (define (abstraction HBS start i b)
   (local [
-          ; normalize : [List-of [List-of Boolean]] [List-of Boolean] NonNegInteger 
+          ; encode-ranges : [List-of [List-of Boolean]] [List-of Boolean] NonNegInteger 
           ; NonNegInteger -> [List-of Boolean]
-          ; Given a lob and the target row of the HBS, the function compares that row to the top row
-          (define (normalize row lower-row i ratio)
+          ; Given a lob and the bottom row of the HBS, the function encodes that row into the bottom 
+          ; row
+          (define (encode-ranges row lower-row i ratio)
             (cond
               [(empty? row) lower-row]
               [(first row)
-               (normalize (rest row) 
-                          (set-range #t lower-row (* i ratio) (+ (* i ratio) (- ratio 1)) 0)
-                          (+ 1 i)
-                          ratio)]
-              [else (normalize (rest row) lower-row (+ 1 i) ratio)]))
+               (encode-ranges (rest row) 
+                              (set-range #t lower-row (* i ratio) (+ (* i ratio) (- ratio 1)) 0)
+                              (+ 1 i)
+                              ratio)]
+              [else (encode-ranges (rest row) lower-row (+ 1 i) ratio)]))
               
-          ; propagate-up : [List-of [List-of Boolean]] [List-of Boolean] -> [List-of Boolean]
-          ; Iterates through the HBS and calls each row to normalize so that that row can be 
+          ; propagate : [List-of [List-of Boolean]] [List-of Boolean] -> [List-of Boolean]
+          ; Iterates through the HBS and calls each row to encode-ranges so that that row can be 
           ; represented in the bottom row. Also passes in the ratio of the current row to the bottom 
           ; row
-          (define (propagate-up HBS lower-row)
-            (local [(define ratio (/ (length lower-row) (length (first HBS))))]
-              (cond
-                [(empty? (rest HBS)) lower-row]
-                [else (propagate-up (rest HBS) (normalize (first HBS) lower-row 0 ratio))])))]
-    (initialize-hbs (set-range b (propagate-up HBS (last HBS)) i (+ -1 i start) 0))))
+          (define (propagate HBS lower-row)
+            (if (empty? (rest HBS))
+                lower-row
+                (propagate (rest HBS)
+                           (encode-ranges (first HBS) lower-row 0 (/ (length lower-row) (length (first HBS)))))))]
+    (initialize-hbs (set-range b (propagate HBS (last HBS)) i (+ -1 i start) 0))))
 
 
 ; set-range : Boolean [List-of Boolean] NonNegInteger NonNegInteger NonNegInteger -> [List-of Boolean]
@@ -347,3 +343,6 @@
 
 (define (last list)
   (first (reverse list)))
+
+
+(alloc-chunk (list (list #t #f) (list #f #f #f #t)) 1)
