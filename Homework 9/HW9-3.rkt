@@ -1,9 +1,9 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-reader.ss" "lang")((modname HW8) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+#reader(lib "htdp-intermediate-reader.ss" "lang")((modname HW9-3) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 
 
-; ======================================== BEGIN IMPORTS =================================================
+; ======================================== BEGIN IMPORTS ========================================
 (define-struct student [name nuid])
 ; A Student is a (make-student String Number)
 ; Interpretation: (make-student name nuid) represents a student.
@@ -45,4 +45,25 @@
 (define EX-STUDENT-GRADES-1 (make-student-grades "Alice" (list 95 65)))
 (define EX-STUDENT-GRADES-2 (make-student-grades "Bob" (list 85 75)))
 (define EX-STUDENT-GRADES-3 (make-student-grades "Carol" (list 68 82 89)))
-; ======================================== END IMPORTS =================================================
+; ========================================= END IMPORTS =========================================
+
+(define loS1 (list EX-STUDENT-1 EX-STUDENT-2 EX-STUDENT-3))
+(define loG1 (list EX-GRADE-1 EX-GRADE-2 EX-GRADE-3 EX-GRADE-4 EX-GRADE-5 EX-GRADE-6 EX-GRADE-7 EX-GRADE-8))
+(define loSG1 (list EX-STUDENT-GRADES-1 EX-STUDENT-GRADES-2 EX-STUDENT-GRADES-3))
+
+
+; Exercise 3
+; students->student-grades : [List-of Student] [List-of Grade] -> [List-of StudentGrades]
+; to produce a list of student grades from the given list of students and grades
+(check-expect (students->student-grades loS1 loG1)
+              (list EX-STUDENT-GRADES-1 EX-STUDENT-GRADES-2 EX-STUDENT-GRADES-3))
+
+
+(define (students->student-grades los log)
+  (map (lambda (s) (students->student-grades-helper s log)) los))
+
+(define (students->student-grades-helper s log)
+  (local [(define (extract-grades nuid log)
+            (map grade-value (filter (lambda (g) (= (grade-nuid g) nuid)) log)))]
+    (make-student-grades (student-name s) (extract-grades (student-nuid s) log))))
+

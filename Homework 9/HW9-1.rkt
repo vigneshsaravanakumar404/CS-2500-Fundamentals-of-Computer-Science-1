@@ -2,7 +2,7 @@
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-intermediate-reader.ss" "lang")((modname HW9-1) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 
-    ; Exercise 1a
+; Exercise 1a
 ; diag-matrix : number number -> (listof (listof number))
 ; to produce a diagonal matrix of size n with d on the diagonal
 (check-expect (diag-matrix 3 1) (list (list 1 0 0) (list 0 1 0) (list 0 0 1)))
@@ -10,11 +10,11 @@
 (check-expect (diag-matrix 4 3) (list (list 3 0 0 0) (list 0 3 0 0) (list 0 0 3 0) (list 0 0 0 3)))
 
 (define (diag-matrix n d)
-    (local [(define (row i)
-                (local [(define (col j)
-                        (if (= i j) d 0))]
-                (build-list n col)))]
-        (build-list n row)))
+  (local [(define (row i)
+            (local [(define (col j)
+                      (if (= i j) d 0))]
+              (build-list n col)))]
+    (build-list n row)))
 
 
 ; Exercise 1b
@@ -31,15 +31,14 @@
 
 
 (define (append-no-dups l1 l2 f)
-    (local [(define (remove-duplicates l f)
-              (cond
-                [(empty? l) empty]
-                [(is-duplicate? (first l) (rest l)) (remove-duplicates (rest l) f)]
-                [else (cons (first l) (remove-duplicates (rest l) f))]))
-            (define (is-duplicate? x lst)
-              (cond
-                [(empty? lst) #false]
-                [(equal? x (first lst)) #true]
-                [else (is-duplicate? x (rest lst))]))]
-      (remove-duplicates (append l1 l2) f)))
-
+  (local [(define (remove-duplicates l f)
+            (cond
+              [(empty? l) empty]
+              [(is-duplicate? (first l) (rest l)) (remove-duplicates (rest l) f)]
+              [else (cons (first l) (remove-duplicates (rest l) f))]))
+          (define (is-duplicate? x lst)
+            (cond
+              [(empty? lst) #false]
+              [(equal? x (first lst)) #true]
+              [else (is-duplicate? x (rest lst))]))]
+    (remove-duplicates (append l1 l2) f)))
