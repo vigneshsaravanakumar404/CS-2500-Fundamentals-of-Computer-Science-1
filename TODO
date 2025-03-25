@@ -5,7 +5,6 @@ Check Before Each Submission:
   - Missing Tests
   - Template Error
 
-HOMEWORK 8:
-  - Check frequent mistakes
-  - Check for data definitions
-  - Check if there is enough check-expects
+HOMEWORK 9:
+  - Check correctu usage of helper functions
+  - Check correct version of code

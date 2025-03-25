@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-reader.ss" "lang")((modname HW9-3) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname HW9-3) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 
 
 ; ======================================== BEGIN IMPORTS ========================================
@@ -47,23 +47,53 @@
 (define EX-STUDENT-GRADES-3 (make-student-grades "Carol" (list 68 82 89)))
 ; ========================================= END IMPORTS =========================================
 
-(define loS1 (list EX-STUDENT-1 EX-STUDENT-2 EX-STUDENT-3))
-(define loG1 (list EX-GRADE-1 EX-GRADE-2 EX-GRADE-3 EX-GRADE-4 EX-GRADE-5 EX-GRADE-6 EX-GRADE-7 EX-GRADE-8))
-(define loSG1 (list EX-STUDENT-GRADES-1 EX-STUDENT-GRADES-2 EX-STUDENT-GRADES-3))
+(define EX-STUDENT-4 (make-student "David" 4))
+(define EX-STUDENT-5 (make-student "Eve" 5))
+(define EX-STUDENT-6 (make-student "Frank" 6))
 
+(define EX-GRADE-9 (make-grade 4 "Fundies 1" 45))
+(define EX-GRADE-10 (make-grade 5 "Fundies 1" 35))
+(define EX-GRADE-11 (make-grade 6 "Fundies 1" 25))
+(define EX-GRADE-12 (make-grade 4 "Psychoceramics" 15))
+(define EX-GRADE-13 (make-grade 5 "Programming Languages" 5))
+(define EX-GRADE-14 (make-grade 6 "Programming Languages" 95))
+(define EX-GRADE-15 (make-grade 6 "Fundies 1" 15))
+
+(define loS1 (list EX-STUDENT-1 EX-STUDENT-2 EX-STUDENT-3))
+(define loG1 (list EX-GRADE-1 EX-GRADE-2 EX-GRADE-3 EX-GRADE-4 
+                   EX-GRADE-5 EX-GRADE-6 EX-GRADE-7 EX-GRADE-8))
+
+(define loS2 (list EX-STUDENT-4 EX-STUDENT-5 EX-STUDENT-6))
+(define loG2 (list EX-GRADE-9 EX-GRADE-10 EX-GRADE-11 EX-GRADE-12 
+                   EX-GRADE-13 EX-GRADE-14 EX-GRADE-15))
 
 ; Exercise 3
 ; students->student-grades : [List-of Student] [List-of Grade] -> [List-of StudentGrades]
 ; to produce a list of student grades from the given list of students and grades
 (check-expect (students->student-grades loS1 loG1)
               (list EX-STUDENT-GRADES-1 EX-STUDENT-GRADES-2 EX-STUDENT-GRADES-3))
+(check-expect (students->student-grades loS2 loG2)
+              (list (make-student-grades "David" (list 45 15))
+                    (make-student-grades "Eve" (list 35 5))
+                    (make-student-grades "Frank" (list 25 95 15))))
+(check-expect (students->student-grades loS1 '())
+              (list (make-student-grades "Alice" '())
+                    (make-student-grades "Bob" '())
+                    (make-student-grades "Carol" '())))
+(check-expect (students->student-grades '() loG1) '())
 
 
 (define (students->student-grades los log)
   (map (lambda (s) (students->student-grades-helper s log)) los))
 
+; students->student-grades-helper : Student [List-of Grade] -> StudentGrades
+; to produce a student grades from the given student and grades
+(check-expect (students->student-grades-helper EX-STUDENT-1 loG1) EX-STUDENT-GRADES-1)
+(check-expect (students->student-grades-helper EX-STUDENT-2 loG1) EX-STUDENT-GRADES-2)
+(check-expect (students->student-grades-helper EX-STUDENT-3 loG1) EX-STUDENT-GRADES-3)
+
 (define (students->student-grades-helper s log)
-  (local [(define (extract-grades nuid log)
-            (map grade-value (filter (lambda (g) (= (grade-nuid g) nuid)) log)))]
-    (make-student-grades (student-name s) (extract-grades (student-nuid s) log))))
+  (local ([define (extract-grades nuid)
+            (map grade-value (filter (lambda (g) (= (grade-nuid g) nuid)) log))])
+    (make-student-grades (student-name s) (extract-grades (student-nuid s)))))
 

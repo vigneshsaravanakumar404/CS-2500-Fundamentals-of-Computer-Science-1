@@ -16,7 +16,6 @@
               (build-list n col)))]
     (build-list n row)))
 
-
 ; Exercise 1b
 ; append-no-dups : [List-of X] [List-of X] (X) [X X -> Boolean] -> [List-of X]
 ; to produce a list of elements from the first list followed by the second list with no duplicates

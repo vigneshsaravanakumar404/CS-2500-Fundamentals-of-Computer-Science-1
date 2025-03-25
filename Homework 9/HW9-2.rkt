@@ -24,9 +24,9 @@
 
 
 (define (zip l1 l2)
-	(cond
-		[(or (empty? l1) (empty? l2)) '()]
-		[else (cons (list (first l1) (first l2)) (zip (rest l1) (rest l2)))]))
+  (cond
+    [(or (empty? l1) (empty? l2)) '()]
+    [else (cons (list (first l1) (first l2)) (zip (rest l1) (rest l2)))]))
 
 
 ; Exercise 2b
@@ -38,6 +38,6 @@
 
 
 (define (map-2list l1 l2 f)
-	(cond
-		[(or (empty? l1) (empty? l2)) '()]
-		[else (cons (f (first l1) (first l2)) (map-2list (rest l1) (rest l2) f))]))
+  (cond
+    [(or (empty? l1) (empty? l2)) '()]
+    [else (cons (f (first l1) (first l2)) (map-2list (rest l1) (rest l2) f))]))
