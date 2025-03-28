@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-advanced-reader.ss" "lang")((modname |Lab 10|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f () #f)))
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname |Lab 10|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 
 (define-struct bnode [value left right])
 ; A [BinTree-of X] is one of
@@ -101,8 +101,7 @@
 
 
 ; Exercise 5
-; bt-height/v2 : [BinTree-of X] -> Number
-; to produce the height of the tree using bt-fold
+
 (check-expect (bt-height/v2 BT-0) 0)
 (check-expect (bt-height/v2 BT-1) 3)
 (check-expect (bt-height/v2 BT-2) 3)
