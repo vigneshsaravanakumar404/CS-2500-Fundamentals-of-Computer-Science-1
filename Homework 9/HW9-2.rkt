@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-reader.ss" "lang")((modname HW9-2) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname HW9-3) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 
 
 ;! TwoList design recipe
@@ -35,9 +35,11 @@
 (check-expect (map-2list (list 1 2 3) (list 4 5 6) +) (list 5 7 9))
 (check-expect (map-2list (list 1 2 3) (list 4 5 6) *) (list 4 10 18))
 (check-expect (map-2list (list 1 2 3) (list 4 5 6) -) (list -3 -3 -3))
+(check-error (map-2list (list 1 2 3) (list 4 5) +) "Lists of unequal size")
+(check-error (map-2list (list 1 2) (list 4 5 6) +) "Lists of unequal size")
 
-
-(define (map-2list l1 l2 f)
-  (cond
-    [(or (empty? l1) (empty? l2)) '()]
-    [else (cons (f (first l1) (first l2)) (map-2list (rest l1) (rest l2) f))]))
+(define (map-2list l1 l2 func)
+    (cond
+        [(not (= (length l1) (length l2))) (error "Lists of unequal size")]
+        [(empty? l1) empty]
+        [else (cons (func (first l1) (first l2)) (map-2list (rest l1) (rest l2) func))]))
