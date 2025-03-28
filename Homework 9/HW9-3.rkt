@@ -96,4 +96,3 @@
   (local ([define (extract-grades nuid)
             (map grade-value (filter (lambda (g) (= (grade-nuid g) nuid)) log))])
     (make-student-grades (student-name s) (extract-grades (student-nuid s)))))
-

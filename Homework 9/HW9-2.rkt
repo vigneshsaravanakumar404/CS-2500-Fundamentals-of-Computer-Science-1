@@ -30,16 +30,17 @@
 
 
 ; Exercise 2b
-; map-2list : [List-of X] [List-of Y] (X Y -> Z) -> [List-of Z]
+;    : [List-of X] [List-of Y] (X Y -> Z) -> [List-of Z]
 ; to produce a list of the results of applying the function f to the ith element of the first list
-(check-expect (map-2list (list 1 2 3) (list 4 5 6) +) (list 5 7 9))
-(check-expect (map-2list (list 1 2 3) (list 4 5 6) *) (list 4 10 18))
-(check-expect (map-2list (list 1 2 3) (list 4 5 6) -) (list -3 -3 -3))
-(check-error (map-2list (list 1 2 3) (list 4 5) +) "Lists of unequal size")
-(check-error (map-2list (list 1 2) (list 4 5 6) +) "Lists of unequal size")
+(check-expect (map-2list + (list 1 2 3) (list 4 5 6)) (list 5 7 9))
+(check-expect (map-2list * (list 1 2 3) (list 4 5 6)) (list 4 10 18))
+(check-expect (map-2list - (list 1 2 3) (list 4 5 6)) (list -3 -3 -3))
+(check-error (map-2list + (list 1 2 3) (list 4 5)) "Lists of unequal size")
+(check-error (map-2list + (list 1 2) (list 4 5 6)) "Lists of unequal size")
 
-(define (map-2list l1 l2 func)
-    (cond
-        [(not (= (length l1) (length l2))) (error "Lists of unequal size")]
-        [(empty? l1) empty]
-        [else (cons (func (first l1) (first l2)) (map-2list (rest l1) (rest l2) func))]))
+(define (map-2list func l1 l2)
+    (if (= (length l1) (length l2))
+        (cond
+          [(empty? l1) empty]
+          [else (cons (func (first l1) (first l2)) (map-2list func (rest l1) (rest l2)))])
+        (error "Lists of unequal size")))
