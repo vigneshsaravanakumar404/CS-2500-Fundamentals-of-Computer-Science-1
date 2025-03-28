@@ -69,7 +69,7 @@
 
 ; Exercise 3
 ; students->student-grades : [List-of Student] [List-of Grade] -> [List-of StudentGrades]
-; to produce a list of student grades from the given list of students and grades
+; produce a list of student grades from the given list of students and grades
 (check-expect (students->student-grades loS1 loG1)
               (list EX-STUDENT-GRADES-1 EX-STUDENT-GRADES-2 EX-STUDENT-GRADES-3))
 (check-expect (students->student-grades loS2 loG2)
@@ -87,12 +87,17 @@
   (map (lambda (s) (students->student-grades-helper s log)) los))
 
 ; students->student-grades-helper : Student [List-of Grade] -> StudentGrades
-; to produce a student grades from the given student and grades
+;  produce a student's grades from the given student and grades
 (check-expect (students->student-grades-helper EX-STUDENT-1 loG1) EX-STUDENT-GRADES-1)
 (check-expect (students->student-grades-helper EX-STUDENT-2 loG1) EX-STUDENT-GRADES-2)
 (check-expect (students->student-grades-helper EX-STUDENT-3 loG1) EX-STUDENT-GRADES-3)
 
 (define (students->student-grades-helper s log)
-  (local ([define (extract-grades nuid)
-            (map grade-value (filter (lambda (g) (= (grade-nuid g) nuid)) log))])
+  (local [
+          ; extract-grades : Number -> [List-of Number]
+          ; to produce a list of grades for the given student nuid
+          ; (extract-grades 1) should return (list 95 65) for s = EX-STUDENT-1
+          ; (extract-grades 2) should return (list 85 75) for s = EX-STUDENT-2
+          (define (extract-grades nuid)
+            (map grade-value (filter (lambda (g) (= (grade-nuid g) nuid)) log)))]
     (make-student-grades (student-name s) (extract-grades (student-nuid s)))))
