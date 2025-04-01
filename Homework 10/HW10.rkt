@@ -212,21 +212,20 @@
                                (blocks-remaining-helper (hbs-right HBS) (/ weight 2)))]
                 [(and #t HBS) weight]
                 [else 0]))]
-    (blocks-remaining-helper HBS (expt 2 (depth HBS)))))
+    (blocks-remaining-helper HBS (depth HBS))))
 
 ; depth : HBS -> NonNegInteger
 ; to produce the depth of the HBS
-(check-expect (depth END-TREE-T) 0)
-(check-expect (depth HBS-2) 1)
-(check-expect (depth HBS-3) 3)
-(check-expect (depth HBS-4) 3)
+(check-expect (depth END-TREE-T) 1)
+(check-expect (depth HBS-2) 2)
+(check-expect (depth HBS-3) 8)
 
 (define (depth HBS)
   (local [(define (depth-helper HBS depth)
             (cond
               [(hbs? HBS) (depth-helper (hbs-left HBS) (+ depth 1))]
               [else depth]))]
-    (+ -1 (depth-helper HBS 0))))
+    (expt 2 (+ -1 (depth-helper HBS 0)))))
 
 
 ; Exercise 1b
@@ -244,23 +243,33 @@
 (check-expect (find-chunk HBS-7 4) -1)
 (check-expect (find-chunk HBS-8 4) 0)
 (check-expect (find-chunk HBS-9 2) 4)
-;;; (check-expect (find-chunk HBS-4 8) 8)
-;;; (check-expect (find-chunk HBS-4 16) -1)
 
 (define (find-chunk HBS size)
-    (local [(define result (find-chunk-helper HBS empty size 0 (expt 2 (depth HBS))))]
-        (if (empty? result) -1 (hbs-chunk-block (last result)))))
+    (hbs-chunk-block (find-chunk-helper HBS (make-hbs-chunk -1 size) size 0 (depth HBS))))
 
-
-(define (find-chunk-helper HBS pq size block-index weight)
-    (local [(define half (/ weight 2))]
+(define (find-chunk-helper HBS best size block-index weight)
+    (local [(define half (/ weight 2))
+            (define DNE (make-hbs-chunk -1 size))]
         (cond
-            [(boolean? HBS) pq] ; Reached the end of HBS
-            [(< weight size) pq] ; Went too far deep, not big enough
-            [(hbs-bit HBS) (list (make-hbs-chunk block-index weight))] ; Best solution down this path
-            [else (append ; Look for solutions
-                    (find-chunk-helper (hbs-left HBS) pq size block-index half)
-                    (find-chunk-helper (hbs-right HBS) pq size (+ block-index half) half))])))
+            [(boolean? HBS) DNE] ; Reached the end of HBS
+            [(< weight size) DNE] ; Went too far deep, not big enough
+            [(hbs-bit HBS) (make-hbs-chunk block-index weight)] ; Best solution down this path
+            [else (better-chunk ; Look for best solution
+                    (find-chunk-helper (hbs-left HBS) best size block-index half)
+                    (find-chunk-helper (hbs-right HBS) best size (+ block-index half) half))])))
+
+(define (better-chunk c1 c2)
+  (local ((define a1 (hbs-chunk-size c1))
+          (define a2 (hbs-chunk-size c2))
+          (define b1 (hbs-chunk-block c1))
+          (define b2 (hbs-chunk-block c2)))
+    (cond ((= b1 -1) c2)
+          ((= b2 -1) c1)
+          ((< a1 a2) c1)
+          ((> a1 a2) c2)
+          ((< b1 b2) c1)
+          (else c2))))
+
 
 ; last : [List-of Any] -> Any
 ; produces the last element of a list or returns empty if empty
@@ -277,4 +286,3 @@
 
 ; initialize-hbs : [List-of Boolean] -> HBS
 ; to produce a list of lists 
-(find-chunk-helper HBS-9 empty 2 0 (expt 2 (depth HBS-9)))
