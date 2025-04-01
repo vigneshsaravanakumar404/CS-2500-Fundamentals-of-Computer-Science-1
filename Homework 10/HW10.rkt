@@ -146,6 +146,88 @@
                                             (make-hbs #f #f #f)
                                             (make-hbs #f #f #f)))))
 
+(define HBS-9 (make-hbs #f
+                        (make-hbs #f
+                                  (make-hbs #t
+                                            (make-hbs #f
+                                                      END-TREE-F
+                                                      (make-hbs #f #f #f))
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f)))
+                                  (make-hbs #f
+                                            (make-hbs #t
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))))
+                        (make-hbs #f
+                                  (make-hbs #f
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))
+                                            (make-hbs #t
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f)))
+                                  (make-hbs #t
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))))))
+;                                0
+;                            /       \
+;                         /             \                   
+;                      /                   \
+;                   /                         \            
+;                0                               0
+;              /   \                           /   \
+;            /       \                       /       \
+;          /           \                   /           \
+;        1               0               0               1
+;      /   \           /   \           /   \           /   \
+;    0       0       1       0       0       1       0       0
+;   / \     / \     / \     / \     / \     / \     / \     / \
+;  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+
+
+; Exercise 1a
+; blocks-remaining : HBS -> NonNegInteger
+; to produce the number of blocks remaining in the HBS
+(check-expect (blocks-remaining END-TREE-T) 1)
+(check-expect (blocks-remaining HBS-2) 1)
+(check-expect (blocks-remaining HBS-3) 8)
+(check-expect (blocks-remaining HBS-6) 7)
+(check-expect (blocks-remaining HBS-7) 0)
+(check-expect (blocks-remaining HBS-8) 8)
+
+(define (blocks-remaining HBS)
+    (local [
+        (define (blocks-remaining-helper HBS weight)
+            (cond
+                [(and (hbs? HBS) (hbs-bit HBS)) weight]
+                [(hbs? HBS) (+ (blocks-remaining-helper (hbs-left HBS) (/ weight 2))
+                               (blocks-remaining-helper (hbs-right HBS) (/ weight 2)))]
+                [(and #t HBS) weight]
+                [else 0]))]
+    (blocks-remaining-helper HBS (expt 2 (depth HBS)))))
+
+; depth : HBS -> NonNegInteger
+; to produce the depth of the HBS
+(check-expect (depth END-TREE-T) 0)
+(check-expect (depth HBS-2) 1)
+(check-expect (depth HBS-3) 3)
+(check-expect (depth HBS-4) 3)
+
+(define (depth HBS)
+  (local [(define (depth-helper HBS depth)
+            (cond
+              [(hbs? HBS) (depth-helper (hbs-left HBS) (+ depth 1))]
+              [else depth]))]
+    (+ -1 (depth-helper HBS 0))))
+
 
 ; Exercise 1b
 ; find-chunk : HBS NonNegInteger -> Integer
@@ -161,24 +243,24 @@
 (check-expect (find-chunk HBS-6 1) 6)
 (check-expect (find-chunk HBS-7 4) -1)
 (check-expect (find-chunk HBS-8 4) 0)
+(check-expect (find-chunk HBS-9 2) 4)
 ;;; (check-expect (find-chunk HBS-4 8) 8)
 ;;; (check-expect (find-chunk HBS-4 16) -1)
-
 
 (define (find-chunk HBS size)
     (local [(define result (find-chunk-helper HBS empty size 0 (expt 2 (depth HBS))))]
         (if (empty? result) -1 (hbs-chunk-block (last result)))))
 
+
 (define (find-chunk-helper HBS pq size block-index weight)
     (local [(define half (/ weight 2))]
         (cond
-            [(boolean? HBS) pq]
-            [(< weight size) pq]
-            [(hbs-bit HBS) (list (make-hbs-chunk block-index weight))]
-            [else (append 
-                            (find-chunk-helper (hbs-left HBS) pq size block-index half)
-                            (find-chunk-helper (hbs-right HBS) pq size (+ block-index half) half))])))
-
+            [(boolean? HBS) pq] ; Reached the end of HBS
+            [(< weight size) pq] ; Went too far deep, not big enough
+            [(hbs-bit HBS) (list (make-hbs-chunk block-index weight))] ; Best solution down this path
+            [else (append ; Look for solutions
+                    (find-chunk-helper (hbs-left HBS) pq size block-index half)
+                    (find-chunk-helper (hbs-right HBS) pq size (+ block-index half) half))])))
 
 ; last : [List-of Any] -> Any
 ; produces the last element of a list or returns empty if empty
@@ -193,35 +275,6 @@
     [(empty? lst) lst]
     [else (first (reverse lst))]))
 
-; Exercise 1a
-; blocks-remaining : HBS -> NonNegInteger
-; to produce the number of blocks remaining in the HBS
-;(check-expect (blocks-remaining END-TREE-T) 2)
-;(check-expect (blocks-remaining HBS-2) 4)
-;(check-expect (blocks-remaining HBS-3) 8)
-;(check-expect (blocks-remaining HBS-4) 15)
-
-;(define (blocks-remaining HBS)
-;    (local [
-;        (define (blocks-remaining-helper HBS weight)
-;            (cond
-;                [(and (hbs? HBS) (hbs-bit HBS)) weight]
-;                [(hbs? HBS) (+ (blocks-remaining-helper (hbs-left HBS) (/ weight 2))
-;                               (blocks-remaining-helper (hbs-right HBS) (/ weight 2)))]
-;                [(and #t HBS) weight]
-;                [else 0]))]
-;    (blocks-remaining-helper HBS (expt 2 (depth HBS)))))
-
-; depth : HBS -> NonNegInteger
-; to produce the depth of the HBS
-(check-expect (depth END-TREE-T) 0)
-(check-expect (depth HBS-2) 1)
-(check-expect (depth HBS-3) 3)
-(check-expect (depth HBS-4) 3)
-
-(define (depth HBS)
-  (local [(define (depth-helper HBS depth)
-            (cond
-              [(hbs? HBS) (depth-helper (hbs-left HBS) (+ depth 1))]
-              [else depth]))]
-    (+ -1 (depth-helper HBS 0))))
+; initialize-hbs : [List-of Boolean] -> HBS
+; to produce a list of lists 
+(find-chunk-helper HBS-9 empty 2 0 (expt 2 (depth HBS-9)))
