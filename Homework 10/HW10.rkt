@@ -4,7 +4,7 @@
 ; ======================================= Provided Data Designs ======================================
 (define-struct hbs [bit left right])
 ; A HierarchicalBitmapSet (HBS) is one of:
-; - #false
+; - #f
 ; - (make-hbs Boolean HBS HBS)
 ; representing a bit at some level of a hierarchical tree of bits,
 ; or a sentinel value representing an empty tree/subtree
@@ -62,8 +62,12 @@
 ;  0   1
 
 (define HBS-3 (make-hbs #t
-                        (make-hbs #f (make-hbs #f END-TREE-F END-TREE-F) (make-hbs #f END-TREE-F END-TREE-F)) 
-                        (make-hbs #f (make-hbs #f END-TREE-F END-TREE-F) (make-hbs #f END-TREE-F END-TREE-F))))
+                        (make-hbs #f
+                                  (make-hbs #f END-TREE-F END-TREE-F)
+                                  (make-hbs #f END-TREE-F END-TREE-F)) 
+                        (make-hbs #f
+                                  (make-hbs #f END-TREE-F END-TREE-F)
+                                  (make-hbs #f END-TREE-F END-TREE-F))))
 ;                1
 ;              /   \
 ;            /       \
@@ -76,8 +80,12 @@
 
 
 (define HBS-5 (make-hbs #f
-                        (make-hbs #f (make-hbs #f END-TREE-F END-TREE-F) (make-hbs #f END-TREE-F END-TREE-F)) 
-                        (make-hbs #t (make-hbs #f END-TREE-F END-TREE-F) (make-hbs #f END-TREE-F END-TREE-F))))
+                        (make-hbs #f
+                                  (make-hbs #f END-TREE-F END-TREE-F)
+                                  (make-hbs #f END-TREE-F END-TREE-F)) 
+                        (make-hbs #t
+                                  (make-hbs #f END-TREE-F END-TREE-F)
+                                  (make-hbs #f END-TREE-F END-TREE-F))))
 ;                0
 ;              /   \
 ;            /       \
@@ -385,13 +393,38 @@
 ; alloc-chunk : hbs NonNegInt -> HBSAllocResult
 ; returns an HBSAllocResult with modified hbs allocting a chunk
 (check-expect (alloc-chunk END-TREE-F 1) (make-hbs-alloc -1 END-TREE-F))
-(check-expect (alloc-chunk HBS-9 8) (make-hbs-alloc -1 HBS-9))
-(check-expect (alloc-chunk HBS-3 8) (make-hbs-alloc 0 (make-hbs #f (hbs-left HBS-3) (hbs-right HBS-3))))
-(check-expect (alloc-chunk HBS-3 8) (make-hbs-alloc 0 (make-hbs #f (hbs-left HBS-3) (hbs-right HBS-3))))
-(check-expect (alloc-chunk HBS-5 4) (make-hbs-alloc 4 (make-hbs #false (make-hbs #false (make-hbs #false (make-hbs #false #false #false) (make-hbs #false #false #false)) (make-hbs #false (make-hbs #false #false #false) (make-hbs #false #false #false))) (make-hbs #false (make-hbs #false (make-hbs #false #false #false) (make-hbs #false #false #false)) (make-hbs #false (make-hbs #false #false #false) (make-hbs #false #false #false))))))
-(check-expect (alloc-chunk HBS-5 2) (make-hbs-alloc 4 (make-hbs #false (make-hbs #false (make-hbs #false (make-hbs #false #false #false) (make-hbs #false #false #false)) (make-hbs #false (make-hbs #false #false #false) (make-hbs #false #false #false))) (make-hbs #false (make-hbs #false (make-hbs #false #false #false) (make-hbs #false #false #false)) (make-hbs #true (make-hbs #false #false #false) (make-hbs #false #false #false))))))
-(check-expect (alloc-chunk HBS-5 1) (make-hbs-alloc 4 (make-hbs #false (make-hbs #false (make-hbs #false (make-hbs #false #false #false) (make-hbs #false #false #false)) (make-hbs #false (make-hbs #false #false #false) (make-hbs #false #false #false))) (make-hbs #false (make-hbs #false (make-hbs #false #false #false) (make-hbs #true #false #false)) (make-hbs #true (make-hbs #false #false #false) (make-hbs #false #false #false))))))
 (check-expect (alloc-chunk HBS-0 1) (make-hbs-alloc -1 HBS-0))
+(check-expect (alloc-chunk HBS-3 8)
+              (make-hbs-alloc 0 (make-hbs #f (hbs-left HBS-3) (hbs-right HBS-3))))
+(check-expect (alloc-chunk HBS-3 8)
+              (make-hbs-alloc 0 (make-hbs #f (hbs-left HBS-3) (hbs-right HBS-3))))
+(check-expect (alloc-chunk HBS-5 4)
+              (make-hbs-alloc 4 (make-hbs #f
+                                          (make-hbs #f
+                                                    (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f))
+                                                    (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f)))
+                                          (make-hbs #f (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f))
+                                                    (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f))))))
+(check-expect (alloc-chunk HBS-5 2)
+              (make-hbs-alloc 4 (make-hbs #f
+                                          (make-hbs #f
+                                                    (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f))
+                                                    (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f)))
+                                          (make-hbs #f (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f))
+                                                    (make-hbs #t (make-hbs #f #f #f) (make-hbs #f #f #f))))))
+(check-expect (alloc-chunk HBS-5 1)
+              (make-hbs-alloc 4 (make-hbs #f
+                                          (make-hbs #f
+                                                    (make-hbs #f
+                                                              (make-hbs #f #f #f)
+                                                              (make-hbs #f #f #f))
+                                                    (make-hbs #f (make-hbs #f #f #f)
+                                                              (make-hbs #f #f #f)))
+                                          (make-hbs #f (make-hbs #f (make-hbs #f #f #f)
+                                                                 (make-hbs #t #f #f))
+                                                    (make-hbs #t (make-hbs #f #f #f)
+                                                              (make-hbs #f #f #f))))))
+(check-expect (alloc-chunk HBS-9 8) (make-hbs-alloc -1 HBS-9))
 (check-expect (alloc-chunk HBS-10 32) (make-hbs-alloc -1 HBS-10))
 (check-expect (alloc-chunk HBS-10 1)
               (make-hbs-alloc 6 (make-hbs #f
@@ -442,7 +475,6 @@
                                                               (make-hbs #f #f #f)
                                                               (make-hbs #f #f #f))))))
 
-
 (define (alloc-chunk hbs n)
   (local
     [(define i (find-chunk hbs n))]
@@ -450,6 +482,94 @@
 
 ; alloc-chunk-helper : hbs NonNegInt NonNegInt NonNegInt NonNegInt -> HBS
 ; to produce a HBSAllocResult with modified hbs allocating a chunk
+(check-expect (alloc-chunk-helper HBS-9 (find-chunk HBS-8 4) 0 4 (depth HBS-8))
+              (make-hbs #f (make-hbs #f
+                                     (make-hbs #t
+                                               (make-hbs #f
+                                                         (make-hbs #f #f #f)
+                                                         (make-hbs #f #f #f))
+                                               (make-hbs #f
+                                                         (make-hbs #f #f #f)
+                                                         (make-hbs #f #f #f)))
+                                     (make-hbs #f
+                                               (make-hbs #t
+                                                         (make-hbs #f #f #f)
+                                                         (make-hbs #f #f #f))
+                                               (make-hbs #f (make-hbs #f #f #f)
+                                                         (make-hbs #f #f #f))))
+                        (make-hbs #f
+                                  (make-hbs #f
+                                            (make-hbs #f (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))
+                                            (make-hbs #t (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f)))
+                                  (make-hbs #t
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))
+                                            (make-hbs #f (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))))))
+(check-expect (alloc-chunk-helper HBS-9 (find-chunk HBS-9 1) 0 1 (depth HBS-9))
+              (make-hbs #f
+                        (make-hbs #f
+                                  (make-hbs #t
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))
+                                            (make-hbs #f (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f)))
+                                  (make-hbs #f
+                                            (make-hbs #f (make-hbs #f #f #f)
+                                                      (make-hbs #t #f #f))
+                                            (make-hbs #f (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))))
+                        (make-hbs #f
+                                  (make-hbs #f
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))
+                                            (make-hbs #t
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f)))
+                                  (make-hbs #t
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))
+                                            (make-hbs #f (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))))))
+
+(check-expect (alloc-chunk-helper HBS-9 (find-chunk HBS-9 2) 0 2 (depth HBS-9))
+              (make-hbs #f
+                        (make-hbs #f
+                                  (make-hbs #t
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f)))
+                                  (make-hbs #f
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))
+                                            (make-hbs #f (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))))
+                        (make-hbs #f
+                                  (make-hbs #f
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))
+                                            (make-hbs #t
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f)))
+                                  (make-hbs #t
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))
+                                            (make-hbs #f
+                                                      (make-hbs #f #f #f)
+                                                      (make-hbs #f #f #f))))))
+
 (define (alloc-chunk-helper hbs ti index tw weight)
   (local
     [(define new-hbs (if (hbs-bit hbs) (break-up-chunk hbs #f) hbs))
@@ -457,17 +577,53 @@
     (cond
       [(and (= ti index) (<= weight tw))  (make-hbs #f (hbs-left hbs) (hbs-right hbs))]
       [(< ti (+ index half)) (make-hbs (hbs-bit new-hbs)
-                              (alloc-chunk-helper (hbs-left new-hbs) ti index tw half)
-                              (hbs-right new-hbs))]
+                                       (alloc-chunk-helper (hbs-left new-hbs) ti index tw half)
+                                       (hbs-right new-hbs))]
       [else (make-hbs (hbs-bit new-hbs)
-                 (hbs-left new-hbs)
-                 (alloc-chunk-helper (hbs-right new-hbs) ti (+ index half) tw half))])))
+                      (hbs-left new-hbs)
+                      (alloc-chunk-helper (hbs-right new-hbs) ti (+ index half) tw half))])))
        
 ; break-up-chunk : hbs boolean -> hbs
 ; to produce a HBSAllocResult with modified hbs allocating a chunk
+(check-expect (break-up-chunk HBS-3 #f)
+              (make-hbs #f
+                        (make-hbs #t
+                                  (make-hbs #f
+                                            (make-hbs #f #f #f)
+                                            (make-hbs #f #f #f))
+                                  (make-hbs #f
+                                            (make-hbs #f #f #f)
+                                            (make-hbs #f #f #f)))
+                        (make-hbs #t
+                                  (make-hbs #f
+                                            (make-hbs #f #f #f)
+                                            (make-hbs #f #f #f))
+                                  (make-hbs #f
+                                            (make-hbs #f #f #f)
+                                            (make-hbs #f #f #f)))))
+
+(check-expect (break-up-chunk HBS-3 #t)
+              (make-hbs #t
+                        (make-hbs #f
+                                  (make-hbs #f
+                                            (make-hbs #f #f #f)
+                                            (make-hbs #f #f #f))
+                                  (make-hbs #f
+                                            (make-hbs #f #f #f)
+                                            (make-hbs #f #f #f)))
+                        (make-hbs #f
+                                  (make-hbs #f
+                                            (make-hbs #f #f #f)
+                                            (make-hbs #f #f #f))
+                                  (make-hbs #f
+                                            (make-hbs #f #f #f)
+                                            (make-hbs #f #f #f)))))
+(check-expect (break-up-chunk END-TREE-F #f) (make-hbs #false #false #false))
+
 (define (break-up-chunk hbs b)
   (cond
     [(boolean? hbs) hbs]
     [b (make-hbs b (hbs-left hbs) (hbs-right hbs))]
     [else (make-hbs b (break-up-chunk (hbs-left hbs) #t) (break-up-chunk (hbs-right hbs) #t))]))
+
 
