@@ -627,3 +627,4 @@
     [else (make-hbs b (break-up-chunk (hbs-left hbs) #t) (break-up-chunk (hbs-right hbs) #t))]))
 
 
+; free-chunk : 
