@@ -40,6 +40,15 @@
 ; - block is the starting block number for the chunk that was allocated;
 ; - size is the size chunk that is being taken or split
 ; or a sentinal value to indicate there was no eligible chunk
+
+
+(require 2htdp/image)
+(define (disp hbs)
+  (local [(define (helper hbs)
+            (cond [(boolean? hbs) empty-image]
+                  [(hbs? hbs) (above (rectangle 30 30 "solid" (if (hbs-bit hbs) "black" "white"))
+                                     (beside (helper (hbs-left hbs)) (helper (hbs-right hbs))))]))]
+    (overlay (helper hbs) (rectangle 400 400 "solid" "gray"))))
 ; ===================================== End Provided Functions =======================================
 
 (define END-TREE-F (make-hbs #f #f #f))
@@ -206,6 +215,21 @@
                                    (make-hbs #t
                                              (make-hbs #f #f #f)
                                              (make-hbs #f #f #f)))))
+
+(define HBS-11 (make-hbs #f
+                         (make-hbs #t
+                                   (make-hbs #f #f #f)
+                                   (make-hbs #f #f #f))
+                         (make-hbs #f
+                                   (make-hbs #t #f #f)
+                                   (make-hbs #f #f #f))))
+(define HBS-12 (make-hbs #f
+                         (make-hbs #f
+                                   (make-hbs #f #f #f)
+                                   (make-hbs #f #f #f))
+                         (make-hbs #f
+                                   (make-hbs #f #f #f)
+                                   (make-hbs #t #f #f))))
 
 ; Exercise 1a
 ; blocks-remaining : HBS -> NonNegInteger
@@ -627,4 +651,35 @@
     [else (make-hbs b (break-up-chunk (hbs-left hbs) #t) (break-up-chunk (hbs-right hbs) #t))]))
 
 
-; free-chunk : 
+; Exercise 3
+; free-chunk : hbs NonNegInt NonNegInt -> hbs
+; produces an updated HBS that reflects deallocation
+(check-expect (free-chunk HBS-5 0 (depth HBS-5))
+              (make-hbs #t
+                        (make-hbs #f
+                                  (make-hbs #f END-TREE-F END-TREE-F)
+                                  (make-hbs #f END-TREE-F END-TREE-F)) 
+                        (make-hbs #f
+                                  (make-hbs #f END-TREE-F END-TREE-F)
+                                  (make-hbs #f END-TREE-F END-TREE-F))))
+(check-expect (free-chunk HBS-11 1 3) (make-hbs #t
+                                                (make-hbs #f
+                                                          (make-hbs #f #f #f)
+                                                          (make-hbs #f #f #f))
+                                                (make-hbs #f
+                                                          (make-hbs #f #f #f)
+                                                          (make-hbs #f #f #f))))
+(check-expect (free-chunk HBS-12 1 2) (make-hbs #f
+                                                (make-hbs #f
+                                                          (make-hbs #f #f #f)
+                                                          (make-hbs #f #f #f))
+                                                (make-hbs #t
+                                                          (make-hbs #f #f #f)
+                                                          (make-hbs #f #f #f))))
+(check-expect (free-chunk HBS-12 1 1) (make-hbs #f
+                                                (make-hbs #f
+                                                          (make-hbs #f #f #f)
+                                                          (make-hbs #t #f #f))
+                                                (make-hbs #f
+                                                          (make-hbs #f #f #f)
+                                                          (make-hbs #t #f #f))))
