@@ -40,15 +40,6 @@
 ; - block is the starting block number for the chunk that was allocated;
 ; - size is the size chunk that is being taken or split
 ; or a sentinal value to indicate there was no eligible chunk
-
-
-(require 2htdp/image)
-(define (disp hbs)
-  (local [(define (helper hbs)
-            (cond [(boolean? hbs) empty-image]
-                  [(hbs? hbs) (above (rectangle 30 30 "solid" (if (hbs-bit hbs) "black" "white"))
-                                     (beside (helper (hbs-left hbs)) (helper (hbs-right hbs))))]))]
-    (overlay (helper hbs) (rectangle 400 400 "solid" "gray"))))
 ; ===================================== End Provided Functions =======================================
 
 (define END-TREE-F (make-hbs #f #f #f))
@@ -242,7 +233,11 @@
 (check-expect (blocks-remaining HBS-8) 8)
 
 (define (blocks-remaining HBS)
-  (local [
+  (local [; blocks-remaining-helper : HBS NonNegInteger -> NonNegInteger
+          ; to produce the number of blocks remaining in the HBS
+          ; (blocks-remaining-helper HBS 2) should return 1
+          ; (blocks-remaining-helper HBS 3) should return 8
+          ; (blocks-remaining-helper HBS 4) should return 7
           (define (blocks-remaining-helper HBS weight)
             (cond
               [(and (hbs? HBS) (hbs-bit HBS)) weight]
@@ -259,7 +254,12 @@
 (check-expect (depth HBS-5) 8)
 
 (define (depth HBS)
-  (local [(define (depth-helper HBS depth)
+  (local [; depth-helper : HBS NonNegInteger -> NonNegInteger
+          ; to produce the depth of the HBS
+          ; (depth-helper HBS-3 0) should return 3
+          ; (depth-helper HBS-3 1) should return 2
+          ; (depth-helper HBS-3 2) should return 1
+          (define (depth-helper HBS depth)
             (cond
               [(hbs? HBS) (depth-helper (hbs-left HBS) (+ depth 1))]
               [else depth]))]
@@ -378,7 +378,7 @@
 (check-expect (and-range (list #f #t #t #f) 1 3) #f)
 (check-expect (and-range (list #f #t #t #f) 1 10) #f)
 (check-expect (and-range (list #f #t #t #f) 0 0) #f)
-(check-expect (and-range (list #t #f #f #f) 0 0 ) #t)
+(check-expect (and-range (list #t #f #f #f) 0 0) #t)
 
 (define (and-range LoB start end)
   (local [
@@ -425,17 +425,34 @@
 (check-expect (alloc-chunk HBS-5 4)
               (make-hbs-alloc 4 (make-hbs #f
                                           (make-hbs #f
-                                                    (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f))
-                                                    (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f)))
-                                          (make-hbs #f (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f))
-                                                    (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f))))))
+                                                    (make-hbs #f
+                                                              (make-hbs #f #f #f)
+                                                              (make-hbs #f #f #f))
+                                                    (make-hbs #f
+                                                              (make-hbs #f #f #f)
+                                                              (make-hbs #f #f #f)))
+                                          (make-hbs #f
+                                                    (make-hbs #f
+                                                              (make-hbs #f #f #f)
+                                                              (make-hbs #f #f #f))
+                                                    (make-hbs #f (make-hbs #f #f #f)
+                                                              (make-hbs #f #f #f))))))
 (check-expect (alloc-chunk HBS-5 2)
               (make-hbs-alloc 4 (make-hbs #f
                                           (make-hbs #f
-                                                    (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f))
-                                                    (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f)))
-                                          (make-hbs #f (make-hbs #f (make-hbs #f #f #f) (make-hbs #f #f #f))
-                                                    (make-hbs #t (make-hbs #f #f #f) (make-hbs #f #f #f))))))
+                                                    (make-hbs #f
+                                                              (make-hbs #f #f #f)
+                                                              (make-hbs #f #f #f))
+                                                    (make-hbs #f
+                                                              (make-hbs #f #f #f)
+                                                              (make-hbs #f #f #f)))
+                                          (make-hbs #f
+                                                    (make-hbs #f
+                                                              (make-hbs #f #f #f)
+                                                              (make-hbs #f #f #f))
+                                                    (make-hbs #t
+                                                              (make-hbs #f #f #f)
+                                                              (make-hbs #f #f #f))))))
 (check-expect (alloc-chunk HBS-5 1)
               (make-hbs-alloc 4 (make-hbs #f
                                           (make-hbs #f
@@ -500,8 +517,7 @@
                                                               (make-hbs #f #f #f))))))
 
 (define (alloc-chunk hbs n)
-  (local
-    [(define i (find-chunk hbs n))]
+  (local [(define i (find-chunk hbs n))]
     (make-hbs-alloc i (if (= i -1) hbs (alloc-chunk-helper hbs i 0 n (depth hbs))))))
 
 ; alloc-chunk-helper : hbs NonNegInt NonNegInt NonNegInt NonNegInt -> HBS
@@ -684,23 +700,32 @@
                                                           (make-hbs #f #f #f)
                                                           (make-hbs #t #f #f))))
 
-
 (define (free-chunk hbs tw ti)
-  (local [(define (free-chunk-helper hbs tw ti w i)
+  (local [
+          ; free-chunk-helper : hbs NonNegInt NonNegInt NonNegInt NonNegInt -> hbs
+          ; to produce an updated HBS that reflects deallocation
+          ; (free-chunk-helper HBS-5 4 0 4) should return (free-chunk HBS-5 4 0)
+          ; (free-chunk-helper HBS-5 4 0 8) should return (free-chunk HBS-5 4 0)
+          ; (free-chunk-helper HBS-5 4 0 2) should return (free-chunk HBS-5 4 0)
+          (define (free-chunk-helper hbs tw ti w i)
             (local [(define half (/ w 2))
-                    (define right (+ i half))]
+                    (define r (+ i half))]
               (cond
-                [(not (hbs? hbs)) #f]
                 [(= tw w) (make-hbs #t (hbs-left hbs) (hbs-right hbs))]
-                [(< ti right) (combine (free-chunk-helper (hbs-left hbs) tw ti half i) (hbs-right hbs))]
-                [else (combine (hbs-left hbs) (free-chunk-helper (hbs-right hbs) tw ti half right))])))]
+                [(< ti r) (combine (free-chunk-helper (hbs-left hbs) tw ti half i) (hbs-right hbs))]
+                [else (combine (hbs-left hbs) (free-chunk-helper (hbs-right hbs) tw ti half r))])))]
     (free-chunk-helper hbs tw ti (depth hbs) 0)))
 
-(define (combine left right)
-  (if (and (hbs? left)
-           (hbs? right)
-           (hbs-bit left)
-           (hbs-bit right))
-      (make-hbs #t (make-hbs #f (hbs-left left) (hbs-right left)) 
-                (make-hbs #f (hbs-left right) (hbs-right right)))
-      (make-hbs #f left right)))
+; combine : hbs hbs -> hbs
+; to combine two hbs into one, if both hbs bits are #t then set them to #f and make parent #t
+; otherwise make parent #f
+(check-expect (combine (make-hbs #t #f #f) (make-hbs #t #f #f)) 
+              (make-hbs #t (make-hbs #f #f #f) (make-hbs #f #f #f)))
+(check-expect (combine (make-hbs #f #f #f) (make-hbs #t #f #f)) 
+              (make-hbs #f (make-hbs #f #f #f) (make-hbs #t #f #f)))
+(check-expect (combine END-TREE-T END-TREE-T) (make-hbs #t (make-hbs #f #f #f) (make-hbs #f #f #f)))
+
+(define (combine l r)
+  (if (and (hbs? l) (hbs? r) (hbs-bit l) (hbs-bit r))
+      (make-hbs #t (make-hbs #f (hbs-left l) (hbs-right l)) (make-hbs #f (hbs-left r) (hbs-right r)))
+      (make-hbs #f l r)))
