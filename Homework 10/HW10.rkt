@@ -642,7 +642,7 @@
                                   (make-hbs #f
                                             (make-hbs #f #f #f)
                                             (make-hbs #f #f #f)))))
-(check-expect (break-up-chunk END-TREE-F #f) (make-hbs #false #false #false))
+(check-expect (break-up-chunk END-TREE-F #f) (make-hbs #f #f #f))
 
 (define (break-up-chunk hbs b)
   (cond
@@ -685,38 +685,22 @@
                                                           (make-hbs #t #f #f))))
 
 
-
-
 (define (free-chunk hbs tw ti)
-  (free-chunk-helper hbs tw ti (depth hbs) 0))
+  (local [(define (free-chunk-helper hbs tw ti w i)
+            (local [(define half (/ w 2))
+                    (define right (+ i half))]
+              (cond
+                [(not (hbs? hbs)) #f]
+                [(= tw w) (make-hbs #t (hbs-left hbs) (hbs-right hbs))]
+                [(< ti right) (combine (free-chunk-helper (hbs-left hbs) tw ti half i) (hbs-right hbs))]
+                [else (combine (hbs-left hbs) (free-chunk-helper (hbs-right hbs) tw ti half right))])))]
+    (free-chunk-helper hbs tw ti (depth hbs) 0)))
 
-(define (free-chunk-helper hbs tw ti weight index)
-  (local [(define half (/ weight 2))]
-    (cond
-      [(not (hbs? hbs)) #false]
-      [(= tw weight) (set-boolean hbs #t)]
-
-      [(< ti (+ index half))
-       (local [(define new-left (free-chunk-helper (hbs-left hbs) tw ti half index))]
-         (combine (make-hbs (hbs-bit hbs) new-left (hbs-right hbs))))]
-      [else
-       (local [(define new-right (free-chunk-helper (hbs-right hbs) tw ti half (+ index half)))
-               (define new (make-hbs (hbs-bit hbs) (hbs-left hbs) new-right))]
-         (combine new))])))
-
-(define (set-boolean hbs b)
-  (if (hbs? hbs) (make-hbs b (hbs-left hbs) (hbs-right hbs)) hbs))
-
-(define (combine hbs)
-  (if (and (hbs? hbs)
-           (hbs? (hbs-left hbs))
-           (hbs? (hbs-right hbs))
-           (hbs-bit (hbs-left hbs))
-           (hbs-bit (hbs-right hbs)))
-      ;; Collapse node if both children are free
-      (make-hbs #t 
-                (set-boolean (hbs-left hbs) #f)
-                (set-boolean (hbs-right hbs) #f))
-      hbs))
-
-
+(define (combine left right)
+  (if (and (hbs? left)
+           (hbs? right)
+           (hbs-bit left)
+           (hbs-bit right))
+      (make-hbs #t (make-hbs #f (hbs-left left) (hbs-right left)) 
+                (make-hbs #f (hbs-left right) (hbs-right right)))
+      (make-hbs #f left right)))
