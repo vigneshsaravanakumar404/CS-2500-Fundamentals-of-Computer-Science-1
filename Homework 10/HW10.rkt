@@ -654,7 +654,7 @@
 ; Exercise 3
 ; free-chunk : hbs NonNegInt NonNegInt -> hbs
 ; produces an updated HBS that reflects deallocation
-(check-expect (free-chunk HBS-5 0 (depth HBS-5))
+(check-expect (free-chunk HBS-5 4 0)
               (make-hbs #t
                         (make-hbs #f
                                   (make-hbs #f END-TREE-F END-TREE-F)
@@ -683,3 +683,40 @@
                                                 (make-hbs #f
                                                           (make-hbs #f #f #f)
                                                           (make-hbs #t #f #f))))
+
+
+
+
+(define (free-chunk hbs tw ti)
+  (free-chunk-helper hbs tw ti (depth hbs) 0))
+
+(define (free-chunk-helper hbs tw ti weight index)
+  (local [(define half (/ weight 2))]
+    (cond
+      [(not (hbs? hbs)) #false]
+      [(= tw weight) (set-boolean hbs #t)]
+
+      [(< ti (+ index half))
+       (local [(define new-left (free-chunk-helper (hbs-left hbs) tw ti half index))]
+         (combine (make-hbs (hbs-bit hbs) new-left (hbs-right hbs))))]
+      [else
+       (local [(define new-right (free-chunk-helper (hbs-right hbs) tw ti half (+ index half)))
+               (define new (make-hbs (hbs-bit hbs) (hbs-left hbs) new-right))]
+         (combine new))])))
+
+(define (set-boolean hbs b)
+  (if (hbs? hbs) (make-hbs b (hbs-left hbs) (hbs-right hbs)) hbs))
+
+(define (combine hbs)
+  (if (and (hbs? hbs)
+           (hbs? (hbs-left hbs))
+           (hbs? (hbs-right hbs))
+           (hbs-bit (hbs-left hbs))
+           (hbs-bit (hbs-right hbs)))
+      ;; Collapse node if both children are free
+      (make-hbs #t 
+                (set-boolean (hbs-left hbs) #f)
+                (set-boolean (hbs-right hbs) #f))
+      hbs))
+
+
