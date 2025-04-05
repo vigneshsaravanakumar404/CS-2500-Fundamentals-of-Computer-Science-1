@@ -1,11 +1,11 @@
 # CS 2500: Fundamentals of Computer Science 1
 
-<div align="center" style="background-color: white; padding: 10px; border-radius: 5px;">
-    <img src="Northeastern-University-Logo-1536x864.png">
-    <br><br>
-    <h2>Fundamentals of Computer Science 1</h2>
-    <p><strong>4 Credit Hours | Khoury College of Science</strong></p>
-    <hr>
+<div align="center">
+  <img src="Northeastern-University-Logo-1536x864.png" width="500">
+  <br><br>
+  <h2>Fundamentals of Computer Science 1</h2>
+  <p><strong>4 Credit Hours | Khoury College of Science</strong></p>
+  <hr>
 </div>
 
 ## 📚 Course Overview
@@ -17,7 +17,7 @@
 | Category                    | Information |
 | :-------------------------- | :---------- |
 | **Semester**                | Spring 2028 |
-| **Grade Earned**            | -           |
+| **Grade Earned**            |             |
 | **Programming Language**    | Racket      |
 | **Development Environment** | DrRacket    |
 
