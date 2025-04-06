@@ -35,5 +35,5 @@
 ---
 
 <div align="center">
-  <p><em>© Vignesh Saravanakumar 2028 | Northeastern University</em></p>
+  <p><em>© Vignesh Saravanakumar 2025 | Northeastern University</em></p>
 </div>

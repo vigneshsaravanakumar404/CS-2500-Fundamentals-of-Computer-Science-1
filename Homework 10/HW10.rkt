@@ -50,11 +50,11 @@
 
 (define HBS-0 (make-hbs #f
                         (make-hbs #f
-                                  (make-hbs #f #f #f)
-                                  (make-hbs #f #f #f))
+                                  END-TREE-F
+                                  END-TREE-F)
                         (make-hbs #f
-                                  (make-hbs #f #f #f)
-                                  (make-hbs #f #f #f))))
+                                  END-TREE-F
+                                  END-TREE-F)))
 
 (define HBS-2 (make-hbs #f END-TREE-F END-TREE-T))
 ;    0
@@ -100,82 +100,82 @@
 (define HBS-6 (make-hbs #f
                         (make-hbs #t
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f))
+                                            END-TREE-F
+                                            END-TREE-F)
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f)))
+                                            END-TREE-F
+                                            END-TREE-F))
                         (make-hbs #f
                                   (make-hbs #t
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f))
+                                            END-TREE-F
+                                            END-TREE-F)
                                   (make-hbs #f
-                                            (make-hbs #t #f #f)
-                                            (make-hbs #f #f #f)))))
+                                            END-TREE-T
+                                            END-TREE-F))))
 
 (define HBS-7 (make-hbs #f
                         (make-hbs #f
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f))
+                                            END-TREE-F
+                                            END-TREE-F)
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f)))
+                                            END-TREE-F
+                                            END-TREE-F))
                         (make-hbs #f
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f))
+                                            END-TREE-F
+                                            END-TREE-F)
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f)))))
+                                            END-TREE-F
+                                            END-TREE-F))))
 
 (define HBS-8 (make-hbs #t
                         (make-hbs #f
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f))
+                                            END-TREE-F
+                                            END-TREE-F)
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f)))
+                                            END-TREE-F
+                                            END-TREE-F))
                         (make-hbs #f
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f))
+                                            END-TREE-F
+                                            END-TREE-F)
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f)))))
+                                            END-TREE-F
+                                            END-TREE-F))))
 
 (define HBS-9 (make-hbs #f
                         (make-hbs #f
                                   (make-hbs #t
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))
+                                                      END-TREE-F
+                                                      END-TREE-F)
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f)))
+                                                      END-TREE-F
+                                                      END-TREE-F))
                                   (make-hbs #f
                                             (make-hbs #t
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))
+                                                      END-TREE-F
+                                                      END-TREE-F)
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))))
+                                                      END-TREE-F
+                                                      END-TREE-F)))
                         (make-hbs #f
                                   (make-hbs #f
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))
+                                                      END-TREE-F
+                                                      END-TREE-F)
                                             (make-hbs #t
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f)))
+                                                      END-TREE-F
+                                                      END-TREE-F))
                                   (make-hbs #t
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))
+                                                      END-TREE-F
+                                                      END-TREE-F)
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))))))
+                                                      END-TREE-F
+                                                      END-TREE-F)))))
 ;                                0
 ;                            /       \
 ;                         /             \                   
@@ -194,33 +194,33 @@
 (define HBS-10 (make-hbs #f
                          (make-hbs #t
                                    (make-hbs #f
-                                             (make-hbs #f #f #f)
-                                             (make-hbs #f #f #f))
+                                             END-TREE-F
+                                             END-TREE-F)
                                    (make-hbs #f
-                                             (make-hbs #f #f #f)
-                                             (make-hbs #f #f #f)))
+                                             END-TREE-F
+                                             END-TREE-F))
                          (make-hbs #f
                                    (make-hbs #f
-                                             (make-hbs #f #f #f)
-                                             (make-hbs #f #f #f))
+                                             END-TREE-F
+                                             END-TREE-F)
                                    (make-hbs #t
-                                             (make-hbs #f #f #f)
-                                             (make-hbs #f #f #f)))))
+                                             END-TREE-F
+                                             END-TREE-F))))
 
 (define HBS-11 (make-hbs #f
                          (make-hbs #t
-                                   (make-hbs #f #f #f)
-                                   (make-hbs #f #f #f))
+                                   END-TREE-F
+                                   END-TREE-F)
                          (make-hbs #f
-                                   (make-hbs #t #f #f)
-                                   (make-hbs #f #f #f))))
+                                   END-TREE-T
+                                   END-TREE-F)))
 (define HBS-12 (make-hbs #f
                          (make-hbs #f
-                                   (make-hbs #f #f #f)
-                                   (make-hbs #f #f #f))
+                                   END-TREE-F
+                                   END-TREE-F)
                          (make-hbs #f
-                                   (make-hbs #f #f #f)
-                                   (make-hbs #t #f #f))))
+                                   END-TREE-F
+                                   END-TREE-T)))
 
 ; Exercise 1a
 ; blocks-remaining : HBS -> NonNegInteger
@@ -426,95 +426,95 @@
               (make-hbs-alloc 4 (make-hbs #f
                                           (make-hbs #f
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))
+                                                              END-TREE-F
+                                                              END-TREE-F)
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f)))
+                                                              END-TREE-F
+                                                              END-TREE-F))
                                           (make-hbs #f
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))
-                                                    (make-hbs #f (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))))))
+                                                              END-TREE-F
+                                                              END-TREE-F)
+                                                    (make-hbs #f END-TREE-F
+                                                              END-TREE-F)))))
 (check-expect (alloc-chunk HBS-5 2)
               (make-hbs-alloc 4 (make-hbs #f
                                           (make-hbs #f
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))
+                                                              END-TREE-F
+                                                              END-TREE-F)
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f)))
+                                                              END-TREE-F
+                                                              END-TREE-F))
                                           (make-hbs #f
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))
+                                                              END-TREE-F
+                                                              END-TREE-F)
                                                     (make-hbs #t
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))))))
+                                                              END-TREE-F
+                                                              END-TREE-F)))))
 (check-expect (alloc-chunk HBS-5 1)
               (make-hbs-alloc 4 (make-hbs #f
                                           (make-hbs #f
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))
-                                                    (make-hbs #f (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f)))
-                                          (make-hbs #f (make-hbs #f (make-hbs #f #f #f)
-                                                                 (make-hbs #t #f #f))
-                                                    (make-hbs #t (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))))))
+                                                              END-TREE-F
+                                                              END-TREE-F)
+                                                    (make-hbs #f END-TREE-F
+                                                              END-TREE-F))
+                                          (make-hbs #f (make-hbs #f END-TREE-F
+                                                                 END-TREE-T)
+                                                    (make-hbs #t END-TREE-F
+                                                              END-TREE-F)))))
 (check-expect (alloc-chunk HBS-9 8) (make-hbs-alloc -1 HBS-9))
 (check-expect (alloc-chunk HBS-10 32) (make-hbs-alloc -1 HBS-10))
 (check-expect (alloc-chunk HBS-10 1)
               (make-hbs-alloc 6 (make-hbs #f
                                           (make-hbs #t
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))
+                                                              END-TREE-F
+                                                              END-TREE-F)
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f)))
+                                                              END-TREE-F
+                                                              END-TREE-F))
                                           (make-hbs #f
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))
+                                                              END-TREE-F
+                                                              END-TREE-F)
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #t #f #f))))))
+                                                              END-TREE-F
+                                                              END-TREE-T)))))
 (check-expect (alloc-chunk HBS-10 2)
               (make-hbs-alloc 6 (make-hbs #f
                                           (make-hbs #t
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))
+                                                              END-TREE-F
+                                                              END-TREE-F)
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f)))
+                                                              END-TREE-F
+                                                              END-TREE-F))
                                           (make-hbs #f
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))
+                                                              END-TREE-F
+                                                              END-TREE-F)
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))))))
+                                                              END-TREE-F
+                                                              END-TREE-F)))))
 (check-expect (alloc-chunk HBS-10 4)
               (make-hbs-alloc 0 (make-hbs #f
                                           (make-hbs #f
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))
+                                                              END-TREE-F
+                                                              END-TREE-F)
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f)))
+                                                              END-TREE-F
+                                                              END-TREE-F))
                                           (make-hbs #f
                                                     (make-hbs #f
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))
+                                                              END-TREE-F
+                                                              END-TREE-F)
                                                     (make-hbs #t
-                                                              (make-hbs #f #f #f)
-                                                              (make-hbs #f #f #f))))))
+                                                              END-TREE-F
+                                                              END-TREE-F)))))
 
 (define (alloc-chunk hbs n)
   (local [(define i (find-chunk hbs n))]
@@ -526,89 +526,89 @@
               (make-hbs #f (make-hbs #f
                                      (make-hbs #t
                                                (make-hbs #f
-                                                         (make-hbs #f #f #f)
-                                                         (make-hbs #f #f #f))
+                                                         END-TREE-F
+                                                         END-TREE-F)
                                                (make-hbs #f
-                                                         (make-hbs #f #f #f)
-                                                         (make-hbs #f #f #f)))
+                                                         END-TREE-F
+                                                         END-TREE-F))
                                      (make-hbs #f
                                                (make-hbs #t
-                                                         (make-hbs #f #f #f)
-                                                         (make-hbs #f #f #f))
-                                               (make-hbs #f (make-hbs #f #f #f)
-                                                         (make-hbs #f #f #f))))
+                                                         END-TREE-F
+                                                         END-TREE-F)
+                                               (make-hbs #f END-TREE-F
+                                                         END-TREE-F)))
                         (make-hbs #f
                                   (make-hbs #f
-                                            (make-hbs #f (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))
-                                            (make-hbs #t (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f)))
+                                            (make-hbs #f END-TREE-F
+                                                      END-TREE-F)
+                                            (make-hbs #t END-TREE-F
+                                                      END-TREE-F))
                                   (make-hbs #t
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))
-                                            (make-hbs #f (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))))))
+                                                      END-TREE-F
+                                                      END-TREE-F)
+                                            (make-hbs #f END-TREE-F
+                                                      END-TREE-F)))))
 (check-expect (alloc-chunk-helper HBS-9 (find-chunk HBS-9 1) 0 1 (depth HBS-9))
               (make-hbs #f
                         (make-hbs #f
                                   (make-hbs #t
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))
-                                            (make-hbs #f (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f)))
+                                                      END-TREE-F
+                                                      END-TREE-F)
+                                            (make-hbs #f END-TREE-F
+                                                      END-TREE-F))
                                   (make-hbs #f
-                                            (make-hbs #f (make-hbs #f #f #f)
-                                                      (make-hbs #t #f #f))
-                                            (make-hbs #f (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))))
+                                            (make-hbs #f END-TREE-F
+                                                      END-TREE-T)
+                                            (make-hbs #f END-TREE-F
+                                                      END-TREE-F)))
                         (make-hbs #f
                                   (make-hbs #f
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))
+                                                      END-TREE-F
+                                                      END-TREE-F)
                                             (make-hbs #t
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f)))
+                                                      END-TREE-F
+                                                      END-TREE-F))
                                   (make-hbs #t
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))
-                                            (make-hbs #f (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))))))
+                                                      END-TREE-F
+                                                      END-TREE-F)
+                                            (make-hbs #f END-TREE-F
+                                                      END-TREE-F)))))
 
 (check-expect (alloc-chunk-helper HBS-9 (find-chunk HBS-9 2) 0 2 (depth HBS-9))
               (make-hbs #f
                         (make-hbs #f
                                   (make-hbs #t
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))
+                                                      END-TREE-F
+                                                      END-TREE-F)
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f)))
+                                                      END-TREE-F
+                                                      END-TREE-F))
                                   (make-hbs #f
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))
-                                            (make-hbs #f (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))))
+                                                      END-TREE-F
+                                                      END-TREE-F)
+                                            (make-hbs #f END-TREE-F
+                                                      END-TREE-F)))
                         (make-hbs #f
                                   (make-hbs #f
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))
+                                                      END-TREE-F
+                                                      END-TREE-F)
                                             (make-hbs #t
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f)))
+                                                      END-TREE-F
+                                                      END-TREE-F))
                                   (make-hbs #t
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))
+                                                      END-TREE-F
+                                                      END-TREE-F)
                                             (make-hbs #f
-                                                      (make-hbs #f #f #f)
-                                                      (make-hbs #f #f #f))))))
+                                                      END-TREE-F
+                                                      END-TREE-F)))))
 
 (define (alloc-chunk-helper hbs ti index tw weight)
   (local
@@ -629,36 +629,36 @@
               (make-hbs #f
                         (make-hbs #t
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f))
+                                            END-TREE-F
+                                            END-TREE-F)
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f)))
+                                            END-TREE-F
+                                            END-TREE-F))
                         (make-hbs #t
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f))
+                                            END-TREE-F
+                                            END-TREE-F)
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f)))))
+                                            END-TREE-F
+                                            END-TREE-F))))
 
 (check-expect (break-up-chunk HBS-3 #t)
               (make-hbs #t
                         (make-hbs #f
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f))
+                                            END-TREE-F
+                                            END-TREE-F)
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f)))
+                                            END-TREE-F
+                                            END-TREE-F))
                         (make-hbs #f
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f))
+                                            END-TREE-F
+                                            END-TREE-F)
                                   (make-hbs #f
-                                            (make-hbs #f #f #f)
-                                            (make-hbs #f #f #f)))))
-(check-expect (break-up-chunk END-TREE-F #f) (make-hbs #f #f #f))
+                                            END-TREE-F
+                                            END-TREE-F))))
+(check-expect (break-up-chunk END-TREE-F #f) END-TREE-F)
 
 (define (break-up-chunk hbs b)
   (cond
@@ -680,25 +680,25 @@
                                   (make-hbs #f END-TREE-F END-TREE-F))))
 (check-expect (free-chunk HBS-11 1 3) (make-hbs #t
                                                 (make-hbs #f
-                                                          (make-hbs #f #f #f)
-                                                          (make-hbs #f #f #f))
+                                                          END-TREE-F
+                                                          END-TREE-F)
                                                 (make-hbs #f
-                                                          (make-hbs #f #f #f)
-                                                          (make-hbs #f #f #f))))
+                                                          END-TREE-F
+                                                          END-TREE-F)))
 (check-expect (free-chunk HBS-12 1 2) (make-hbs #f
                                                 (make-hbs #f
-                                                          (make-hbs #f #f #f)
-                                                          (make-hbs #f #f #f))
+                                                          END-TREE-F
+                                                          END-TREE-F)
                                                 (make-hbs #t
-                                                          (make-hbs #f #f #f)
-                                                          (make-hbs #f #f #f))))
+                                                          END-TREE-F
+                                                          END-TREE-F)))
 (check-expect (free-chunk HBS-12 1 1) (make-hbs #f
                                                 (make-hbs #f
-                                                          (make-hbs #f #f #f)
-                                                          (make-hbs #t #f #f))
+                                                          END-TREE-F
+                                                          END-TREE-T)
                                                 (make-hbs #f
-                                                          (make-hbs #f #f #f)
-                                                          (make-hbs #t #f #f))))
+                                                          END-TREE-F
+                                                          END-TREE-T)))
 
 (define (free-chunk hbs tw ti)
   (local [
@@ -719,11 +719,11 @@
 ; combine : hbs hbs -> hbs
 ; to combine two hbs into one, if both hbs bits are #t then set them to #f and make parent #t
 ; otherwise make parent #f
-(check-expect (combine (make-hbs #t #f #f) (make-hbs #t #f #f)) 
-              (make-hbs #t (make-hbs #f #f #f) (make-hbs #f #f #f)))
-(check-expect (combine (make-hbs #f #f #f) (make-hbs #t #f #f)) 
-              (make-hbs #f (make-hbs #f #f #f) (make-hbs #t #f #f)))
-(check-expect (combine END-TREE-T END-TREE-T) (make-hbs #t (make-hbs #f #f #f) (make-hbs #f #f #f)))
+(check-expect (combine END-TREE-T END-TREE-T) 
+              (make-hbs #t END-TREE-F END-TREE-F))
+(check-expect (combine END-TREE-F END-TREE-T) 
+              (make-hbs #f END-TREE-F END-TREE-T))
+(check-expect (combine END-TREE-T END-TREE-T) (make-hbs #t END-TREE-F END-TREE-F))
 
 (define (combine l r)
   (if (and (hbs? l) (hbs? r) (hbs-bit l) (hbs-bit r))

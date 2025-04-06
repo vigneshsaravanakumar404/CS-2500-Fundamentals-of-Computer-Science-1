@@ -318,6 +318,9 @@
     [(key=? ke "Q") (stop-with ws)]
     [else ws]))
 
+(equal? (key-expr BOOL-LIST-1 "Q") BOOL-LIST-1)
+(equal? (key-expr BOOL-LIST-3 "w") BOOL-LIST-3)
+
 
 ; compute-shift : [List-of Boolean] -> NonNegInteger
 ; Produces the shift value for the mouse fliping of rectangles
@@ -358,6 +361,6 @@
     [on-mouse mouse-expr]
     [close-on-stop #true]))
 
-(bit-bucket '())
-(bit-bucket BOOL-LIST-4)
-(bit-bucket BOOL-LIST-5)
+;;; (bit-bucket '())
+;;; (bit-bucket BOOL-LIST-4)
+;;; (bit-bucket BOOL-LIST-5)
