@@ -1,0 +1,98 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-intermediate-reader.ss" "lang")((modname L22_P2-hw8-hints) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+We have a disk that is almost brand new, only a single block (#6)
+is being used (i.e., allocated to a file).
+Start with actual underlying storage map:
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+If we want to allocate a single block at a time, this is fine: just
+look for the first available free (i.e., #true) bit. But if we want
+to be able to allocate a contiguous chunk, above is not very efficient,
+and has other pathological behaviors, like fragmenting.
+
+A hierarchical bitmap set (HBS) is a way to make allocating bigger
+chunks much more efficient, because we never need to look for a chain
+of bits.
+
+Here is one example of a possible HBS:
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|               0               |               1               | Level-3 (8-chunks)
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|       1       |       0       |       0       |       0       | Level-2 (4-chunks)
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|   0   |   0   |   1   |   0   |   0   |   0   |   0   |   0   | Level-1 (2-chunks)
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | Level-0 (1-chunks)
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+In this HBS, if the user requested a 4-chunk (chunk of 4 contiguous
+blocks), we could satisfy the request by just returning the chunk
+at block 0, corresponding to the 1 (i.e., #true) at the 0th position
+in Level-2
+
+For hierarchical representations (like our HBS): must first
+understand concept of complete form vs. minimal forms, latter of
+which has subtypes correct forms vs. normal form
+(Note only one is plural!)
+
+COMPLETE FORM: At every level, #true means that chunk is available:
+
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|               0               |               1               |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|       1       |       0       |       1       |       1       |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|   1   |   1   |   1   |   0   |   1   |   1   |   1   |   1   |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+
+Problem: allocating or freeing a chunk will cause potential changes
+at every possible level, and particularly at lower levels, it can be
+a massive amount of work. In above, imagine allocating the 4-chunk
+starting at block#12 (rightmost bit on Level-2). And afterwards,
+work out freeing that chunk back up.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MINIMAL FORMS:
+In a minimal form, a block is only represented explicitly as part of
+some single chunk.
+
+TYPE A: CORRECT (BUT NON-NORMAL) MINIMAL FORM:
+An example of a correct (but not normal) minimal form:
+
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|               0               |               0               |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|       1       |       0       |       1       |       1       |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| 0 | 0 | 0 | 0 | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+
+Problem: we will not be able to allocate the available-in-actuality
+4-chunk at block#4 unless we scan for chains, which the whole point
+was to avoid.
+
+TYPE B: NORMAL MINIMAL FORM:
+Blocks are both:
+(a) uniquely represented; and
+(b) represented at highest possible level.
+
+We can trivially convert a correct minimal form to a normal form:
+starting from bottom, take any pairmates that are both free, and
+replace them with corresponding free chunk at next higher level.
+("Replace" means set those bits to #false, set bit at next level to #true.)
+
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|               0               |               1               |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|       1       |       0       |       0       |       0       |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|   0   |   0   |   1   |   0   |   0   |   0   |   0   |   0   |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+
