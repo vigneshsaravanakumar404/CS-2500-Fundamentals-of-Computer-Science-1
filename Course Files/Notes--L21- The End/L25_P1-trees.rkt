@@ -142,24 +142,23 @@
 ; A 3-ary ("ternary") tree is one where every non-empty node has exactly 3 children.
 ; Design a data definition 3-tree that represents this, with each node having a number inside of it:
 
-(define-struct three-tree [number child1 child2 child3])
+(define-struct tree [val c1 c2])
 
-; A 3-tree is one of:
-; - #false
-; - (make-three-tree Number 3-tree 3-tree 3-tree)
-; Interpretation: A 3-ary tree
+; A tree is one of:
+; - #f
+; - (make-binary-tree X binary-tree binary-tree)
+; Interpretation: A X and two children.
  
-(define 3-TREE-1 #false)
-(define 3-TREE-2 (make-three-tree 2 3-TREE-1 3-TREE-1 3-TREE-1))
-(define 3-TREE-3 (make-three-tree 3 3-TREE-2 3-TREE-1 3-TREE-1))
- 
-(define (3t-temp 3t)
+(define TREE-1 #f)
+(define TREE-2 (make-tree 2 TREE-1 TREE-1 TREE-1))
+(define TREE-3 (make-tree 3 TREE-2 TREE-1 TREE-1))
+
+(define (tree-temp tree)
   (...
-   (cond [(boolean? 3t) ...]
-         [(three-tree? 3t) (... (three-tree-number 3t) ...
-                                (3t-temp (three-tree-child1 3t)) ...
-                                (3t-temp (three-tree-child2 3t)) ...
-                                (3t-temp (three-tree-child3 3t)) ...)])))
+   (cond [(boolean? tree) ...]
+         [(tree tree) (... (tree-val tree) ...
+                                (tree-temp (tree-c1 tree)) ...
+                                (tree-temp (tree-c2 tree)) ...)])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

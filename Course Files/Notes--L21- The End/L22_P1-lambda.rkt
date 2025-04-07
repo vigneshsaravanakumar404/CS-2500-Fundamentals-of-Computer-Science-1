@@ -68,7 +68,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; The following is the most trivial example:
-(lambda (n) (+ n 3))
+(lambda (n) (+ n 3)) ; a + 3 function
 
 ; How do I use a lambda? Well, one option is to pass it in as an argument to a function.
 (map (lambda (n) (+ n 3)) (list 1 2 3))

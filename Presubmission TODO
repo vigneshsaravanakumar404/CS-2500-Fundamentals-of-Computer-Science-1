@@ -1,7 +1,11 @@
 Check Before Each Submission:
-  - Not using helper functions
-  - Specificity of data types in signature ✅
-  - Missing interpretation ✅
-  - Missing Tests ✅
-  - Template Error ✅
-  - Local Template ✅
+
+- Not using helper functions
+- Specificity of data types in signature ✅
+- Missing interpretation ✅
+- Missing Tests ✅
+- Template Error ✅
+- Local Template ✅
+
+L14-L27
+Currently on: 
