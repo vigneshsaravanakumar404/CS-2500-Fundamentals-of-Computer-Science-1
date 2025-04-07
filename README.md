@@ -1,7 +1,7 @@
 # CS 2500: Fundamentals of Computer Science 1
 
 <div align="center">
-  <img src="Northeastern-University-Logo-1536x864.png" width="500" style="background-color: white;">
+  <img src="image.png" width="500" style="background-color: white;">
   <br><br>
   <h2>Fundamentals of Computer Science 1</h2>
   <p><strong>4 Credit Hours | Khoury College of Science</strong></p>
