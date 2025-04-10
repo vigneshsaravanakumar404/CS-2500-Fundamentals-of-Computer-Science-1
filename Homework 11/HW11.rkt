@@ -49,12 +49,17 @@
 (check-expect (valid-bst? BT-3) #f)
 
 (define (valid-bst? bst)
-  (local [(define (valid-bst-helper bst min max)
+  (local [; accum : BinaryTree Number Number -> Boolean
+          ; check if a binary tree is a valid binary search tree
+          ; bst=BT-1 min=-inf.0 max=+inf.0 should return #t
+          ; bst=BT-3 min=-inf.0 max=+inf.0 should return #f
+          ; bst=BT-2 min=-inf.0 max=+inf.0 should return #t
+          (define (accum bst min max)
             (if (boolean? bst) #t
                 (and (<= min (btnode-value bst) max)
-                     (valid-bst-helper (btnode-left bst) min (btnode-value bst))
-                     (valid-bst-helper (btnode-right bst) (btnode-value bst) max))))]
-    (valid-bst-helper bst -inf.0 +inf.0)))
+                     (accum (btnode-left bst) min (btnode-value bst))
+                     (accum (btnode-right bst) (btnode-value bst) max))))]
+    (accum bst -inf.0 +inf.0)))
 
 
 ; Exercise 2a
@@ -66,15 +71,15 @@
 
 (define (index-of-max lst)
   (local [
-          ; accumulator : [NEList-of Number] NonNegInt Number NonNegInt -> NonNegInt
+          ; accum : [NEList-of Number] NonNegInt Number NonNegInt -> NonNegInt
           ; find the index of the maximum element in a list
           ; lst=(list 9 3) i=5 max=9 max-i=2 should return 2
           ; lst=(list 1 5 9 4 7 9 3) i=0 max=1 max-i=0 should return 2
-          (define (accumulator lst i max max-i)
+          (define (accum lst i max max-i)
             (cond [(empty? lst) max-i]
-                  [(> (first lst) max) (accumulator (rest lst) (+ i 1) (first lst) i)]
-                  [else (accumulator (rest lst) (+ i 1) max max-i)]))]
-    (accumulator lst 0 (first lst) 0)))
+                  [(> (first lst) max) (accum (rest lst) (+ i 1) (first lst) i)]
+                  [else (accum (rest lst) (+ i 1) max max-i)]))]
+    (accum lst 0 (first lst) 0)))
 
 ; Exercise 2b
 ; balanced-paren? : ParString -> Boolean
@@ -92,18 +97,18 @@
 (check-expect (balanced-paren? "(()(())))") #f)
 
 (define (balanced-paren? lst)
-  (local [; accumulator : [NEList-of String] NonNegInt -> Boolean
+  (local [; accum : [NEList-of String] NonNegInt -> Boolean
           ; check if the parentheses are balanced
           ; lst=(list "(" ")" "(" ")" "(" ")" "(" ")" "(" ")" "(" ")" "(" ")") c=0 should return #t
           ; lst=(list "(") c=1 should return #f
           ; lst=(list ")") c=1 should return #t
-          (define (accumulator lst c)
+          (define (accum lst c)
             (cond
               [(empty? lst) (= c 0)]
-              [(string=? (first lst) "(") (accumulator (rest lst) (+ c 1))]
-              [(> c 0) (accumulator (rest lst) (- c 1))]
+              [(string=? (first lst) "(") (accum (rest lst) (+ c 1))]
+              [(> c 0) (accum (rest lst) (- c 1))]
               [else #f]))]
-    (accumulator (explode lst) 0)))
+    (accum (explode lst) 0)))
 
 ; Exercise 2c
 ; fibonacci : NonNegInt -> NonNegInt
@@ -115,10 +120,10 @@
 (check-expect (fibonacci 341) 82281144336295989585340713815384441479925901307982452831610787275979941)
 
 (define (fibonacci n)
-  (local [; accumulator : NonNegInt NonNegInt NonNegInt NonNegInt -> NonNegInt
-          ; compute the nth Fibonacci number using an accumulator
+  (local [; accum : NonNegInt NonNegInt NonNegInt NonNegInt -> NonNegInt
+          ; compute the nth Fibonacci number using an accum
           ; n=11 i=11 a=0 b=1 should return 89
           ; n=10 i=0 a=0 b=1 should return 55
-          (define (accumulator n i a b)
-            (if (= i n) a (accumulator n (+ i 1) b (+ a b))))]
-    (accumulator n 0 0 1)))
+          (define (accum n i a b)
+            (if (= i n) a (accum n (+ i 1) b (+ a b))))]
+    (accum n 0 0 1)))
