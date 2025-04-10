@@ -1,7 +1,6 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname HW10) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
-
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname HW11) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 ; ========================================================= IMPORTS
 (define-struct btnode [value left right])
 ; A BinaryTree is one of
@@ -53,8 +52,8 @@
   (local [(define (valid-bst-helper bst min max)
             (if (boolean? bst) #t
                 (and (<= min (btnode-value bst) max)
-                  (valid-bst-helper (btnode-left bst) min (btnode-value bst))
-                  (valid-bst-helper (btnode-right bst) (btnode-value bst) max))))]
+                     (valid-bst-helper (btnode-left bst) min (btnode-value bst))
+                     (valid-bst-helper (btnode-right bst) (btnode-value bst) max))))]
     (valid-bst-helper bst -inf.0 +inf.0)))
 
 
@@ -69,12 +68,12 @@
   (local [
           ; accumulator : [NEList-of Number] NonNegInt Number NonNegInt -> NonNegInt
           ; find the index of the maximum element in a list
-          ; lst=(list 9 3) i=5 max=9 max-1=2 should return 2
-          ; lst=(list 1 5 9 4 7 9 3) i=0 max=1 max-1=0 should return 2
-          (define (accumulator lst i max max-1)
-            (cond [(empty? lst) max-1]
+          ; lst=(list 9 3) i=5 max=9 max-i=2 should return 2
+          ; lst=(list 1 5 9 4 7 9 3) i=0 max=1 max-i=0 should return 2
+          (define (accumulator lst i max max-i)
+            (cond [(empty? lst) max-i]
                   [(> (first lst) max) (accumulator (rest lst) (+ i 1) (first lst) i)]
-                  [else (accumulator (rest lst) (+ i 1) max max-1)]))]
+                  [else (accumulator (rest lst) (+ i 1) max max-i)]))]
     (accumulator lst 0 (first lst) 0)))
 
 ; Exercise 2b
@@ -104,7 +103,7 @@
               [(string=? (first lst) "(") (accumulator (rest lst) (+ c 1))]
               [(> c 0) (accumulator (rest lst) (- c 1))]
               [else #f]))]
-  (accumulator (explode lst) 0)))
+    (accumulator (explode lst) 0)))
 
 ; Exercise 2c
 ; fibonacci : NonNegInt -> NonNegInt
