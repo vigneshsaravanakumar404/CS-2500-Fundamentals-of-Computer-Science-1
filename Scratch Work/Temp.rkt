@@ -5,7 +5,3 @@
 ; Didn't call out to employee staff -1/-2
 ; Called Wrong funciton for tree-value, tree-left, tree-right -2/-3
 ; didn't uppercase the first function -2/-3
-
-5
-
-14 + 12 + 11 + 12 + 10
