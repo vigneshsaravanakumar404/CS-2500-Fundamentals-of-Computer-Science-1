@@ -15,7 +15,7 @@
 
 | Category                    | Information |
 | :-------------------------- | :---------- |
-| **Semester**                | Spring 2028 |
+| **Semester**                | Fall 2024   |
 | **Grade Earned**            |             |
 | **Programming Language**    | Racket      |
 | **Development Environment** | DrRacket    |
