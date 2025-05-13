@@ -4,7 +4,7 @@
   <img src="image.png" width="500" style="background-color: white;">
   <br><br>
   <h2>Fundamentals of Computer Science 1</h2>
-  <p><strong>4 Credit Hours | Khoury College of Science</strong></p>
+  <p><strong>5 Credit Hours | Khoury College of Science</strong></p>
 </div>
 
 ## 📚 Course Overview
