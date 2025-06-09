@@ -16,7 +16,7 @@
 | Category                    | Information |
 | :-------------------------- | :---------- |
 | **Semester**                | Fall 2024   |
-| **Grade Earned**            |             |
+| **Grade Earned**            |   98% (A)   |
 | **Programming Language**    | Racket      |
 | **Development Environment** | DrRacket    |
 
