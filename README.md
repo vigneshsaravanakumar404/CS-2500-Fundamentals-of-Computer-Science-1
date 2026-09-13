@@ -15,25 +15,26 @@
 
 | Category                    | Information |
 | :-------------------------- | :---------- |
-| **Semester**                | Spring 2025 |
-| **Grade Earned**            | 98.76% (A)  |
-| **Programming Language**    | Racket      |
-| **Development Environment** | DrRacket    |
+| **Semester**                | Fall 2024 |
+| **Grade Earned**            | A |
+| **Programming Language**    | Racket |
+| **Development Environment** | DrRacket |
 
 ## 🏛️ Repository Structure
 
 ```
 .
-├── README.md          # Course information (this file)
-├── Course File/       # Official Lecture Notes
-├── Labs/              # Lab Assignments
-├── Homework 1/        # Homework 1 Files
-├── Homework 2/        # Homework 2 Files
-├── ...                # Additional Homework Files
+├── README.md      # Course information (this file)
+├── Course Files/  # Official Lecture Notes
+├── Homework 1/    # Homework 1 Files
+├── Homework 2/    # Homework 2 Files
+├── ...            # Homework 3–11
+├── Labs/          # Lab Assignments
+└── Scratch Work/  # Practice and Scratch Files
 ```
 
 ---
 
 <div align="center">
-  <p><em>© Vignesh Saravanakumar 2025 | Northeastern University</em></p>
+  <p><em>© Vignesh Saravanakumar 2026 | Northeastern University</em></p>
 </div>
